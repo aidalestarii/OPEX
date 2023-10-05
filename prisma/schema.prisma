@@ -204,7 +204,7 @@ model RealizationItem {
   amountSubmission Float     @map("amount_submission") @db.DoublePrecision
   periodStart      DateTime  @map("period_start") @db.Date
   periodFinish     DateTime  @map("period_finish") @db.Date
-  descriptionPby   Json      @map("description_pby")
+  descriptionPby   String    @map("description_pby") @db.VarChar(255)
   remarkPby        String    @map("remark_pby") @db.VarChar(255)
   createdAt        DateTime  @default(now()) @map("created_at") @db.Timestamp()
   createdBy        String    @map("created_by") @db.VarChar(255)
