@@ -123,6 +123,7 @@ model FileUpload {
   @@map("file_upload")
 }
 
+//test
 model Memo {
   id         Int       @id @default(autoincrement())
   uniqueId   String    @unique @map("unique_id") @db.Uuid
