@@ -95,7 +95,7 @@ model Budget {
 
 model Kurs {
   idKurs    Int       @id @default(autoincrement()) @map("id_kurs")
-  uniqueId  String    @map("unique_id") @db.VarChar(20)
+  uniqueId  String    @unique @map("unique_id") @db.VarChar(20)
   years     Int       @map("years") @db.Integer
   value     Float     @map("value") @db.DoublePrecision
   createdAt DateTime  @map("created_at") @db.Timestamp()
