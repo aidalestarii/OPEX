@@ -1,0 +1,341 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+// Prisma Studio
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+//Enum for 'Approval' tabel
+enum SignTitleEnum {
+  approved_by
+  reviewed_by
+}
+
+//Enum for 'Approval' tabel
+enum SignStatusEnum {
+  approve
+  waiting_approval
+  revise
+  reject
+}
+
+//Enum for 'Approval' tabel
+enum BudgetTypeEnum {
+  rkap_budget
+  plan_realization
+  remaining_budget
+}
+
+enum FileUploadTypeEnum {
+  hps_document
+  profitability_analyst
+  other
+  budget_rkap
+}
+
+enum TypeRealizationEnum {
+  uang_muka
+  entertainment
+  pengadaan
+}
+
+enum TypeReallocationEnum {
+  internal_dinas
+  different_dinas_same_direktorat
+  different_dinas_different_direktorat
+}
+
+enum StatusEnum {
+  open
+  progress
+  closed
+  reject
+  revise
+}
+
+model Approval {
+  id             Int            @id @default(autoincrement())
+  uniqueId       String         @unique @map("unique_id") @db.Uuid
+  personalNumber String         @unique @map("personal_number") @db.VarChar(255)
+  dinas          String         @map("dinas") @db.VarChar(255)
+  signTitle      SignTitleEnum  @map("sign_title")
+  signStatus     SignStatusEnum @map("sign_status")
+  requestNumber  Int            @map("no_request") @db.Integer
+  createdAt      DateTime       @default(now()) @map("created_at") @db.Timestamp()
+  createdBy      String         @map("created_by") @db.VarChar(255)
+  updatedAt      DateTime?      @updatedAt @map("updated_at") @db.Timestamp()
+  updatedBy      String?        @map("updated_by") @db.VarChar(255)
+  memoId         Int            @map("memo_id") @db.Integer
+  noteMemoId     Int            @map("note_memo_id") @db.Integer
+
+  memo     Memo     @relation(fields: [memoId], references: [id])
+  noteMemo NoteMemo @relation(fields: [noteMemoId], references: [id])
+
+  // @@index([uniqueId])
+  @@map("approval")
+}
+
+model Budget {
+  id          Int            @id @default(autoincrement())
+  uniqueId    String         @unique @map("unique_id") @db.Uuid
+  type        BudgetTypeEnum @map("type")
+  group       String         @map("group") @db.VarChar(255)
+  groupDetail String         @map("group_detail") @db.VarChar(255)
+  glNumber    Float          @map("gl_number") @db.DoublePrecision //jelasin apa kepanjangan gl
+  dinas       String         @map("dinas") @db.VarChar(255)
+  years       DateTime       @map("years") @db.Date
+  month       DateTime       @map("month") @db.Date
+  value       Float          @map("value") @db.DoublePrecision
+  createdAt   DateTime       @default(now()) @map("created_at") @db.Timestamp()
+  createdBy   String         @map("created_by") @db.VarChar(255)
+  updatedAt   DateTime?      @updatedAt @map("updated_at") @db.Timestamp()
+  updatedBy   String?        @map("updated_by") @db.VarChar(255)
+
+  RealizationItem           RealizationItem[]
+  ReallocationItemCorporate ReallocationItemCorporate[]
+
+  // @@index([uniqueId])
+  @@map("budget")
+}
+
+model FileUpload {
+  id           Int                @id @default(autoincrement())
+  uniqueId     String             @unique @map("unique_id") @db.Uuid
+  docName      String             @map("doc_name") @db.VarChar(255)
+  docSize      Float              @map("doc_size") @db.DoublePrecision
+  docType      FileUploadTypeEnum @map("doc_type")
+  createdAt    DateTime           @default(now()) @map("created_at") @db.Timestamp()
+  createdBy    String             @map("created_by") @db.VarChar(255)
+  departmentBy String             @map("department_by") @db.VarChar(255)
+  updatedAt    DateTime?          @updatedAt @map("updated_at") @db.Timestamp()
+  updatedBy    String?            @map("updated_by") @db.VarChar(255)
+
+  Realization           Realization[]
+  ReallocationCorporate ReallocationCorporate[]
+
+  // @@index([uniqueId])
+  @@map("file_upload")
+}
+
+//test
+model Memo {
+  id         Int       @id @default(autoincrement())
+  uniqueId   String    @unique @map("unique_id") @db.Uuid
+  memoNumber Int       @map("memo_number") @db.Integer
+  from       String    @map("from") @db.VarChar(255)
+  to         Int       @map("to") @db.Integer
+  note       String    @map("note") @db.VarChar(255)
+  createdAt  DateTime  @default(now()) @map("created_at") @db.Timestamp()
+  createdBy  String    @map("created_by") @db.VarChar(255)
+  updatedAt  DateTime? @updatedAt @map("updated_at") @db.Timestamp()
+  updatedBy  String?   @map("updated_by") @db.VarChar(255)
+
+  Approval        Approval[]
+  RealizationItem RealizationItem[]
+
+  // @@index([uniqueId])
+  @@map("memo")
+}
+
+model NoteMemo {
+  id            Int       @id @default(autoincrement())
+  uniqueId      String    @unique @map("unique_id") @db.Uuid
+  requestNumber Int       @map("no_request") @db.Integer
+  memoNumber    Int       @map("memo_number") @db.Integer
+  from          String    @map("from") @db.VarChar(255)
+  to            Int       @map("to") @db.Integer
+  note          String    @map("note") @db.VarChar(255)
+  createdAt     DateTime  @default(now()) @map("created_at") @db.Timestamp()
+  createdBy     String    @map("created_by") @db.VarChar(255)
+  updatedAt     DateTime? @updatedAt @map("updated_at") @db.Timestamp()
+  updatedBy     String?   @map("updated_by") @db.VarChar(255)
+
+  Approval        Approval[]
+  RealizationItem RealizationItem[]
+
+  // @@index([uniqueId])
+  @@map("note_memo")
+}
+
+model Realization {
+  id                 Int                 @id @default(autoincrement())
+  uniqueId           String              @unique @map("unique_id") @db.Uuid
+  requestNumber      Int                 @map("no_request") @db.Integer
+  dinas              String              @map("dinas") @db.VarChar(255)
+  typeSubmissionEnum TypeRealizationEnum @map("type_submission_enum")
+  responsibleRequest String              @map("respinsible_request") @db.VarChar(255)
+  titleRequest       String              @map("title_request") @db.Text
+  noteRequest        Json                @map("note_request")
+  status             StatusEnum
+  departmentTo       String              @map("department_to") @db.VarChar(255)
+  statusTo           String              @map("status_to") @db.VarChar(255)
+  fileUploadId       Int                 @map("file_upload_id") @db.Integer
+  reallocationId     Int?                @map("reallocation_id") @db.Integer
+  createdAt          DateTime            @default(now()) @map("created_at") @db.Timestamp()
+  createdBy          String              @map("created_by") @db.VarChar(255)
+  updatedAt          DateTime?           @updatedAt @map("updated_at") @db.Timestamp()
+  updatedBy          String?             @map("updated_by") @db.VarChar(255)
+  realizationItemId  Int                 @map("realization_item_id") @db.Integer
+  kursUsdId          Int                 @map("kurs_usd_id") @db.Integer
+
+  Reallocation    Reallocation[]
+  fileUpload      FileUpload      @relation(fields: [fileUploadId], references: [id])
+  realizationItem RealizationItem @relation(fields: [realizationItemId], references: [id])
+  kursUsd         KursUsd         @relation(fields: [kursUsdId], references: [id])
+
+  // @@index([uniqueId])
+  @@map("realization")
+}
+
+model RealizationItem {
+  id               Int       @id @default(autoincrement())
+  uniqueId         String    @unique @map("unique_id") @db.Uuid
+  requestNumber    Int       @map("no_request") @db.Integer
+  group            String    @map("group") @db.VarChar(255)
+  groupDetail      String    @map("group_detail") @db.VarChar(255)
+  glNumber         String    @map("gl_number") @db.VarChar(255)
+  available        Float     @map("available") @db.DoublePrecision
+  amountSubmission Float     @map("amount_submission") @db.DoublePrecision
+  periodStart      DateTime  @map("period_start") @db.Date
+  periodFinish     DateTime  @map("period_finish") @db.Date
+  descriptionPby   String    @map("description_pby") @db.VarChar(255)
+  remarkPby        String    @map("remark_pby") @db.VarChar(255)
+  createdAt        DateTime  @default(now()) @map("created_at") @db.Timestamp()
+  createdBy        String    @map("created_by") @db.VarChar(255)
+  updatedAt        DateTime? @updatedAt @map("updated_at") @db.Timestamp()
+  updatedBy        String?   @map("updated_by") @db.VarChar(255)
+  budgetId         Int       @map("budget_id") @db.Integer
+  memoId           Int?      @map("memo_id") @db.Integer
+  noteMemoId       Int?      @map("note_memo_id") @db.Integer
+
+  Realization Realization[]
+
+  budget   Budget    @relation(fields: [budgetId], references: [id])
+  memo     Memo?     @relation(fields: [memoId], references: [id])
+  noteMemo NoteMemo? @relation(fields: [noteMemoId], references: [id])
+
+  // @@index([uniqueId])
+  @@map("realization_item")
+}
+
+model Reallocation {
+  id                   Int                  @id @default(autoincrement())
+  uniqueId             String               @unique @map("unique_id") @db.Uuid
+  requestNumber        String               @map("no_request") @db.VarChar(255)
+  taReff               Int                  @map("ta_reff") @db.Integer
+  status               StatusEnum
+  typeReallocationEnum TypeReallocationEnum
+  ownerBudget          String               @map("owner_budget") @db.VarChar(255)
+  descRequest          Json                 @map("desc_request")
+  reallocationItemId   Int                  @map("reallocation_item_id") @db.Integer
+  realizationId        Int                  @map("realization_id") @db.Integer
+  createdAt            DateTime             @default(now()) @map("created_at") @db.Timestamp()
+  createdBy            String               @map("created_by") @db.VarChar(255)
+  updatedAt            DateTime?            @updatedAt @map("updated_at") @db.Timestamp()
+  updatedBy            String?              @map("updated_by") @db.VarChar(255)
+
+  reallocationItem ReallocationItem @relation(fields: [reallocationItemId], references: [id])
+  realization      Realization      @relation(fields: [realizationId], references: [id])
+
+  // @@index([uniqueId])
+  @@map("reallocation")
+}
+
+model ReallocationItem {
+  id               Int       @id @default(autoincrement())
+  uniqueId         String    @unique @map("unique_id") @db.Uuid
+  budgetId         Int       @map("budget_id") @db.Integer
+  groupFrom        String    @map("group_from") @db.VarChar(255)
+  groupDetail      String    @map("group_detail") @db.VarChar(255)
+  glNumber         Float     @map("gl_number") @db.DoublePrecision
+  available        Float     @map("available") @db.DoublePrecision
+  amountSubmission Float     @map("amount_submission") @db.DoublePrecision
+  groupTo          String    @map("group_to") @db.VarChar(255)
+  groupDetailTo    String    @map("group_detail_to") @db.VarChar(255)
+  glNumberTo       Float     @map("gl_number_to") @db.DoublePrecision
+  availableTo      Float     @map("available_to") @db.DoublePrecision
+  recipientTotal   Float     @map("recipient_total") @db.DoublePrecision
+  budgetName       String    @map("budget_name") @db.VarChar(255)
+  remark           String    @map("remark") @db.VarChar(255)
+  createdAt        DateTime  @default(now()) @map("created_at") @db.Timestamp()
+  createdBy        String    @map("created_by") @db.VarChar(255)
+  updatedAt        DateTime? @updatedAt @map("updated_at") @db.Timestamp()
+  updatedBy        String?   @map("updated_by") @db.VarChar(255)
+
+  Reallocation Reallocation[]
+
+  // @@index([uniqueId])
+  @@map("reallocation_item")
+}
+
+model ReallocationCorporate {
+  id                          Int       @id @default(autoincrement())
+  uniqueId                    String    @unique @map("unique_id") @db.Uuid
+  dinasTo                     String    @map("dinas_to") @db.VarChar(255)
+  titleNote                   String    @map("title_note") @db.Text
+  note                        String    @map("note") @db.VarChar(255)
+  reallocationItemCorporateId Int       @map("reallocation_item_corporate_id") @db.Integer
+  fileUploadId                Int       @map("file_upload_id") @db.Integer
+  createdAt                   DateTime  @default(now()) @map("created_at") @db.Timestamp()
+  createdBy                   String    @map("created_by") @db.VarChar(255)
+  updatedAt                   DateTime? @updatedAt @map("updated_at") @db.Timestamp()
+  updatedBy                   String?   @map("updated_by") @db.VarChar(255)
+
+  reallocationItemCorporate ReallocationItemCorporate @relation(fields: [reallocationItemCorporateId], references: [id])
+  fileUpload                FileUpload                @relation(fields: [fileUploadId], references: [id])
+
+  // @@index([uniqueId])
+  @@map("reallocation_corporate")
+}
+
+model ReallocationItemCorporate {
+  id                        Int       @id @default(autoincrement())
+  uniqueId                  String    @unique @map("unique_id") @db.Uuid
+  budgetId                  Int       @map("budget_id") @db.Integer
+  groupFrom                 String    @map("group_from") @db.VarChar(255)
+  groupDetailFrom           String    @map("group_detail_from") @db.VarChar(255)
+  glNumberFrom              Float     @map("gl_number_from") @db.DoublePrecision
+  availableFrom             Float     @map("available_from") @db.DoublePrecision
+  amountSubmissionFrom      Float     @map("amount_submission_from") @db.DoublePrecision
+  totalGroupFrom            Float     @map("total_group_from") @db.DoublePrecision
+  totalAmountSubmissionFrom Float     @map("total_amount_submission_from") @db.DoublePrecision
+  groupTo                   String    @map("group_to") @db.VarChar(255)
+  groupDetailTo             String    @map("group_detail_to") @db.VarChar(255)
+  glNumberTo                Float     @map("gl_number_to") @db.DoublePrecision
+  availableTo               Float     @map("available_to") @db.DoublePrecision
+  recipientTotal            Float     @map("recipient_total") @db.DoublePrecision
+  createdAt                 DateTime  @default(now()) @map("created_at") @db.Timestamp()
+  createdBy                 String    @map("created_by") @db.VarChar(255)
+  updatedAt                 DateTime? @updatedAt @map("updated_at") @db.Timestamp()
+  updatedBy                 String?   @map("updated_by") @db.VarChar(255)
+
+  reallocationCorporate ReallocationCorporate[]
+  budget                Budget                  @relation(fields: [budgetId], references: [id])
+
+  // @@index([uniqueId])
+  @@map("reallocation_item_corporate")
+}
+
+model KursUsd {
+  id        Int       @id @default(autoincrement())
+  uniqueId  String    @unique @map("unique_id") @db.Uuid
+  years     String    @map("years") @db.VarChar(255)
+  kursFrom  String    @map("kurs_from") @db.VarChar(255)
+  kursTo    String    @map("kurs_to") @db.VarChar(255)
+  value     Float     @map("available") @db.DoublePrecision
+  createdAt DateTime  @default(now()) @map("created_at") @db.Timestamp()
+  createdBy String    @map("created_by") @db.VarChar(255)
+  updatedAt DateTime? @updatedAt @map("updated_at") @db.Timestamp()
+  updatedBy String?   @map("updated_by") @db.VarChar(255)
+
+  Realization Realization[]
+
+  // @@index([uniqueId])
+  @@map("kurs_usd")
+}
