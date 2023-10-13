@@ -86,17 +86,11 @@ export class CreateBudgetDto {
     @IsDecimal()
     total: number;
 
-    @IsNotEmpty()
     @IsDateString()
+    @IsNotEmpty()
     createdAt: string;
 
     @IsNotEmpty()
     @IsString()
     createdBy: string;
-
-    @IsDateString()
-    updatedAt: string;
-
-    @IsString()
-    updatedBy: string;
 }

@@ -1,9 +1,11 @@
+import { MGlAccount } from "@prisma/client";
+import { Type } from "class-transformer";
 import { IsBoolean, IsDateString, IsNotEmpty, IsNumber, IsString } from "class-validator";
 
 export class CreateMGlAccountDto {
 
     @IsNotEmpty()
-    @IsString()
+    @IsString()3
     uniqueId: string;
 
     @IsNotEmpty()
@@ -39,5 +41,4 @@ export class CreateMGlAccountDto {
 
     @IsString()
     updatedBy: string;
-
 }

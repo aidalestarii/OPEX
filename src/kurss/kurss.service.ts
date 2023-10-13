@@ -2,7 +2,6 @@ import { Injectable } from '@nestjs/common';
 import { CreateKurssDto } from './dto/create-kurss.dto';
 import { UpdateKurssDto } from './dto/update-kurss.dto';
 import { PrismaService } from 'src/prisma.service';
-import { Kurs } from '@prisma/client';
 
 
 @Injectable()
@@ -13,7 +12,7 @@ export class KurssService {
       data: createKurssDto,
     });
   }
-
+k
   findAll() {
     return this.prisma.kurs.findMany();
   }
