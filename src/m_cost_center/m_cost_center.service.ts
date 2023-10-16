@@ -6,28 +6,34 @@ import { PrismaService } from 'src/prisma.service';
 @Injectable()
 export class MCostCenterService {
   constructor(private readonly prisma: PrismaService) {}
-  create(createMCostCenterDto: CreateMCostCenterDto) {
-    return this.prisma.mCostCenter.create({
+
+  async create(createMCostCenterDto: CreateMCostCenterDto) {
+    const mcost = await this.prisma.mCostCenter.create({
       data: createMCostCenterDto,
     });
+    return mcost;
   }
 
-  findAll() {
-    return this.prisma.mCostCenter.findMany();
+  async findAll() {
+    const mcost = await this.prisma.mCostCenter.findMany();
+    return mcost;
   }
 
-  findOne(id: number) {
-    return this.prisma.mCostCenter.findUnique({ where: { idCostCenter: id } });
+  async findOne(id: number) {
+    const mcost = await this.prisma.mCostCenter.findUnique({ where: { idCostCenter: id } });
+    return mcost;
   }
 
-  update(id: number, updateMCostCenterDto: UpdateMCostCenterDto) {
-    return this.prisma.mCostCenter.update({
+  async update(id: number, updateMCostCenterDto: UpdateMCostCenterDto) {
+    const mcost = await this.prisma.mCostCenter.update({
       where: { idCostCenter: id },
       data: updateMCostCenterDto,
     });
+    return mcost;
   }
 
-  remove(id: number) {
-    return this.prisma.mCostCenter.delete({ where: { idCostCenter: id } });
+  async remove(id: number) {
+    const mcost = await this.prisma.mCostCenter.delete({ where: { idCostCenter: id } });
+    return mcost;
   }
 }

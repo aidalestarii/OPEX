@@ -6,28 +6,33 @@ import { PrismaService } from 'src/prisma.service';
 @Injectable()
 export class MGlAccountService {
   constructor(private readonly prisma: PrismaService) {}
-  create(createMGlAccountDto: CreateMGlAccountDto) {
-    return this.prisma.mGlAccount.create({
+  async create(createMGlAccountDto: CreateMGlAccountDto) {
+    const mgl = await this.prisma.mGlAccount.create({
       data: createMGlAccountDto,
     });
+    return mgl;
   }
 
-  findAll() {
-    return this.prisma.mGlAccount.findMany();
+  async findAll() {
+    const mgl = await this.prisma.mGlAccount.findMany();
+    return mgl;
   }
 
-  findOne(id: number) {
-    return this.prisma.mGlAccount.findUnique({ where: { idGlAccount: id } });
+  async findOne(id: number) {
+    const mgl = await this.prisma.mGlAccount.findUnique({ where: { idGlAccount: id } });
+    return mgl;
   }
 
-  update(id: number, updateMGlAccountDto: UpdateMGlAccountDto) {
-    return this.prisma.mGlAccount.update({
+  async update(id: number, updateMGlAccountDto: UpdateMGlAccountDto) {
+    const mgl = await this.prisma.mGlAccount.update({
       where: { idGlAccount: id },
       data: UpdateMGlAccountDto,
     });
+    return mgl;
   }
 
-  remove(id: number) {
-    return this.prisma.mGlAccount.delete({ where: { idGlAccount: id } });
+  async remove(id: number) {
+    const mgl = await this.prisma.mGlAccount.delete({ where: { idGlAccount: id } });
+    return mgl;
   }
 }

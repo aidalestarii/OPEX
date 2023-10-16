@@ -40,9 +40,6 @@ export class UpdateMCostCenterDto extends PartialType(CreateMCostCenterDto) {
     @IsString()
     createdBy: string;
 
-    @IsDateString()
-    updatedAt: string;
-
     @IsString()
     updatedBy: string;
 }

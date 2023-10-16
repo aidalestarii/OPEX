@@ -2,6 +2,7 @@ import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/commo
 import { BudgetService } from './budget.service';
 import { CreateBudgetDto } from './dto/create-budget.dto';
 import { UpdateBudgetDto } from './dto/update-budget.dto';
+import { ShowBudgetDTO } from './dto/show-budget.dto';
 
 @Controller('budget')
 export class BudgetController {
@@ -13,7 +14,7 @@ export class BudgetController {
   }
 
   @Get()
-  findAll() {
+  findAll(showBudgetDTO: ShowBudgetDTO) {
     return this.budgetService.findAll();
   }
 

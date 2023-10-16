@@ -41,9 +41,6 @@ export class CreateMCostCenterDto {
     @IsString()
     createdBy: string;
 
-    @IsDateString()
-    updatedAt: string;
-
     @IsString()
     updatedBy: string;
 

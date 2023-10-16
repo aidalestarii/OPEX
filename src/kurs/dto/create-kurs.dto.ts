@@ -1,6 +1,6 @@
 import { IsNotEmpty, IsString, IsNumber, IsDateString, IsDecimal } from 'class-validator';
 
-export class CreateKurssDto {
+export class CreateKursDto {
     @IsNotEmpty()
     @IsString()
     uniqueId: string;
@@ -13,11 +13,7 @@ export class CreateKurssDto {
     @IsDecimal()
     value: number;
 
-    @IsDateString()
-    createdAt: string;
-
     @IsNotEmpty()
     @IsString()
     createdBy: string;
-
 }

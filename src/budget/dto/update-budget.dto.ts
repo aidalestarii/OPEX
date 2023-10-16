@@ -84,9 +84,6 @@ export class UpdateBudgetDto extends PartialType(CreateBudgetDto) {
     @IsDecimal()
     total: number;
 
-    @IsDateString()
-    updatedAt: string;
-
     @IsString()
     updatedBy: string;
     

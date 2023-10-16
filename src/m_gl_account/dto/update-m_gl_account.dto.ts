@@ -35,9 +35,6 @@ export class UpdateMGlAccountDto extends PartialType(CreateMGlAccountDto) {
     @IsString()
     createdBy: string;
 
-    @IsDateString()
-    updatedAt: string;
-
     @IsString()
     updatedBy: string;
 }
