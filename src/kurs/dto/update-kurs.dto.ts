@@ -13,7 +13,6 @@ export class UpdateKursDto {
   @IsNumber()
   years?: number; // Tahun kurs yang ingin diperbarui
 
-  @IsOptional()
   @IsNotEmpty()
   @IsString()
   updatedBy: string; // Penyunting kurs yang ingin diperbarui
