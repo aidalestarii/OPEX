@@ -1,59 +1,40 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UploadedFile, UseInterceptors, ParseFilePipeBuilder, HttpStatus } from '@nestjs/common';
+import { Controller, Post, Body, UseInterceptors, UploadedFile, BadRequestException } from '@nestjs/common';
 import { FilesService } from './files.service';
 import { CreateFileDto } from './dto/create-file.dto';
-import { UpdateFileDto } from './dto/update-file.dto';
-import { Express } from 'express'
 import { FileInterceptor } from '@nestjs/platform-express';
-import { diskStorage } from 'multer';
 import { extname } from 'path';
+import { diskStorage } from 'multer';
 
-//constructor(private readonly filesService: FilesService) {}
 @Controller('upload')
 export class FilesController {
   constructor(private readonly filesService: FilesService) {}
-  @Post('')
-  @UseInterceptors(FileInterceptor('file',{
-    storage: diskStorage({
-      destination: './files',
-      filename(req, file, callback) {
+
+  @Post()
+  @UseInterceptors(
+    FileInterceptor('file', {
+      storage: diskStorage({
+        destination: './files',
+        filename(req, file, callback) {
           const filename = `${file.originalname}`;
           callback(null, filename);
+        },
+      }),
+      fileFilter(req, file, callback) {
+        if (file.mimetype !== 'application/pdf') {
+          return callback(new BadRequestException('pdf aja'), false);
+        }
+        if (file.size > 100000000) {
+          return callback(new BadRequestException('mb lebih'), false);
+        }
+        callback(null, true);
       },
     }),
-    fileFilter(req, file, callback) {
-        const allowext=['.pdf'];
-        const ext = extname(file.originalname);
-        if (allowext.includes(ext)) {
-          callback(null, true);
-        } else {
-          return 'Only PDF files are allowed...';
-          //(new Error('Only PDF files are allowed...'), false);
-        }
-    },
-  }))
-async uploadFile(@UploadedFile() file): Promise<string> {
-  // Lakukan apa pun yang diperlukan dengan file yang diunggah di sini
-  console.log('File yang diunggah:', file);
-  return 'upload file success';
-}
+  )
 
-  @Get()
-  findAll() {
-    return this.filesService.findAll();
-  }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.filesService.findOne(+id);
-  }
-
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateFileDto: UpdateFileDto) {
-    return this.filesService.update(+id, updateFileDto);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.filesService.remove(+id);
+  //di config, pake reg rile buat service. reg file ['key']. atas luat metdod bawah dlm method
+  async uploadFile(@UploadedFile() file: Express.Multer.File, @Body() body: CreateFileDto): Promise<string> {
+    console.log('file:', file);
+    return 'upload file success';
   }
 }
