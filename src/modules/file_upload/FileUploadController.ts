@@ -1,48 +1,53 @@
 import {
+  BadRequestException,
   Controller,
   Post,
-  Body,
   UseInterceptors,
   UploadedFile,
-  BadRequestException,
   Res,
   HttpStatus,
+  Body,
 } from '@nestjs/common';
-import { FileUploadService } from './file_upload.service';
-import { CreateFileDto } from './dto/create-file.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { extname } from 'path';
-import { diskStorage } from 'multer';
+import { CreateFileDto } from './dto/create-file.dto';
 import { Response } from 'express';
 import { plainToInstance } from 'class-transformer';
+import { diskStorage } from 'multer';
+import { FileUploadService } from './file_upload.service';
 import { ApiResponseDto } from 'src/core/dto/api-response.dto';
-import { multerOptions } from 'src/modules/files/multer.config';
 
 function filename(req, file, callback) {
   const filename = `${file.originalname}`;
   callback(null, filename);
 }
 
+function fileFilter(req, file, callback) {
+  if (file.mimetype !== 'application/pdf') {
+    return callback(new BadRequestException('pdf aja'), false);
+  }
+  if (file.size > 100000000) {
+    return callback(new BadRequestException('mb lebih'), false);
+  }
+  callback(null, true);
+}
+
 @Controller({
   version: '1',
-  path: 'api/uploadfile',
+  path: 'api/upload',
 })
 export class FileUploadController {
   constructor(private readonly fileUploadService: FileUploadService) {}
 
-  /**
-   * Upload docs
-   *
-   * @param file
-   * @param body
-   * @returns
-   */
   @Post()
-  @UseInterceptors(FileInterceptor('file', multerOptions))
-  async upload(@UploadedFile() file) {
-    console.log(file);
-  }
-
+  @UseInterceptors(
+    FileInterceptor('file', {
+      storage: diskStorage({
+        destination: './files',
+        filename,
+      }),
+      fileFilter,
+    }),
+  )
   async uploadFile(
     @UploadedFile() file: Express.Multer.File,
     @Body() body: CreateFileDto,
