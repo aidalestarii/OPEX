@@ -8,7 +8,7 @@ import { HttpException, HttpStatus } from '@nestjs/common';
 export const multerOptions = {
   // Enable file size limits
   limits: {
-    fileSize: 1000000,
+    fileSize: 1000000, //1mb
   },
   // Check the mimetypes to allow for upload
   fileFilter: (req: any, file: any, cb: any) => {
@@ -30,17 +30,21 @@ export const multerOptions = {
   storage: diskStorage({
     // Destination storage path details
     destination: (req: any, file: any, cb: any) => {
-      const uploadPath = './files';
+      const uploadPath = './uploads';
       // Create folder if doesn't exist
       if (!existsSync(uploadPath)) {
         mkdirSync(uploadPath);
       }
       cb(null, uploadPath);
     },
+
     // File modification details
     filename: (req: any, file: any, cb: any) => {
-      // Calling the callback passing the random name generated with the original extension name
-      cb(null, `${uuid()}${extname(file.originalname)}`);
+      const sanitizedOriginalName = file.originalname.replace(
+        /[^a-zA-Z0-9.]/g,
+        '_',
+      );
+      cb(null, `${sanitizedOriginalName}`);
     },
   }),
 };
