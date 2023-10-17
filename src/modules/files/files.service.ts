@@ -3,19 +3,15 @@ import { CreateFileDto } from './dto/create-file.dto';
 import { UpdateFileDto } from './dto/update-file.dto';
 import * as fs from 'fs/promises'; // Menggunakan fs.promises untuk operasi async
 
-
 @Injectable()
 export class FilesService {
-
   async create(createFileDto: CreateFileDto, uploadedFile): Promise<string> {
     const savedFilePath = `./file/${uploadedFile.filename}`;
     console.log('File yang disimpan:', savedFilePath);
-      return savedFilePath;
-    }
-
-  findAll() {
-    return `This action returns all files`;
+    return savedFilePath;
   }
+
+  findAll() {}
 
   findOne(id: number) {
     return `This action returns a #${id} file`;
