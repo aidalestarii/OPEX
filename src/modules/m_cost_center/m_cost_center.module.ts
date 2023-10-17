@@ -1,7 +1,7 @@
-import { Module } from '@nestjs/common';
+                                    import { Module } from '@nestjs/common';
 import { MCostCenterService } from './m_cost_center.service';
 import { MCostCenterController } from './m_cost_center.controller';
-import { PrismaService } from 'src/prisma.service';
+import { PrismaService } from 'src/core/service/prisma.service';
 
 @Module({
   controllers: [MCostCenterController],

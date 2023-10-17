@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { CreateMCostCenterDto } from './dto/create-m_cost_center.dto';
 import { UpdateMCostCenterDto } from './dto/update-m_cost_center.dto';
-import { PrismaService } from 'src/prisma.service';
+import { PrismaService } from 'src/core/service/prisma.service';
 
 @Injectable()
 export class MCostCenterService {

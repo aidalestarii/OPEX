@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { MGlAccountService } from './m_gl_account.service';
 import { MGlAccountController } from './m_gl_account.controller';
-import { PrismaService } from 'src/prisma.service';
+import { PrismaService } from 'src/core/service/prisma.service';
 
 @Module({
   controllers: [MGlAccountController],

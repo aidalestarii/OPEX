@@ -7,9 +7,10 @@ import { MGlAccountModule } from './m_gl_account/m_gl_account.module';
 import { FilesModule } from './files/files.module';
 import { MulterModule } from '@nestjs/platform-express';
 import { KursModule } from './kurs/kurs.module';
+import { FileUploadModule } from './file_upload/file_upload.module';
 
 @Module({
-  imports: [BudgetModule, MCostCenterModule, MGlAccountModule, FilesModule, KursModule],
+  imports: [BudgetModule, MCostCenterModule, MGlAccountModule, FilesModule, KursModule, FileUploadModule],
   controllers: [AppController],
   providers: [AppService],
 })

@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { CreateMGlAccountDto } from './dto/create-m_gl_account.dto';
 import { UpdateMGlAccountDto } from './dto/update-m_gl_account.dto';
-import { PrismaService } from 'src/prisma.service';
+import { PrismaService } from 'src/core/service/prisma.service';
 
 @Injectable()
 export class MGlAccountService {

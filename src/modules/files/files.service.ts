@@ -13,9 +13,6 @@ export class FilesService {
       return savedFilePath;
     }
 
-
-  
-
   findAll() {
     return `This action returns all files`;
   }
