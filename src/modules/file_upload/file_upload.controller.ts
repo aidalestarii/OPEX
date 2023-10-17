@@ -16,7 +16,7 @@ import { diskStorage } from 'multer';
 import { Response } from 'express';
 import { plainToInstance } from 'class-transformer';
 import { ApiResponseDto } from 'src/core/dto/api-response.dto';
-import { multerOptions } from 'src/modules/files/multer.config';
+import { multerOptions } from 'src/config/multer.config';
 
 function filename(req, file, callback) {
   const filename = `${file.originalname}`;
@@ -32,11 +32,12 @@ export class FileUploadController {
 
   /**
    * Upload docs
-   *
+   * JSDoc
    * @param file
    * @param body
    * @returns
    */
+
   @Post()
   @UseInterceptors(FileInterceptor('file', multerOptions))
   async upload(@UploadedFile() file) {

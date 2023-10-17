@@ -13,7 +13,7 @@ import { UpdateMGlAccountDto } from './dto/update-m_gl_account.dto';
 
 @Controller({
   version: '1',
-  path: 'api/-gl-account',
+  path: 'api/m-gl-account',
 })
 export class MGlAccountController {
   constructor(private readonly mGlAccountService: MGlAccountService) {}
