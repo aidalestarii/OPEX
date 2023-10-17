@@ -11,17 +11,10 @@ import {
 import { FilesService } from './files.service';
 import { CreateFileDto } from './dto/create-file.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { extname } from 'path';
-import { diskStorage } from 'multer';
 import { Response } from 'express';
 import { plainToInstance } from 'class-transformer';
 import { ApiResponseDto } from 'src/core/dto/api-response.dto';
 import { multerOptions } from 'src/modules/files/multer.config';
-
-function filename(req, file, callback) {
-  const filename = `${file.originalname}`;
-  callback(null, filename);
-}
 
 @Controller({
   version: '1',

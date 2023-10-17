@@ -1,10 +1,21 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+} from '@nestjs/common';
 import { BudgetService } from './budget.service';
 import { CreateBudgetDto } from './dto/create-budget.dto';
 import { UpdateBudgetDto } from './dto/update-budget.dto';
 import { ShowBudgetDTO } from './dto/show-budget.dto';
 
-@Controller('budget')
+@Controller({
+  version: '1',
+  path: 'api/budget',
+})
 export class BudgetController {
   constructor(private readonly budgetService: BudgetService) {}
 

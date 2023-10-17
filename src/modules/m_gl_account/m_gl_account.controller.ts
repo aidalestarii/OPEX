@@ -1,9 +1,20 @@
-import { Controller, Get, Post, Body, Param, Delete, Put } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Param,
+  Delete,
+  Put,
+} from '@nestjs/common';
 import { MGlAccountService } from './m_gl_account.service';
 import { CreateMGlAccountDto } from './dto/create-m_gl_account.dto';
 import { UpdateMGlAccountDto } from './dto/update-m_gl_account.dto';
 
-@Controller('m-gl-account')
+@Controller({
+  version: '1',
+  path: 'api/-gl-account',
+})
 export class MGlAccountController {
   constructor(private readonly mGlAccountService: MGlAccountService) {}
 
@@ -23,7 +34,10 @@ export class MGlAccountController {
   }
 
   @Put(':id')
-  update(@Param('id') id: number, @Body() updateMGlAccountDto: UpdateMGlAccountDto) {
+  update(
+    @Param('id') id: number,
+    @Body() updateMGlAccountDto: UpdateMGlAccountDto,
+  ) {
     return this.mGlAccountService.update(+id, updateMGlAccountDto);
   }
 
