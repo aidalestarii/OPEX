@@ -26,7 +26,9 @@ export class KursService {
 
   async update(id: number, updateKursDto: UpdateKursDto) {
     //Validation ID
-    const existingKurs = await this.prisma.kurs.findUnique({ where: { idKurs: id } });
+    const existingKurs = await this.prisma.kurs.findUnique({
+      where: { idKurs: id },
+    });
     if (!existingKurs) {
       throw new NotFoundException(`Kurs with ID ${id} not found`);
     }
@@ -38,8 +40,8 @@ export class KursService {
   }
 
   async remove(id: number) {
-    const kurs = await this.prisma.kurs.delete({ 
-        where: { idKurs: id } 
+    const kurs = await this.prisma.kurs.delete({
+      where: { idKurs: id },
     });
     return kurs;
   }
