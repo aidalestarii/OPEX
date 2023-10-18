@@ -26,7 +26,7 @@ export class MGlAccountService {
   async update(id: number, updateMGlAccountDto: UpdateMGlAccountDto) {
     const mgl = await this.prisma.mGlAccount.update({
       where: { idGlAccount: id },
-      data: UpdateMGlAccountDto,
+      data: updateMGlAccountDto,
     });
     return mgl;
   }

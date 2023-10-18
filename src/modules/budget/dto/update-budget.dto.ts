@@ -1,89 +1,90 @@
 import { PartialType } from '@nestjs/mapped-types';
 import { CreateBudgetDto } from './create-budget.dto';
-import { IsDateString, IsDecimal, IsNotEmpty, IsNumber, IsString } from "class-validator";
+import { IsDateString, IsDecimal, IsNotEmpty, IsNumber, IsString, IsOptional } from "class-validator";
 
 export class UpdateBudgetDto extends PartialType(CreateBudgetDto) {
 
-    @IsNotEmpty()
+    @IsOptional()
     @IsNumber()
     years: number;
 
-    @IsNotEmpty()
+    @IsOptional()
     @IsNumber()
     idGlAccount: number;
 
-    @IsNotEmpty()
+    @IsOptional()
     @IsNumber()
     idCostCenter: number;
 
-    @IsNotEmpty()
+    @IsOptional()
     @IsDecimal()
     value01: number;
 
-    @IsNotEmpty()
+    @IsOptional()
     @IsDecimal()
     value02: number;
 
-    @IsNotEmpty()
+    @IsOptional()
     @IsDecimal()
     value03: number;
 
-    @IsNotEmpty()
+    @IsOptional()
     @IsDecimal()
     value04: number;
 
-    @IsNotEmpty()
+    @IsOptional()
     @IsDecimal()
     value05: number;
 
-    @IsNotEmpty()
+    @IsOptional()
     @IsDecimal()
     value06: number;
 
-    @IsNotEmpty()
+    @IsOptional()
     @IsDecimal()
     value07: number;
 
-    @IsNotEmpty()
+    @IsOptional()
     @IsDecimal()
     value08: number;
 
-    @IsNotEmpty()
+    @IsOptional()
     @IsDecimal()
     value09: number;
 
-    @IsNotEmpty()
+    @IsOptional()
     @IsDecimal()
     value10: number;
 
-    @IsNotEmpty()
+    @IsOptional()
     @IsDecimal()
     value11: number;
 
-    @IsNotEmpty()
+    @IsOptional()
     @IsDecimal()
     value12: number;
 
-    @IsNotEmpty()
+    @IsOptional()
     @IsDecimal()
     value13: number;
 
-    @IsNotEmpty()
+    @IsOptional()
     @IsDecimal()
     value14: number;
 
-    @IsNotEmpty()
+    @IsOptional()
     @IsDecimal()
     value15: number;
 
-    @IsNotEmpty()
+    @IsOptional()
     @IsDecimal()
     value16: number;
 
-    @IsNotEmpty()
+    @IsOptional()
     @IsDecimal()
     total: number;
 
+    @IsNotEmpty()
     @IsString()
     updatedBy: string;
     

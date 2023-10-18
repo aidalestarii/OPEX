@@ -1,45 +1,42 @@
 import { PartialType } from '@nestjs/mapped-types';
 import { CreateMCostCenterDto } from './create-m_cost_center.dto';
-import { IsDateString, IsNotEmpty, IsString } from "class-validator";
+import {
+  IsDateString,
+  IsNotEmpty,
+  IsString,
+  IsOptional,
+} from 'class-validator';
 
 export class UpdateMCostCenterDto extends PartialType(CreateMCostCenterDto) {
+  @IsOptional()
+  @IsString()
+  costCenter: string;
 
-    @IsNotEmpty()
-    @IsString()
-    costCenter: string;
+  @IsOptional()
+  @IsString()
+  unit: string;
 
-    @IsNotEmpty()
-    @IsString()
-    unit: string;
+  @IsOptional()
+  @IsString()
+  bidang: string;
 
-    @IsNotEmpty()
-    @IsString()
-    bidang: string;
+  @IsOptional()
+  @IsString()
+  dinas: string;
 
-    @IsNotEmpty()
-    @IsString()
-    dinas: string;
+  @IsOptional()
+  @IsString()
+  groupDinas: string;
 
-    @IsNotEmpty()
-    @IsString()
-    groupDinas: string;
+  @IsOptional()
+  @IsString()
+  description: string;
 
-    @IsNotEmpty()
-    @IsString()
-    description: string;
+  @IsOptional()
+  @IsString()
+  profitCenter: string;
 
-    @IsNotEmpty()
-    @IsString()
-    profitCenter: string;
-
-    @IsNotEmpty()
-    @IsDateString()
-    createdAt: string;
-
-    @IsNotEmpty()
-    @IsString()
-    createdBy: string;
-
-    @IsString()
-    updatedBy: string;
+  @IsNotEmpty()
+  @IsString()
+  updatedBy: string;
 }
