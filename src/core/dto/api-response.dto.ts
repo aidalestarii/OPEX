@@ -1,12 +1,12 @@
-import { Expose } from "class-transformer";
+import { Expose } from 'class-transformer';
 
-export class ApiResponseDto<T> {
-   @Expose()
-   data: T;
+export class ApiResponseDto<T, U> {
+  @Expose()
+  data: T;
 
-   @Expose()
-   meta: any;
+  @Expose()
+  meta: U;
 
-   @Expose()
-   time: Date;
+  @Expose()
+  time: Date;
 }

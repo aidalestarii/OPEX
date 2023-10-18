@@ -4,24 +4,17 @@ import {
   Body,
   UseInterceptors,
   UploadedFile,
-  BadRequestException,
   Res,
   HttpStatus,
 } from '@nestjs/common';
 import { FileUploadService } from './file_upload.service';
 import { CreateFileDto } from './dto/create-file.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { extname } from 'path';
-import { diskStorage } from 'multer';
 import { Response } from 'express';
 import { plainToInstance } from 'class-transformer';
 import { ApiResponseDto } from 'src/core/dto/api-response.dto';
 import { multerOptions } from 'src/config/multer.config';
-
-function filename(req, file, callback) {
-  const filename = `${file.originalname}`;
-  callback(null, filename);
-}
+import { UpdateFileDto } from './dto/update-file.dto';
 
 @Controller({
   version: '1',
@@ -40,29 +33,43 @@ export class FileUploadController {
 
   @Post()
   @UseInterceptors(FileInterceptor('file', multerOptions))
-  async upload(@UploadedFile() file) {
-    console.log(file);
-  }
-
-  async uploadFile(
+  async upload(
     @UploadedFile() file: Express.Multer.File,
     @Body() body: CreateFileDto,
     @Res() res: Response,
   ): Promise<Response> {
-    console.log('file:', file);
-
+    console.log(file);
     const result = {
-      data: body,
-      meta: {
+      data: {
         fileName: file.originalname,
+        size: file.size,
+        doctype: file.mimetype,
+      },
+      meta: {
+        HttpStatus,
       },
       time: new Date(),
     };
+
+    // const response: ApiResponseDto<CreateFileDto[], {personalNumber: string}> = {
+    //   data: [{
+    //     uniqueId: ''
+    //   }],
+    //   meta: {
+    //     personalNumber: '',
+    //   }
+    // }
+
+    // const response2: ApiResponseDto<UpdateFileDto> = {
+    //   data: {
+    //     uni
+    //   }
+    // }
 
     const resultDto = plainToInstance(ApiResponseDto, result, {
       excludeExtraneousValues: true,
     });
 
-    return res.status(HttpStatus.OK).send();
+    return res.status(HttpStatus.OK).json(resultDto);
   }
 }
