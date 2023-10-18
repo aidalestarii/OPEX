@@ -1,13 +1,33 @@
-import { Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  Body,
+  Injectable,
+  UploadedFile,
+  ValidationPipe,
+} from '@nestjs/common';
 import { UpdateFileDto } from './dto/update-file.dto';
 import { CreateFileDto } from './dto/create-file.dto';
+import { PrismaService } from 'src/core/service/prisma.service';
+import { error } from 'console';
 
 @Injectable()
 export class FileUploadService {
-  async create(createFileDto: CreateFileDto, uploadedFile): Promise<string> {
-    const savedFilePath = `./file/${uploadedFile.filename}`;
-    console.log('File yang disimpan:', savedFilePath);
-    return savedFilePath;
+  constructor(private readonly prisma: PrismaService) {}
+
+  async create(createFileDto: CreateFileDto): Promise<any> {
+    return this.prisma.fileUpload.create({
+      data: createFileDto,
+    });
+    // .then((upload) => {
+    //   return upload;
+    // })
+    // .catch((error) => {
+    //   throw new BadRequestException(error);
+    // });
+    //return data;
+    // } catch (error) {
+    //   throw new BadRequestException(error);
+    // }
   }
 
   findAll() {}

@@ -1,37 +1,43 @@
 import { PartialType } from '@nestjs/mapped-types';
 import { CreateFileDto } from './create-file.dto';
-import { IsDateString, IsDecimal, IsNotEmpty, IsString } from "class-validator";
+import {
+  IsDateString,
+  IsDecimal,
+  IsEnum,
+  IsNotEmpty,
+  IsNumber,
+  IsString,
+} from 'class-validator';
+import { FileUploadTypeEnum } from '@prisma/client';
 
 export class UpdateFileDto extends PartialType(CreateFileDto) {
-    @IsNotEmpty()
-    @IsString()
-    uniqueId: string;
+  @IsNotEmpty()
+  @IsString()
+  uniqueId: string;
 
-    @IsNotEmpty()
-    @IsString()
-    filename: string;
+  @IsNotEmpty()
+  @IsString()
+  filename: string;
 
-    @IsNotEmpty()
-    @IsString()
-    docName: string;
+  @IsNotEmpty()
+  @IsString()
+  docName: string;
 
-    @IsNotEmpty()
-    @IsDecimal()
-    docSize: string;
+  docSize: number;
 
-    @IsNotEmpty()
-    @IsString()
-    docType: string;
+  @IsNotEmpty()
+  @IsEnum(FileUploadTypeEnum)
+  docType: FileUploadTypeEnum;
 
-    @IsNotEmpty()
-    @IsString()
-    departmentBy: string;
+  @IsNotEmpty()
+  @IsString()
+  departmentBy: string;
 
-    @IsNotEmpty()
-    @IsDateString()
-    createdAt: string;
+  @IsNotEmpty()
+  @IsDateString()
+  createdAt: string;
 
-    @IsNotEmpty()
-    @IsString()
-    createdBy: string;
+  @IsNotEmpty()
+  @IsString()
+  createdBy: string;
 }

@@ -6,11 +6,14 @@ import {
   Patch,
   Param,
   Delete,
+  Put,
+  NotFoundException,
 } from '@nestjs/common';
 import { BudgetService } from './budget.service';
 import { CreateBudgetDto } from './dto/create-budget.dto';
 import { UpdateBudgetDto } from './dto/update-budget.dto';
 import { ShowBudgetDTO } from './dto/show-budget.dto';
+import { Console } from 'console';
 
 @Controller({
   version: '1',
@@ -34,7 +37,7 @@ export class BudgetController {
     return this.budgetService.findOne(+id);
   }
 
-  @Patch(':id')
+  @Put(':id')
   update(@Param('id') id: number, @Body() updateBudgetDto: UpdateBudgetDto) {
     return this.budgetService.update(+id, updateBudgetDto);
   }
@@ -42,5 +45,11 @@ export class BudgetController {
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.budgetService.remove(+id);
+  }
+  
+  @Get(':id/total')
+  async calculateTotal(@Param('id') id: number) {
+    const total = await this.budgetService.calculateTotalValue(id);
+    return { total };
   }
 }
