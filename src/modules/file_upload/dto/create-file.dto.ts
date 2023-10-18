@@ -1,35 +1,36 @@
-import { IsDateString, IsDecimal, IsNotEmpty, IsString } from "class-validator";
+import { FileUploadTypeEnum } from '@prisma/client';
+import {
+  IsDateString,
+  IsDecimal,
+  IsEnum,
+  IsNotEmpty,
+  IsNumber,
+  IsString,
+  isNumber,
+} from 'class-validator';
 
 export class CreateFileDto {
-    @IsNotEmpty()
-    @IsString()
-    uniqueId: string;
+  // @IsNotEmpty()
+  uniqueId: string;
 
-    @IsNotEmpty()
-    @IsString()
-    filename: string;
+  filename: string;
 
-    @IsNotEmpty()
-    @IsString()
-    docName: string;
+  //@IsNumber()
+  docSize: number;
 
-    @IsNotEmpty()
-    @IsDecimal()
-    docSize: string;
+  @IsNotEmpty()
+  @IsString()
+  docName: string;
 
-    @IsNotEmpty()
-    @IsString()
-    docType: string;
+  @IsNotEmpty()
+  @IsEnum(FileUploadTypeEnum)
+  docType: FileUploadTypeEnum;
 
-    @IsNotEmpty()
-    @IsString()
-    departmentBy: string;
+  @IsNotEmpty()
+  @IsString()
+  departmentBy: string;
 
-    @IsNotEmpty()
-    @IsDateString()
-    createdAt: string;
-
-    @IsNotEmpty()
-    @IsString()
-    createdBy: string;
+  @IsNotEmpty()
+  @IsString()
+  createdBy: string;
 }

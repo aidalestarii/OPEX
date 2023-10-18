@@ -6,6 +6,7 @@ import {
   UploadedFile,
   Res,
   HttpStatus,
+  ValidationPipe,
 } from '@nestjs/common';
 import { FileUploadService } from './file_upload.service';
 import { CreateFileDto } from './dto/create-file.dto';
@@ -35,21 +36,32 @@ export class FileUploadController {
   @UseInterceptors(FileInterceptor('file', multerOptions))
   async upload(
     @UploadedFile() file: Express.Multer.File,
-    @Body() body: CreateFileDto,
+    @Body(new ValidationPipe()) createFileDto: CreateFileDto,
     @Res() res: Response,
   ): Promise<Response> {
-    console.log(file);
-    const result = {
-      data: {
-        fileName: file.originalname,
-        size: file.size,
-        doctype: file.mimetype,
-      },
-      meta: {
-        HttpStatus,
-      },
-      time: new Date(),
-    };
+    try {
+      console.log(file.size);
+      //const response: ApiResponseDto<CreateFileDto, any> =
+
+      // const resultDto = plainToInstance(ApiResponseDto, response, {
+      //   excludeExtraneousValues: true,
+      // });
+
+      //return res.status(HttpStatus.OK).send(resultDto);
+      const data = await this.fileUploadService.create(createFileDto);
+      const result = {
+        data: data,
+        meta: {
+          filename: file.filename,
+        },
+        time: new Date(),
+      };
+      console.log(file);
+      console.log(createFileDto);
+      return res.status(HttpStatus.OK).send(result);
+    } catch (error) {
+      res.status(404).json(error.response);
+    }
 
     // const response: ApiResponseDto<CreateFileDto[], {personalNumber: string}> = {
     //   data: [{
@@ -59,17 +71,5 @@ export class FileUploadController {
     //     personalNumber: '',
     //   }
     // }
-
-    // const response2: ApiResponseDto<UpdateFileDto> = {
-    //   data: {
-    //     uni
-    //   }
-    // }
-
-    const resultDto = plainToInstance(ApiResponseDto, result, {
-      excludeExtraneousValues: true,
-    });
-
-    return res.status(HttpStatus.OK).json(resultDto);
   }
 }
