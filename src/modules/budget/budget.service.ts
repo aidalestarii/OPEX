@@ -9,10 +9,10 @@ export class BudgetService {
   constructor(private readonly prisma: PrismaService) {}
 
   async create(createBudgetDto: CreateBudgetDto) {
-    const budget = await this.prisma.budget.create({
+    const kurs = await this.prisma.budget.create({
       data: createBudgetDto,
     });
-    return budget;
+    return kurs;
   }
 
   async findAll() {
@@ -58,7 +58,7 @@ export class BudgetService {
   // `;
   //   return total[0].total;
   // }
-  async calculateTotalValue(idBudget: number): Promise<number> {
+  async totalBudget(idBudget: number): Promise<number> {
     const budget = await this.prisma.budget.findUnique({
       where: {
         idBudget: idBudget, // Menggunakan tipe data number

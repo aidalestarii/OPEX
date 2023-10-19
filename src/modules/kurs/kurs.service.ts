@@ -12,6 +12,7 @@ export class KursService {
       data: createKursDto,
     });
     return kurs;
+    
   }
 
   async findAll() {
