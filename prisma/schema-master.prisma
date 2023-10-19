@@ -1,0 +1,508 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator dbml {
+  provider = "prisma-dbml-generator"
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model approval {
+  id_approval Int         @id
+  unique_id   String      @db.VarChar(20)
+  table_name  String      @db.VarChar(20)
+  table_id    Int
+  name        String      @db.VarChar(50)
+  jabatan     String      @db.VarChar(50)
+  unit        String      @db.VarChar(8)
+  status      StatusEnum
+  remark      String?
+  created_at  DateTime    @db.Timestamp(6)
+  created_by  String      @db.VarChar(50)
+  updated_at  DateTime?   @db.Timestamp(6)
+  updated_by  String?     @db.VarChar(50)
+  note_memo   note_memo[]
+
+  @@index([table_name, table_id, created_by], map: "approval_idx")
+}
+
+model budget {
+  id_budget      Int           @id
+  unique_id      String        @db.VarChar(20)
+  years          Int
+  id_gl_account  Int
+  id_cost_center Int
+  total          Float
+  value01        Float
+  value02        Float
+  value03        Float
+  value04        Float
+  value05        Float
+  value06        Float
+  value07        Float
+  value08        Float
+  value09        Float
+  value10        Float
+  value11        Float
+  value12        Float
+  value13        Float
+  value14        Float
+  value15        Float
+  value16        Float
+  created_at     DateTime      @db.Timestamp(6)
+  created_by     String        @db.VarChar(50)
+  updated_at     DateTime?     @db.Timestamp(6)
+  updated_by     String?       @db.VarChar(50)
+  m_cost_center  m_cost_center @relation(fields: [id_cost_center], references: [id_cost_center], onDelete: NoAction, onUpdate: NoAction, map: "fk_m_cost_center_to_budget")
+  m_gl_account   m_gl_account  @relation(fields: [id_gl_account], references: [id_gl_account], onDelete: NoAction, onUpdate: NoAction, map: "fk_m_gl_account_to_budget")
+
+  @@unique([years, id_gl_account, id_cost_center], map: "budget_idx")
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model budget_investation {
+  id_budget_investation    Int                        @id
+  unique_id                String                     @db.VarChar(20)
+  years                    Int
+  no_invest                Int?
+  id_cost_center           Int
+  description              String?                    @db.VarChar(255)
+  type                     InvestTypeEnum?
+  group_asset              String?                    @db.VarChar(40)
+  usefull                  Int?                       @db.SmallInt
+  skala                    Int?                       @db.SmallInt
+  group_invest             String?                    @db.VarChar(40)
+  category                 String?                    @db.VarChar(40)
+  new                      Boolean?
+  total                    Float
+  plus                     Float
+  minus                    Float
+  created_at               DateTime                   @db.Timestamp(6)
+  created_by               String                     @db.VarChar(50)
+  updated_at               DateTime?                  @db.Timestamp(6)
+  updated_by               String?                    @db.VarChar(50)
+  m_cost_center            m_cost_center              @relation(fields: [id_cost_center], references: [id_cost_center], onDelete: NoAction, onUpdate: NoAction, map: "fk_m_cost_center_to_budget_investation")
+  realization_invest_item  realization_invest_item[]
+  reallocation_invest_item reallocation_invest_item[]
+
+  @@unique([years, no_invest, id_cost_center], map: "budget_invest_idx")
+}
+
+model budget_reallocation {
+  id_budget      Int           @id
+  unique_id      String        @db.VarChar(20)
+  years          Int
+  id_cost_center Int
+  id_gl_account  Int
+  plus           Float
+  minus          Float
+  created_at     DateTime      @db.Timestamp(6)
+  created_by     String        @db.VarChar(50)
+  updated_at     DateTime?     @db.Timestamp(6)
+  updated_by     String?       @db.VarChar(50)
+  m_cost_center  m_cost_center @relation(fields: [id_cost_center], references: [id_cost_center], onDelete: NoAction, onUpdate: NoAction, map: "fk_m_cost_center_to_budget_reallocation")
+  m_gl_account   m_gl_account  @relation(fields: [id_gl_account], references: [id_gl_account], onDelete: NoAction, onUpdate: NoAction, map: "fk_m_gl_account_to_budget_reallocation")
+
+  @@unique([years, id_cost_center, id_gl_account], map: "budget_reallocation_idx")
+}
+
+model file_upload {
+  id_file_upload  Int            @id
+  unique_id       String         @db.VarChar(20)
+  table_name      String         @db.VarChar(20)
+  id_table        Int
+  id_doc_category Int
+  doc_name        String         @db.VarChar(100)
+  doc_link        String         @db.VarChar(255)
+  doc_size        Float
+  doc_type        String         @db.VarChar(5)
+  created_at      DateTime       @db.Timestamp(6)
+  created_by      String         @db.VarChar(50)
+  updated_at      DateTime?      @db.Timestamp(6)
+  update_by       String?        @db.VarChar(50)
+  m_doc_category  m_doc_category @relation(fields: [id_doc_category], references: [id_doc_category], onDelete: NoAction, onUpdate: NoAction, map: "fk_m_doc_category_to_file_upload")
+
+  @@unique([table_name, id_table, id_doc_category, doc_name], map: "file_upload_idx")
+}
+
+model m_cost_center {
+  id_cost_center                                                                     Int                        @id
+  unique_id                                                                          String                     @db.VarChar(20)
+  cost_center                                                                        String                     @unique(map: "cost_center_idx") @db.VarChar(20)
+  description                                                                        String                     @db.VarChar(50)
+  bidang                                                                             String                     @db.VarChar(8)
+  dinas                                                                              String                     @db.VarChar(8)
+  directorat                                                                         String                     @db.VarChar(8)
+  group_dinas                                                                        String                     @db.VarChar(20)
+  profit_center                                                                      String                     @db.VarChar(20)
+  active                                                                             Boolean
+  created_at                                                                         DateTime                   @db.Timestamp(6)
+  created_by                                                                         String                     @db.VarChar(50)
+  update_at                                                                          DateTime?                  @db.Timestamp(6)
+  updated_by                                                                         String?                    @db.VarChar(50)
+  budget                                                                             budget[]
+  budget_investation                                                                 budget_investation[]
+  budget_reallocation                                                                budget_reallocation[]
+  realization                                                                        realization[]
+  reallocation_budget_item_reallocation_budget_item_id_cost_centerTom_cost_center    reallocation_budget_item[] @relation("reallocation_budget_item_id_cost_centerTom_cost_center")
+  reallocation_budget_item_reallocation_budget_item_id_cost_center_toTom_cost_center reallocation_budget_item[] @relation("reallocation_budget_item_id_cost_center_toTom_cost_center")
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model m_doc_category {
+  id_doc_category Int           @id @default(autoincrement())
+  unique_id       String        @db.VarChar(20)
+  module          ModulEnum
+  doc_category    String        @db.VarChar(20)
+  description     String        @db.VarChar(100)
+  created_at      DateTime?     @db.Timestamp(6)
+  created_by      String        @db.VarChar(50)
+  updated_at      DateTime?     @db.Timestamp(6)
+  update_by       String?       @db.VarChar(50)
+  file_upload     file_upload[]
+
+  @@unique([module, doc_category], map: "doc_category_idx")
+}
+
+model m_gl_account {
+  id_gl_account                                                                    Int                        @id
+  unique_id                                                                        String                     @db.VarChar(20)
+  gl_account                                                                       Decimal                    @unique(map: "gl_account_idx") @db.Decimal
+  description                                                                      String                     @db.VarChar(50)
+  group_detail                                                                     String                     @db.VarChar(50)
+  group_gl                                                                         String                     @db.VarChar(20)
+  sap                                                                              Boolean
+  active                                                                           Boolean
+  created_at                                                                       DateTime                   @db.Timestamp(6)
+  created_by                                                                       String                     @db.VarChar(50)
+  update_at                                                                        DateTime?                  @db.Timestamp(6)
+  updated_by                                                                       String?                    @db.VarChar(50)
+  budget                                                                           budget[]
+  budget_reallocation                                                              budget_reallocation[]
+  realization_item                                                                 realization_item[]
+  reallocation_budget_item_reallocation_budget_item_id_gl_accountTom_gl_account    reallocation_budget_item[] @relation("reallocation_budget_item_id_gl_accountTom_gl_account")
+  reallocation_budget_item_reallocation_budget_item_id_gl_account_toTom_gl_account reallocation_budget_item[] @relation("reallocation_budget_item_id_gl_account_toTom_gl_account")
+  reallocation_item                                                                reallocation_item[]
+}
+
+model m_kurs {
+  id_kurs    Int       @id
+  unique_id  String    @db.VarChar(20)
+  years      Int       @unique(map: "years_idx")
+  value      Float
+  created_at DateTime  @db.Timestamp(6)
+  created_by String    @db.VarChar(50)
+  update_at  DateTime? @db.Timestamp(6)
+  updated_by String?   @db.VarChar(50)
+}
+
+model m_status {
+  id_status           Int                   @id @default(autoincrement())
+  unique_id           String                @db.VarChar(20)
+  created_at          DateTime?             @db.Timestamp(6)
+  created_by          String                @db.VarChar(50)
+  updated_at          DateTime?             @db.Timestamp(6)
+  updated_by          String?               @db.VarChar(50)
+  status              String?               @db.VarChar(25)
+  realization         realization[]
+  realization_invest  realization_invest[]
+  reallocation        reallocation[]
+  reallocation_budget reallocation_budget[]
+  reallocation_invest reallocation_invest[]
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model m_type_invest {
+  id_type_invest     Int                  @id @default(autoincrement())
+  unique_id          String               @db.VarChar(20)
+  type               String               @unique(map: "type_invest_idx") @db.VarChar(1)
+  name               String?              @db.VarChar(12)
+  created_at         DateTime             @db.Timestamp(6)
+  created_by         String               @db.VarChar(50)
+  update_by          String?              @db.VarChar(20)
+  updated_at         DateTime?            @db.Timestamp(6)
+  realization_invest realization_invest[]
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model note_memo {
+  id            Int       @id
+  unique_id     String    @db.VarChar(20)
+  id_approval   Int
+  years         Int
+  dinas         String    @db.VarChar(8)
+  memo_number   BigInt
+  department_to String    @db.VarChar(8)
+  note          String
+  created_at    DateTime  @db.Timestamp(6)
+  created_by    String    @db.VarChar(50)
+  updated_at    DateTime? @db.Timestamp(6)
+  updated_by    String?   @db.VarChar(50)
+  approval      approval  @relation(fields: [id_approval], references: [id_approval], onDelete: NoAction, onUpdate: NoAction, map: "fk_approval_to_note_memo")
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model realization {
+  id_realization    Int                 @id
+  unique_id         String              @db.VarChar(20)
+  years             Int
+  month             Int
+  id_cost_center    Int
+  no_draft          Int
+  no_request        Int?
+  ta_reff           Int?
+  type              RealizationTypeEnum
+  responsible_nopeg String              @db.VarChar(8)
+  title_request     String
+  note_request      String
+  status            StatusEnum
+  id_status         Int
+  department        String              @db.VarChar(8)
+  nopeg             String              @db.VarChar(8)
+  department_to     String              @db.VarChar(8)
+  nopeg_to          String              @db.VarChar(8)
+  created_at        DateTime            @db.Timestamp(6)
+  created_by        String              @db.VarChar(50)
+  updated_at        DateTime?           @db.Timestamp(6)
+  updated_by        String?             @db.VarChar(50)
+  m_cost_center     m_cost_center       @relation(fields: [id_cost_center], references: [id_cost_center], onDelete: NoAction, onUpdate: NoAction, map: "fk_m_cost_center_to_realization")
+  m_status          m_status            @relation(fields: [id_status], references: [id_status], onDelete: NoAction, onUpdate: NoAction, map: "fk_m_status_to_realization")
+  realization_item  realization_item[]
+  reallocation      reallocation[]
+
+  @@index([years, id_cost_center], map: "realization_idx")
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model realization_invest {
+  id_realization_invest   Int                       @id
+  unique_id               String                    @db.VarChar(20)
+  years                   Int
+  no_draft                Int
+  no_request              Int?
+  id_type_invest          Int
+  cba                     Boolean?
+  responsible_nopeg       String                    @db.VarChar(8)
+  description             String?
+  io                      Decimal?                  @db.Decimal(12, 0)
+  status                  StatusEnum
+  id_status               Int
+  department              String                    @db.VarChar(8)
+  nopeg                   String                    @db.VarChar(8)
+  department_to           String                    @db.VarChar(8)
+  nopeg_to                String                    @db.VarChar(8)
+  created_at              DateTime                  @db.Timestamp(6)
+  created_by              String                    @db.VarChar(50)
+  updated_at              DateTime?                 @db.Timestamp(6)
+  updated_by              String?                   @db.VarChar(50)
+  m_status                m_status                  @relation(fields: [id_status], references: [id_status], onDelete: NoAction, onUpdate: NoAction, map: "fk_m_status_to_realization_invest")
+  m_type_invest           m_type_invest             @relation(fields: [id_type_invest], references: [id_type_invest], onDelete: NoAction, onUpdate: NoAction, map: "fk_m_type_invest_to_realization_invest")
+  realization_invest_item realization_invest_item[]
+
+  @@index([years], map: "realization_invest_idx")
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model realization_invest_item {
+  id_realization_invest_item Int                        @id
+  unique_id                  String                     @db.VarChar(20)
+  id_realization_invest      Int
+  id_budget_investation      Int
+  amount                     Float?
+  amount_submission          Float
+  internal                   Boolean?
+  note                       String?
+  created_at                 DateTime                   @db.Timestamp(6)
+  created_by                 String                     @db.VarChar(50)
+  updated_at                 DateTime?                  @db.Timestamp(6)
+  updated_by                 String?                    @db.VarChar(50)
+  budget_investation         budget_investation         @relation(fields: [id_budget_investation], references: [id_budget_investation], onDelete: NoAction, onUpdate: NoAction, map: "fk_budget_investation_to_realization_invest_item")
+  realization_invest         realization_invest         @relation(fields: [id_realization_invest], references: [id_realization_invest], onDelete: NoAction, onUpdate: NoAction, map: "fk_realization_invest_to_realization_invest_item")
+  reallocation_invest_item   reallocation_invest_item[]
+}
+
+model realization_item {
+  id_realization_item Int                 @id
+  unique_id           String              @db.VarChar(20)
+  id_realization      Int
+  id_gl_account       Int
+  amount              Float
+  amount_submission   Float
+  amount_hps          Float
+  amount_correction   Float
+  period_start        DateTime            @db.Date
+  period_finish       DateTime            @db.Date
+  desc_pby            String
+  remark_pby          String
+  memo                String
+  created_at          DateTime            @db.Timestamp(6)
+  created_by          String              @db.VarChar(50)
+  update_at           DateTime?           @db.Timestamp(6)
+  updated_by          String?             @db.VarChar(50)
+  m_gl_account        m_gl_account        @relation(fields: [id_gl_account], references: [id_gl_account], onDelete: NoAction, onUpdate: NoAction, map: "fk_m_gl_account_to_realization_item")
+  realization         realization         @relation(fields: [id_realization], references: [id_realization], onDelete: NoAction, onUpdate: NoAction, map: "fk_realization_to_realization_item")
+  reallocation_item   reallocation_item[]
+
+  @@unique([id_realization, id_gl_account], map: "realization_item_idx")
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model reallocation {
+  id_reallocation   Int                 @id
+  unique_id         String              @db.VarChar(20)
+  realization_id    Int
+  type              String              @db.VarChar(30)
+  ta_reff           Int
+  owner_budget      String              @db.VarChar(8)
+  status            StatusEnum
+  id_status         Int
+  department        String              @db.VarChar(8)
+  nopeg             String              @db.VarChar(8)
+  department_to     String              @db.VarChar(8)
+  nopeg_to          String              @db.VarChar(8)
+  created_at        DateTime            @db.Timestamp(6)
+  created_by        String              @db.VarChar(50)
+  update_at         DateTime?           @db.Timestamp(6)
+  updated_by        String?             @db.VarChar(50)
+  m_status          m_status            @relation(fields: [id_status], references: [id_status], onDelete: NoAction, onUpdate: NoAction, map: "fk_m_status_to_reallocation")
+  realization       realization         @relation(fields: [realization_id], references: [id_realization], onDelete: NoAction, onUpdate: NoAction, map: "fk_realization_to_reallocation")
+  reallocation_item reallocation_item[]
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model reallocation_budget {
+  id_reallocation_budget   Int                        @id @default(autoincrement())
+  unique_id                String                     @db.VarChar(20)
+  years                    Int
+  ta_reff                  Int
+  id_status                Int
+  status                   StatusEnum
+  department               String                     @db.VarChar(8)
+  nopeg                    String                     @db.VarChar(8)
+  department_to            String                     @db.VarChar(8)
+  nopeg_to                 String                     @db.VarChar(8)
+  created_at               DateTime?                  @db.Timestamp(6)
+  created_by               String                     @db.VarChar(50)
+  updated_at               DateTime?                  @db.Timestamp(6)
+  updated_by               String?                    @db.VarChar(50)
+  m_status                 m_status                   @relation(fields: [id_status], references: [id_status], onDelete: NoAction, onUpdate: NoAction, map: "fk_m_status_to_reallocation_budget")
+  reallocation_budget_item reallocation_budget_item[]
+
+  @@index([years], map: "reallocation_budget_idx")
+}
+
+model reallocation_budget_item {
+  id_reallocation_budget_item                                             Int                 @id @default(autoincrement())
+  unique_id                                                               String              @db.VarChar(20)
+  id_reallocation_budget                                                  Int
+  id_cost_center                                                          Int
+  id_gl_account                                                           Int
+  id_cost_center_to                                                       Int
+  id_gl_account_to                                                        Int
+  amount                                                                  Float?
+  created_at                                                              DateTime?           @db.Timestamp(6)
+  created_by                                                              String              @db.VarChar(50)
+  updated_at                                                              DateTime?           @db.Timestamp(6)
+  updated_by                                                              String?             @db.VarChar(50)
+  m_cost_center_reallocation_budget_item_id_cost_centerTom_cost_center    m_cost_center       @relation("reallocation_budget_item_id_cost_centerTom_cost_center", fields: [id_cost_center], references: [id_cost_center], onDelete: NoAction, onUpdate: NoAction, map: "fk_m_cost_center_to_reallocation_budget_item")
+  m_cost_center_reallocation_budget_item_id_cost_center_toTom_cost_center m_cost_center       @relation("reallocation_budget_item_id_cost_center_toTom_cost_center", fields: [id_cost_center_to], references: [id_cost_center], onDelete: NoAction, onUpdate: NoAction, map: "fk_m_cost_center_to_reallocation_budget_item1")
+  m_gl_account_reallocation_budget_item_id_gl_accountTom_gl_account       m_gl_account        @relation("reallocation_budget_item_id_gl_accountTom_gl_account", fields: [id_gl_account], references: [id_gl_account], onDelete: NoAction, onUpdate: NoAction, map: "fk_m_gl_account_to_reallocation_budget_item")
+  m_gl_account_reallocation_budget_item_id_gl_account_toTom_gl_account    m_gl_account        @relation("reallocation_budget_item_id_gl_account_toTom_gl_account", fields: [id_gl_account_to], references: [id_gl_account], onDelete: NoAction, onUpdate: NoAction, map: "fk_m_gl_account_to_reallocation_budget_item1")
+  reallocation_budget                                                     reallocation_budget @relation(fields: [id_reallocation_budget], references: [id_reallocation_budget], onDelete: NoAction, onUpdate: NoAction, map: "fk_reallocation_budget_to_reallocation_budget_item")
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model reallocation_invest {
+  id_reallocation_invest   Int                        @id
+  unique_id                String                     @db.VarChar(20)
+  type                     String                     @db.VarChar(30)
+  ba                       Int
+  status                   StatusEnum
+  id_status                Int
+  department               String                     @db.VarChar(8)
+  nopeg                    String                     @db.VarChar(8)
+  department_to            String                     @db.VarChar(8)
+  nopeg_to                 String                     @db.VarChar(8)
+  created_at               DateTime                   @db.Timestamp(6)
+  created_by               String                     @db.VarChar(50)
+  update_at                DateTime?                  @db.Timestamp(6)
+  updated_by               String?                    @db.VarChar(50)
+  m_status                 m_status                   @relation(fields: [id_status], references: [id_status], onDelete: NoAction, onUpdate: NoAction, map: "fk_m_status_to_reallocation_invest")
+  reallocation_invest_item reallocation_invest_item[]
+}
+
+model reallocation_invest_item {
+  id_reallocation_invest_item Int                     @id
+  unique_id                   String                  @db.VarChar(20)
+  id_reallocation_invest      Int
+  id_budget_investation       Int
+  id_realization_invest_item  Int
+  amount                      Float
+  description                 String?                 @db.VarChar(255)
+  note                        String?
+  remark                      String
+  created_at                  DateTime                @db.Timestamp(6)
+  created_by                  String                  @db.VarChar(50)
+  update_by                   String?                 @db.VarChar(20)
+  updated_at                  DateTime?               @db.Timestamp(6)
+  budget_investation          budget_investation      @relation(fields: [id_budget_investation], references: [id_budget_investation], onDelete: NoAction, onUpdate: NoAction, map: "fk_budget_investation_to_reallocation_invest_item")
+  realization_invest_item     realization_invest_item @relation(fields: [id_realization_invest_item], references: [id_realization_invest_item], onDelete: NoAction, onUpdate: NoAction, map: "fk_realization_invest_item_to_reallocation_invest_item")
+  reallocation_invest         reallocation_invest     @relation(fields: [id_reallocation_invest], references: [id_reallocation_invest], onDelete: NoAction, onUpdate: NoAction, map: "fk_reallocation_invest_to_reallocation_invest_item")
+}
+
+model reallocation_item {
+  id_reallocation_item Int              @id
+  unique_id            String           @db.VarChar(20)
+  id_reallocation      Int
+  id_gl_account        Int
+  id_realizazion_item  Int
+  amount               Float
+  budget_name          String           @db.VarChar(50)
+  remark               String
+  created_at           DateTime         @db.Timestamp(6)
+  created_by           String           @db.VarChar(50)
+  updated_at           DateTime?        @db.Timestamp(6)
+  update_by            String?          @db.VarChar(20)
+  m_gl_account         m_gl_account     @relation(fields: [id_gl_account], references: [id_gl_account], onDelete: NoAction, onUpdate: NoAction, map: "fk_m_gl_account_to_reallocation_item")
+  realization_item     realization_item @relation(fields: [id_realizazion_item], references: [id_realization_item], onDelete: NoAction, onUpdate: NoAction, map: "fk_realization_item_to_reallocation_item")
+  reallocation         reallocation     @relation(fields: [id_reallocation], references: [id_reallocation], onDelete: NoAction, onUpdate: NoAction, map: "fk_reallocation_to_reallocation_item")
+}
+
+model simulation {
+  id_simulation     Int       @id
+  unique_id         String    @db.VarChar(20)
+  years             Int
+  simulation_budget Float?    @db.Real
+  created_at        DateTime  @db.Timestamp(6)
+  created_by        String    @db.VarChar(50)
+  update_at         DateTime? @db.Timestamp(6)
+  updated_by        String?   @db.VarChar(50)
+}
+
+enum InvestTypeEnum {
+  FS
+  CBA
+}
+
+enum ModulEnum {
+  Opex
+  Capex
+}
+
+enum RealizationTypeEnum {
+  Uang
+  Entertainment
+  Pengadaan
+}
+
+enum StatusEnum {
+  Progress
+  Revise
+  Reject
+  Close
+}
