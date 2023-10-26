@@ -1,37 +1,36 @@
-import { MGlAccount } from '@prisma/client';
-import { Type } from 'class-transformer';
-import {
-  IsBoolean,
-  IsDateString,
-  IsNotEmpty,
-  IsNumber,
-  IsString,
-} from 'class-validator';
+import { Decimal } from '@prisma/client/runtime/library';
+import { IsBoolean, IsNumber, IsNotEmpty, IsString } from 'class-validator';
 
 export class CreateMGlAccountDto {
+  //gl_account, description, group_detail,
+  //groupgl, sap, active, created by
   @IsNotEmpty()
   @IsString()
   uniqueId: string;
 
   @IsNotEmpty()
+  @IsNumber()
+  glAccount: Decimal;
+
+  @IsNotEmpty()
   @IsString()
-  group: string;
+  description: string;
 
   @IsNotEmpty()
   @IsString()
   groupDetail: string;
 
   @IsNotEmpty()
-  @IsNumber()
-  glAccount: number;
+  @IsString()
+  groupGl: string;
 
   @IsNotEmpty()
   @IsBoolean()
   sap: boolean;
 
   @IsNotEmpty()
-  @IsString()
-  description: string;
+  @IsBoolean()
+  active: boolean;
 
   @IsNotEmpty()
   @IsString()

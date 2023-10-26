@@ -10,7 +10,6 @@ import {
 import { KursService } from './kurs.service';
 import { CreateKursDto } from './dto/create-kurs.dto';
 import { UpdateKursDto } from './dto/update-kurs.dto';
-import { body } from 'express-validator';
 
 @Controller({
   version: '1',

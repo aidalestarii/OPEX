@@ -5,6 +5,7 @@ import {
   IsNotEmpty,
   IsString,
   IsOptional,
+  IsBoolean,
 } from 'class-validator';
 
 export class UpdateMCostCenterDto extends PartialType(CreateMCostCenterDto) {
@@ -14,7 +15,7 @@ export class UpdateMCostCenterDto extends PartialType(CreateMCostCenterDto) {
 
   @IsOptional()
   @IsString()
-  unit: string;
+  description: string;
 
   @IsOptional()
   @IsString()
@@ -26,17 +27,20 @@ export class UpdateMCostCenterDto extends PartialType(CreateMCostCenterDto) {
 
   @IsOptional()
   @IsString()
-  groupDinas: string;
+  directorat: string;
 
   @IsOptional()
   @IsString()
-  description: string;
+  groupDinas: string;
 
   @IsOptional()
   @IsString()
   profitCenter: string;
 
-  @IsNotEmpty()
-  @IsString()
+  @IsOptional()
+  @IsBoolean()
+  active: boolean;
+
+  @IsDateString()
   updatedBy: string;
 }

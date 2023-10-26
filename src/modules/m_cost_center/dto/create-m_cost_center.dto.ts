@@ -1,6 +1,8 @@
-import { IsDateString, IsNotEmpty, IsString } from 'class-validator';
+import { IsBoolean, IsDateString, IsNotEmpty, IsString } from 'class-validator';
 
 export class CreateMCostCenterDto {
+  //cost_center, description, bidang, dinas, directorat,
+  //group_dinas, profit center, active
   @IsNotEmpty()
   @IsString()
   uniqueId: string;
@@ -11,7 +13,7 @@ export class CreateMCostCenterDto {
 
   @IsNotEmpty()
   @IsString()
-  unit: string;
+  description: string;
 
   @IsNotEmpty()
   @IsString()
@@ -23,15 +25,19 @@ export class CreateMCostCenterDto {
 
   @IsNotEmpty()
   @IsString()
+  directorat: string;
+
+  @IsNotEmpty()
+  @IsString()
   groupDinas: string;
 
   @IsNotEmpty()
   @IsString()
-  description: string;
+  profitCenter: string;
 
   @IsNotEmpty()
-  @IsString()
-  profitCenter: string;
+  @IsBoolean()
+  active: boolean;
 
   @IsNotEmpty()
   @IsDateString()

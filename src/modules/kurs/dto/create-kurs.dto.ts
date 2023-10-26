@@ -1,19 +1,27 @@
-import { IsNotEmpty, IsString, IsNumber, IsDateString, IsDecimal } from 'class-validator';
+import {
+  IsNotEmpty,
+  IsString,
+  IsNumber,
+  IsDecimal,
+  IsUUID,
+} from 'class-validator';
+import { randomUUID } from 'crypto';
 
 export class CreateKursDto {
-    @IsNotEmpty()
-    @IsString()
-    uniqueId: string;
+  //@IsNotEmpty()
+  //@IsString()
+  @IsUUID()
+  uniqueId: string = randomUUID();
 
-    @IsNotEmpty()
-    @IsNumber()
-    years: number;
+  @IsNotEmpty()
+  @IsNumber()
+  years: number;
 
-    @IsNotEmpty()
-    @IsDecimal()
-    value: number;
+  @IsNotEmpty()
+  @IsDecimal()
+  value: number;
 
-    @IsNotEmpty()
-    @IsString()
-    createdBy: string;
+  @IsNotEmpty()
+  @IsString()
+  createdBy: string;
 }

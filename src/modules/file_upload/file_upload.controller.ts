@@ -7,15 +7,16 @@ import {
   Res,
   HttpStatus,
   ValidationPipe,
+  UsePipes,
 } from '@nestjs/common';
 import { FileUploadService } from './file_upload.service';
-import { CreateFileDto } from './dto/create-file.dto';
+import { CreateFileDto } from './dto/create-file-upload.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { Response } from 'express';
+import { Response, Express } from 'express';
 import { plainToInstance } from 'class-transformer';
 import { ApiResponseDto } from 'src/core/dto/api-response.dto';
-import { multerOptions } from 'src/config/multer.config';
-import { UpdateFileDto } from './dto/update-file.dto';
+import { multerPdfOptions } from 'src/config/multer.config';
+import { multerConfig } from 'src/config/multer-options.config';
 
 @Controller({
   version: '1',
@@ -32,44 +33,67 @@ export class FileUploadController {
    * @returns
    */
 
-  @Post()
-  @UseInterceptors(FileInterceptor('file', multerOptions))
-  async upload(
+  @Post('/postpdf')
+  @UsePipes(new ValidationPipe())
+  @UseInterceptors(FileInterceptor('file', multerPdfOptions))
+  async uploadpdf(
     @UploadedFile() file: Express.Multer.File,
-    @Body(new ValidationPipe()) createFileDto: CreateFileDto,
+    @Body(new ValidationPipe())
+    createFileDto: CreateFileDto,
     @Res() res: Response,
   ): Promise<Response> {
     try {
-      console.log(file.size);
-      //const response: ApiResponseDto<CreateFileDto, any> =
-
-      // const resultDto = plainToInstance(ApiResponseDto, response, {
-      //   excludeExtraneousValues: true,
-      // });
-
-      //return res.status(HttpStatus.OK).send(resultDto);
+      createFileDto.docSize = file.size;
       const data = await this.fileUploadService.create(createFileDto);
-      const result = {
-        data: data,
+
+      const response = {
+        data: data.uploadedFileInfo,
         meta: {
-          filename: file.filename,
+          data,
+          file,
         },
         time: new Date(),
       };
-      console.log(file);
-      console.log(createFileDto);
-      return res.status(HttpStatus.OK).send(result);
-    } catch (error) {
-      res.status(404).json(error.response);
-    }
 
-    // const response: ApiResponseDto<CreateFileDto[], {personalNumber: string}> = {
-    //   data: [{
-    //     uniqueId: ''
-    //   }],
-    //   meta: {
-    //     personalNumber: '',
-    //   }
-    // }
+      console.log(file);
+      return res.status(HttpStatus.OK).send(response);
+    } catch (error) {
+      console.error(error);
+      return res
+        .status(HttpStatus.BAD_REQUEST)
+        .send({ message: 'Internal server error' });
+    }
+  }
+
+  @Post('/postexcel')
+  @UsePipes(new ValidationPipe())
+  @UseInterceptors(FileInterceptor('file', multerConfig))
+  async uploadexcel(
+    @UploadedFile() file: Express.Multer.File,
+    @Body(new ValidationPipe())
+    createFileDto: CreateFileDto,
+    @Res() res: Response,
+  ): Promise<Response> {
+    try {
+      createFileDto.docSize = file.size;
+      const data = await this.fileUploadService.create(createFileDto);
+
+      const response = {
+        data: data.uploadedFileInfo,
+        meta: {
+          data,
+          file,
+        },
+        time: new Date(),
+      };
+
+      console.log(file);
+      return res.status(HttpStatus.OK).send(response);
+    } catch (error) {
+      console.error(error);
+      return res
+        .status(HttpStatus.BAD_REQUEST)
+        .send({ message: 'Internal server error' });
+    }
   }
 }
