@@ -47,10 +47,10 @@ export const multerOptions = {
       cb(null, uploadPath);
     },
     // File modification details
-    filename: (req: Request, file: Express.Multer.File, cb: Function) => {
+    filename: (req: Request, file: any, cb: any) => {
       const uploadedFileName = file.originalname;
       // Validation years & configName
-      if (!req?.body?.years) {
+      if (!req?.body['years']) {
         cb(new BadRequestException([`years should not be empty`]), false);
       } else if (!file) {
         cb(new BadRequestException([`file should not be empty`]), false);

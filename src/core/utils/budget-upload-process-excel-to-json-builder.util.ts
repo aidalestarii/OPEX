@@ -56,7 +56,7 @@ export class BudgetUploadProcessExcelToJsonBuilder {
   ): this {
     const columnName: string =
       //CHARCODE -1 = A
-      sheetConfig.columnToKey[String.fromCharCode(65 + cellIndex)];
+      sheetConfig.columnToKey[String.fromCharCode(64 + cellIndex)];
     if (!columnName) return;
 
     const columnConfig: ColumnDto = sheetConfig.columns[columnName];
@@ -66,10 +66,10 @@ export class BudgetUploadProcessExcelToJsonBuilder {
     const cellValue: CellValue =
       cell?.value['result'] || cell?.value['error'] || cell?.value;
 
-    console.log(`column-name : ${columnName}`);
-    console.log(`value : ${cellValue}`);
-    console.log(`type: ${typeof cellValue}`);
-    console.log('______________________________ ');
+    // console.log(`column-name : ${columnName}`);
+    // console.log(`value : ${cellValue}`);
+    // console.log(`type: ${typeof cellValue}`);
+    // console.log('______________________________ ');
 
     if (Object(cellValue).toString().startsWith('Invalid')) {
       this.errorSheetName.push(sheetConfig.name);
@@ -146,18 +146,21 @@ export class BudgetUploadProcessExcelToJsonBuilder {
     const years: number = req?.body['years'];
     const workbook: Workbook = new Workbook();
     await workbook.xlsx.readFile(String(this.filePath));
-    console.log(this.filePath);
-    console.log(this.sheets);
+    // console.log(this.filePath);
+    // console.log(this.sheets);
+    // console.log(years);
 
     const data: ReadBudgetUploadSheetDto = {
       budgetUpload: null,
     };
 
+    //console log in satu satu mulai dari isi rows, dll.
     const $dataSheets: Observable<BudgetUploadSheetsDto> = of(this.sheets).pipe(
       mergeMap((items) => items),
       mergeMap((sheet) => {
         const { name, header } = sheet;
         const worksheet: Worksheet = workbook.getWorksheet(name);
+        // console.log(sheet);
         if (worksheet) {
           const rows = this.readSheetData(
             worksheet,
@@ -185,7 +188,8 @@ export class BudgetUploadProcessExcelToJsonBuilder {
 
       throw new MessagesInvalidDataError(errors);
     }
-
+    data.budgetUpload = data['td2023'];
+    console.log(data);
     return data;
   }
 }

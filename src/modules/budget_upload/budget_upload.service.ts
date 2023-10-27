@@ -17,8 +17,8 @@ export class BudgetUploadService {
     //WriteResponseBase
   ): Promise<any> {
     try {
-      const read: ReadBudgetUploadSheetDto =
-        await this.excelService.readFormatExcel(req);
+      const read = await this.excelService.readFormatExcel(req);
+      console.log(read);
       if (!read?.budgetUpload)
         throw new BadRequestException(
           `Failed to read Excel, sheetname invalid`,

@@ -23,7 +23,7 @@ export class ExcelBudgetUploadService {
     try {
       const budgetUploadSheet: BudgetUploadSheetsDto =
         this.readExcelSheetBudgetUploadBuilder
-          .getSheetName('TD 2023')
+          .getSheetName('td2023')
           .ignoreHeaderRow()
           .setSheetNameToJsonFields(ItemsBudgetUploadDto.propertyNames)
           .setColumnPropertyToJsonFields(ItemsBudgetUploadDto.propertyConfig)
