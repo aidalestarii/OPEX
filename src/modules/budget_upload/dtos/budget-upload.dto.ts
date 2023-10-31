@@ -20,8 +20,8 @@ export class ItemsBudgetUploadDto {
   @IsNumber()
   idCostCenter: number;
 
-  @IsString()
-  indikatorKeuangan: string;
+  // @IsString()
+  // indikatorKeuangan: string;
 
   @IsOptional()
   @IsNumber()
@@ -97,27 +97,31 @@ export class ItemsBudgetUploadDto {
       { dataType: StringNumberBigintObject; maxLength?: number }
     >
   > = {
-    indikatorKeuangan: { dataType: 'string', maxLength: 300 },
-    value01: { dataType: 'number', maxLength: 300 },
-    value02: { dataType: 'number', maxLength: 300 },
-    value03: { dataType: 'number', maxLength: 300 },
-    value04: { dataType: 'number', maxLength: 300 },
-    value05: { dataType: 'number', maxLength: 300 },
-    value06: { dataType: 'number', maxLength: 300 },
-    value07: { dataType: 'number', maxLength: 300 },
-    value08: { dataType: 'number', maxLength: 300 },
-    value09: { dataType: 'number', maxLength: 300 },
-    value10: { dataType: 'number', maxLength: 300 },
-    value11: { dataType: 'number', maxLength: 300 },
-    value12: { dataType: 'number', maxLength: 300 },
-    value13: { dataType: 'number', maxLength: 300 },
-    value14: { dataType: 'number', maxLength: 300 },
-    value15: { dataType: 'number', maxLength: 300 },
-    value16: { dataType: 'number', maxLength: 300 },
+    years: { dataType: 'number', maxLength: 300 },
+    idCostCenter: { dataType: 'string', maxLength: 300 },
+    idGlAccount: { dataType: 'number', maxLength: 300 },
+    value01: { dataType: 'float', maxLength: 300 },
+    value02: { dataType: 'float', maxLength: 300 },
+    value03: { dataType: 'float', maxLength: 300 },
+    value04: { dataType: 'float', maxLength: 300 },
+    value05: { dataType: 'float', maxLength: 300 },
+    value06: { dataType: 'float', maxLength: 300 },
+    value07: { dataType: 'float', maxLength: 300 },
+    value08: { dataType: 'float', maxLength: 300 },
+    value09: { dataType: 'float', maxLength: 300 },
+    value10: { dataType: 'float', maxLength: 300 },
+    value11: { dataType: 'float', maxLength: 300 },
+    value12: { dataType: 'float', maxLength: 300 },
+    value13: { dataType: 'float', maxLength: 300 },
+    value14: { dataType: 'float', maxLength: 300 },
+    value15: { dataType: 'float', maxLength: 300 },
+    value16: { dataType: 'float', maxLength: 300 },
   };
 
   static propertyNames: (keyof ItemsBudgetUploadDto)[] = [
-    'indikatorKeuangan',
+    'years',
+    'idCostCenter',
+    'idGlAccount',
     'value01',
     'value02',
     'value03',
