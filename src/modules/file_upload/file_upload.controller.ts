@@ -17,6 +17,7 @@ import { plainToInstance } from 'class-transformer';
 import { ApiResponseDto } from 'src/core/dto/api-response.dto';
 import { multerPdfOptions } from 'src/config/multer.config';
 import { multerConfig } from 'src/config/multer-options.config';
+import { extname } from 'path';
 
 @Controller({
   version: '1',
@@ -43,7 +44,12 @@ export class FileUploadController {
     @Res() res: Response,
   ): Promise<Response> {
     try {
+      createFileDto.idTable = 10;
+      createFileDto.idDocCategory = 20;
       createFileDto.docSize = file.size;
+      createFileDto.docType = extname(file.originalname);
+      createFileDto.docLink = file.path;
+      createFileDto.docName = file.filename;
       const data = await this.fileUploadService.create(createFileDto);
 
       const response = {

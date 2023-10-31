@@ -136,20 +136,21 @@ model BudgetReallocation {
 }
 
 model FileUpload {
-  idUpload      Int          @id @default(autoincrement()) @map("id_upload")
-  uniqueId      String       @default(uuid()) @map("unique_id") @db.VarChar(20)
-  tableName     String       @map("table_name") @db.VarChar(20)
-  idTable       Int          @map("id_table") @db.Integer
-  idDocCategory Int          @map("id_doc_category") @db.Integer
-  docName       String       @map("doc_name") @db.VarChar(100)
-  docLink       String       @map("doc_link") @db.VarChar(255)
-  docSize       Float        @map("doc_size")
-  docType       String       @map("doc_type") @db.VarChar(5)
-  createdAt     DateTime     @default(now()) @map("created_at") @db.Timestamp(6)
-  createdBy     String       @map("created_by") @db.VarChar(50)
-  updatedAt     DateTime?    @default(now()) @map("updated_at") @db.Timestamp(6)
-  updatedBy     String?      @map("updated_by") @db.VarChar(50)
-  mDocCategory  MDocCategory @relation(fields: [idDocCategory], references: [idDocCategory], onDelete: NoAction, onUpdate: NoAction, map: "fk_m_doc_category_to_file_upload")
+  idUpload                  Int           @id @default(autoincrement()) @map("id_upload")
+  uniqueId                  String        @default(uuid()) @map("unique_id") @db.VarChar(36)
+  tableName                 String        @map("table_name") @db.VarChar(20)
+  idTable                   Int           @map("id_table") @db.Integer
+  idDocCategory             Int           @map("id_doc_category") @db.Integer
+  docName                   String        @map("doc_name") @db.VarChar(100)
+  docLink                   String        @map("doc_link") @db.VarChar(255)
+  docSize                   Float         @map("doc_size") @db.DoublePrecision
+  docType                   String        @map("doc_type") @db.VarChar(5)
+  createdAt                 DateTime      @default(now()) @map("created_at") @db.Timestamp(6)
+  createdBy                 String        @map("created_by") @db.VarChar(50)
+  updatedAt                 DateTime?     @default(now()) @map("updated_at") @db.Timestamp(6)
+  updatedBy                 String?       @map("updated_by") @db.VarChar(50)
+  MDocCategory              MDocCategory? @relation(fields: [mDocCategoryIdDocCategory], references: [idDocCategory], onDelete: NoAction, onUpdate: NoAction, map: "fk_m_doc_category_to_file_upload")
+  mDocCategoryIdDocCategory Int?
 
   @@unique([tableName, idTable, idDocCategory, docName], map: "file_upload_idx")
   @@map("file_upload")
@@ -209,7 +210,7 @@ model MGlAccount {
   active                                                                           Boolean                  @map("active")
   createdAt                                                                        DateTime                 @default(now()) @map("created_at") @db.Timestamp(6)
   createdBy                                                                        String                   @map("created_by") @db.VarChar(50)
-  updatedAt                                                                         DateTime?                @default(now()) @map("updated_at") @db.Timestamp(6)
+  updatedAt                                                                        DateTime?                @default(now()) @map("updated_at") @db.Timestamp(6)
   updatedBy                                                                        String?                  @map("updated_by") @db.VarChar(50)
   budget                                                                           Budget[]
   budgetReallocation                                                               BudgetReallocation[]
