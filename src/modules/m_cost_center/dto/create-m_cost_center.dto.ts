@@ -1,4 +1,10 @@
-import { IsBoolean, IsDateString, IsNotEmpty, IsString } from 'class-validator';
+import {
+  IsBoolean,
+  IsDateString,
+  IsNotEmpty,
+  IsOptional,
+  IsString,
+} from 'class-validator';
 
 export class CreateMCostCenterDto {
   //cost_center, description, bidang, dinas, directorat,
@@ -11,7 +17,7 @@ export class CreateMCostCenterDto {
   @IsString()
   costCenter: string;
 
-  @IsNotEmpty()
+  @IsOptional()
   @IsString()
   description: string;
 

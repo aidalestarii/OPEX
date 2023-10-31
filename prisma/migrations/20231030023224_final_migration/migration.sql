@@ -116,7 +116,7 @@ CREATE TABLE "budget_reallocation" (
     "minus" DOUBLE PRECISION NOT NULL,
     "created_at" TIMESTAMP(6) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "created_by" VARCHAR(50) NOT NULL,
-    "updated_at" TIMESTAMP(6),
+    "updated_at" TIMESTAMP(6) DEFAULT CURRENT_TIMESTAMP,
     "updated_by" VARCHAR(50),
 
     CONSTRAINT "budget_reallocation_pkey" PRIMARY KEY ("id_budget")
@@ -135,7 +135,7 @@ CREATE TABLE "file_upload" (
     "doc_type" VARCHAR(5) NOT NULL,
     "created_at" TIMESTAMP(6) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "created_by" VARCHAR(50) NOT NULL,
-    "updated_at" TIMESTAMP(6),
+    "updated_at" TIMESTAMP(6) DEFAULT CURRENT_TIMESTAMP,
     "updated_by" VARCHAR(50),
 
     CONSTRAINT "file_upload_pkey" PRIMARY KEY ("id_upload")
@@ -197,7 +197,7 @@ CREATE TABLE "m_gl_account" (
 -- CreateTable
 CREATE TABLE "m_kurs" (
     "id_kurs" SERIAL NOT NULL,
-    "unique_id" VARCHAR(20) NOT NULL,
+    "unique_id" VARCHAR(36) NOT NULL,
     "years" INTEGER NOT NULL,
     "value" DOUBLE PRECISION NOT NULL,
     "created_at" TIMESTAMP(6) NOT NULL DEFAULT CURRENT_TIMESTAMP,

@@ -56,8 +56,8 @@ model Budget {
   idBudget     Int         @id @default(autoincrement()) @map("id_budget")
   uniqueId     String      @unique @default(uuid()) @map("unique_id") @db.VarChar(20)
   years        Int         @map("years") @db.Integer
-  idCostCenter Int         @map("id_cost_center") @db.Integer
   idGlAccount  Int         @map("id_gl_account") @db.Integer
+  idCostCenter Int         @map("id_cost_center") @db.Integer
   total        Float       @map("total") @db.DoublePrecision
   value01      Float       @map("value01") @db.DoublePrecision
   value02      Float       @map("value02") @db.DoublePrecision
@@ -209,7 +209,7 @@ model MGlAccount {
   active                                                                           Boolean                  @map("active")
   createdAt                                                                        DateTime                 @default(now()) @map("created_at") @db.Timestamp(6)
   createdBy                                                                        String                   @map("created_by") @db.VarChar(50)
-  updatedAt                                                                         DateTime?                @default(now()) @map("updated_at") @db.Timestamp(6)
+  updatedAt                                                                        DateTime?                @default(now()) @map("updated_at") @db.Timestamp(6)
   updatedBy                                                                        String?                  @map("updated_by") @db.VarChar(50)
   budget                                                                           Budget[]
   budgetReallocation                                                               BudgetReallocation[]
@@ -268,7 +268,7 @@ model Realization {
   status           StatusEnum          @map("status")
   idStatus         Int                 @map("id_status") @db.Integer
   department       String              @map("department") @db.VarChar(8)
-  nopeg            String              @map("nopeg") @db.VarChar(8)
+  employeeNumber   String              @map("nopeg") @db.VarChar(8)
   departmentTo     String              @map("department_to") @db.VarChar(8)
   employeeNumberTo String              @map("nopeg_to") @db.VarChar(8)
   createdAt        DateTime            @default(now()) @map("created_at") @db.Timestamp(6)
@@ -421,6 +421,7 @@ model ReallocationBudget {
   reallocationBudgetItem ReallocationBudgetItem[]
 
   @@index([years], map: "reallocation_budget_idx")
+  @@map("reallocation_budget")
 }
 
 model ReallocationBudgetItem {
