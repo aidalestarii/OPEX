@@ -23,8 +23,33 @@ export class BudgetController {
   constructor(private readonly budgetService: BudgetService) {}
 
   @Post()
-  create(@Body() createBudgetDto: CreateBudgetDto) {
-    return this.budgetService.create(createBudgetDto);
+  async create(@Body() createBudgetDto: CreateBudgetDto) {
+    const total = this.calculateTotal(createBudgetDto);
+    createBudgetDto.total = total;
+    const createdBudget = await this.budgetService.create(createBudgetDto);
+    return createdBudget;
+  }
+
+  private calculateTotal(createBudgetDto: CreateBudgetDto): number {
+    const values = [
+      createBudgetDto.value01,
+      createBudgetDto.value02,
+      createBudgetDto.value03,
+      createBudgetDto.value04,
+      createBudgetDto.value05,
+      createBudgetDto.value06,
+      createBudgetDto.value07,
+      createBudgetDto.value08,
+      createBudgetDto.value09,
+      createBudgetDto.value10,
+      createBudgetDto.value11,
+      createBudgetDto.value12,
+      createBudgetDto.value13,
+      createBudgetDto.value14,
+      createBudgetDto.value15,
+      createBudgetDto.value16,
+    ];
+    return values.reduce((total, value) => total + value, 0);
   }
 
   @Get()
@@ -45,11 +70,5 @@ export class BudgetController {
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.budgetService.remove(+id);
-  }
-  
-  @Get(':id/total')
-  async calculateTotal(@Param('id') id: number) {
-    const total = await this.budgetService.calculateTotalValue(id);
-    return { total };
   }
 }

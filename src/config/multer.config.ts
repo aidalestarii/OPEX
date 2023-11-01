@@ -4,7 +4,7 @@ import { diskStorage } from 'multer';
 import { HttpException, HttpStatus } from '@nestjs/common';
 
 // Multer upload options
-export const multerOptions = {
+export const multerPdfOptions = {
   // Enable file size limits
   limits: {
     fileSize: 1000000, //1mb
@@ -29,7 +29,7 @@ export const multerOptions = {
   storage: diskStorage({
     // Destination storage path details
     destination: (req: any, file: any, cb: any) => {
-      const uploadPath = './uploads';
+      const uploadPath = './uploads/pdf';
       // Create folder if doesn't exist
       if (!existsSync(uploadPath)) {
         mkdirSync(uploadPath);

@@ -1,41 +1,34 @@
 import { PartialType } from '@nestjs/mapped-types';
 import { CreateMGlAccountDto } from './create-m_gl_account.dto';
-import {
-  IsBoolean,
-  IsDateString,
-  IsNotEmpty,
-  IsNumber,
-  IsString,
-  isNotEmpty,
-  IsOptional,
-} from 'class-validator';
+import { IsBoolean, IsString, IsOptional, IsNumber } from 'class-validator';
+import { Decimal } from '@prisma/client/runtime/library';
 
 export class UpdateMGlAccountDto extends PartialType(CreateMGlAccountDto) {
   @IsOptional()
-  @IsString()
-  uniqueId: string;
-
-  @IsOptional()
-  @IsString()
-  group: string;
-
-  @IsOptional()
-  @IsString()
-  groupDetail: string;
-
-  @IsOptional()
   @IsNumber()
-  glAccount: number;
+  glAccount: Decimal;
+
+  @IsOptional()
+  @IsString()
+  description?: string;
+
+  @IsOptional()
+  @IsString()
+  groupDetail?: string;
+
+  @IsOptional()
+  @IsString()
+  groupGl?: string;
 
   @IsOptional()
   @IsBoolean()
-  sap: boolean;
+  sap?: boolean;
 
   @IsOptional()
-  @IsString()
-  description: string;
+  @IsBoolean()
+  active?: boolean;
 
-  @IsNotEmpty()
+  @IsOptional()
   @IsString()
   updatedBy: string;
 }

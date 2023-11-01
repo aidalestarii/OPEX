@@ -1,7 +1,6 @@
 import { IsDateString, IsDecimal, IsNotEmpty, IsNumber, IsString } from "class-validator";
 
 export class CreateBudgetDto {
-
     @IsNotEmpty()
     @IsString()
     uniqueId: string;

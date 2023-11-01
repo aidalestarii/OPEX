@@ -7,9 +7,9 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-// generator dbml {
-//   provider = "prisma-dbml-generator"
-// }
+generator dbml {
+  provider = "prisma-dbml-generator"
+}
 
 /// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
 model Approval {
@@ -24,7 +24,7 @@ model Approval {
   remark     String?    @map("remark")
   createdAt  DateTime   @default(now()) @map("created_at") @db.Timestamp(6)
   createdBy  String     @map("created_by") @db.VarChar(50)
-  updatedAt  DateTime?  @default(now()) @map("updated_at") @db.Timestamp(6)
+  updatedAt  DateTime?  @default(now()) @updatedAt @map("updated_at") @db.Timestamp(6)
   updatedBy  String?    @map("updated_by") @db.VarChar(50)
   noteMemo   NoteMemo[]
   //note_memo   note_memo[]
@@ -45,7 +45,7 @@ model NoteMemo {
   note         String    @map("note")
   createdAt    DateTime  @default(now()) @map("created_at") @db.Timestamp(6)
   createdBy    String    @map("created_by") @db.VarChar(50)
-  updatedAt    DateTime? @default(now()) @map("updated_at") @db.Timestamp(6)
+  updatedAt    DateTime? @default(now()) @updatedAt @map("updated_at") @db.Timestamp(6)
   updatedBy    String?   @map("updated_by") @db.VarChar(50)
   approval     Approval  @relation(fields: [idApproval], references: [idApproval], onDelete: NoAction, onUpdate: NoAction, map: "fk_approval_to_note_memo")
 
@@ -77,7 +77,7 @@ model Budget {
   value16      Float       @map("value16") @db.DoublePrecision
   createdAt    DateTime    @default(now()) @map("created_at") @db.Timestamp(6)
   createdBy    String      @map("created_by") @db.VarChar(50)
-  updatedAt    DateTime?   @default(now()) @map("updated_at") @db.Timestamp(6)
+  updatedAt    DateTime?   @default(now()) @updatedAt @map("updated_at") @db.Timestamp(6)
   updatedBy    String?     @map("updated_by") @db.VarChar(50)
   mCostCenter  MCostCenter @relation(fields: [idCostCenter], references: [idCostCenter], onDelete: NoAction, onUpdate: NoAction, map: "fk_m_cost_center_to_budget")
   mGlAccount   MGlAccount  @relation(fields: [idGlAccount], references: [idGlAccount], onDelete: NoAction, onUpdate: NoAction, map: "fk_m_gl_account_to_budget")
@@ -106,7 +106,7 @@ model BudgetInvestation {
   minus                  Float                    @map("minus") @db.DoublePrecision
   createdAt              DateTime                 @default(now()) @map("created_at") @db.Timestamp(6)
   createdBy              String                   @map("created_by") @db.VarChar(50)
-  updatedAt              DateTime?                @default(now()) @map("updated_at") @db.Timestamp(6)
+  updatedAt              DateTime?                @default(now()) @updatedAt @map("updated_at") @db.Timestamp(6)
   updatedBy              String?                  @map("updated_by") @db.VarChar(50)
   mCostCenter            MCostCenter              @relation(fields: [idCostCenter], references: [idCostCenter], onDelete: NoAction, onUpdate: NoAction, map: "fk_m_cost_center_to_budget_investation")
   realizationInvestItem  RealizationInvestItem[]
@@ -126,7 +126,7 @@ model BudgetReallocation {
   minus        Float       @map("minus") @db.DoublePrecision
   createdAt    DateTime    @default(now()) @map("created_at") @db.Timestamp(6)
   createdBy    String      @map("created_by") @db.VarChar(50)
-  updatedAt    DateTime?   @default(now()) @map("updated_at") @db.Timestamp(6)
+  updatedAt    DateTime?   @updatedAt @map("updated_at") @db.Timestamp(6)
   updatedBy    String?     @map("updated_by") @db.VarChar(50)
   mCostCenter  MCostCenter @relation(fields: [idCostCenter], references: [idCostCenter], onDelete: NoAction, onUpdate: NoAction, map: "fk_m_cost_center_to_budget_reallocation")
   mGlAccount   MGlAccount  @relation(fields: [idGlAccount], references: [idGlAccount], onDelete: NoAction, onUpdate: NoAction, map: "fk_m_gl_account_to_budget_reallocation")
@@ -136,21 +136,20 @@ model BudgetReallocation {
 }
 
 model FileUpload {
-  idUpload                  Int           @id @default(autoincrement()) @map("id_upload")
-  uniqueId                  String        @default(uuid()) @map("unique_id") @db.VarChar(36)
-  tableName                 String        @map("table_name") @db.VarChar(20)
-  idTable                   Int           @map("id_table") @db.Integer
-  idDocCategory             Int           @map("id_doc_category") @db.Integer
-  docName                   String        @map("doc_name") @db.VarChar(100)
-  docLink                   String        @map("doc_link") @db.VarChar(255)
-  docSize                   Float         @map("doc_size") @db.DoublePrecision
-  docType                   String        @map("doc_type") @db.VarChar(5)
-  createdAt                 DateTime      @default(now()) @map("created_at") @db.Timestamp(6)
-  createdBy                 String        @map("created_by") @db.VarChar(50)
-  updatedAt                 DateTime?     @default(now()) @map("updated_at") @db.Timestamp(6)
-  updatedBy                 String?       @map("updated_by") @db.VarChar(50)
-  MDocCategory              MDocCategory? @relation(fields: [mDocCategoryIdDocCategory], references: [idDocCategory], onDelete: NoAction, onUpdate: NoAction, map: "fk_m_doc_category_to_file_upload")
-  mDocCategoryIdDocCategory Int?
+  idUpload      Int          @id @default(autoincrement()) @map("id_upload")
+  uniqueId      String       @default(uuid()) @map("unique_id") @db.VarChar(20)
+  tableName     String       @map("table_name") @db.VarChar(20)
+  idTable       Int          @map("id_table") @db.Integer
+  idDocCategory Int          @map("id_doc_category") @db.Integer
+  docName       String       @map("doc_name") @db.VarChar(100)
+  docLink       String       @map("doc_link") @db.VarChar(255)
+  docSize       Float        @map("doc_size")
+  docType       String       @map("doc_type") @db.VarChar(5)
+  createdAt     DateTime     @default(now()) @map("created_at") @db.Timestamp(6)
+  createdBy     String       @map("created_by") @db.VarChar(50)
+  updatedAt     DateTime?    @updatedAt @map("updated_at") @db.Timestamp(6)
+  updatedBy     String?      @map("updated_by") @db.VarChar(50)
+  mDocCategory  MDocCategory @relation(fields: [idDocCategory], references: [idDocCategory], onDelete: NoAction, onUpdate: NoAction, map: "fk_m_doc_category_to_file_upload")
 
   @@unique([tableName, idTable, idDocCategory, docName], map: "file_upload_idx")
   @@map("file_upload")
@@ -164,7 +163,7 @@ model MDocCategory {
   description   String       @map("description") @db.VarChar(100)
   createdAt     DateTime?    @default(now()) @map("created_at") @db.Timestamp(6)
   createdBy     String       @map("created_by") @db.VarChar(50)
-  updatedAt     DateTime?    @default(now()) @map("updated_at") @db.Timestamp(6)
+  updatedAt     DateTime?    @default(now()) @updatedAt @map("updated_at") @db.Timestamp(6)
   updatedBy     String?      @map("updated_by") @db.VarChar(50)
   fileUpload    FileUpload[]
 
@@ -185,7 +184,7 @@ model MCostCenter {
   active                                                                             Boolean                  @map("active")
   createdAt                                                                          DateTime                 @default(now()) @map("created_at") @db.Timestamp(6)
   createdBy                                                                          String                   @map("created_by") @db.VarChar(50)
-  updatedAt                                                                          DateTime?                @default(now()) @map("updated_at") @db.Timestamp(6)
+  updatedAt                                                                          DateTime?                @default(now()) @updatedAt @map("updated_at") @db.Timestamp(6)
   updatedBy                                                                          String?                  @map("updated_by") @db.VarChar(50)
   budget                                                                             Budget[]
   budgetInvestation                                                                  BudgetInvestation[]
@@ -210,7 +209,7 @@ model MGlAccount {
   active                                                                           Boolean                  @map("active")
   createdAt                                                                        DateTime                 @default(now()) @map("created_at") @db.Timestamp(6)
   createdBy                                                                        String                   @map("created_by") @db.VarChar(50)
-  updatedAt                                                                        DateTime?                @default(now()) @map("updated_at") @db.Timestamp(6)
+  updatedAt                                                                        DateTime?                @default(now()) @updatedAt @map("updated_at") @db.Timestamp(6)
   updatedBy                                                                        String?                  @map("updated_by") @db.VarChar(50)
   budget                                                                           Budget[]
   budgetReallocation                                                               BudgetReallocation[]
@@ -224,30 +223,30 @@ model MGlAccount {
 
 model MKurs {
   idKurs    Int       @id @default(autoincrement()) @map("id_kurs")
-  uniqueId  String    @unique @default(uuid()) @map("unique_id") @db.VarChar(36)
+  uniqueId  String    @unique @default(uuid()) @map("unique_id") @db.VarChar(20)
   years     Int       @unique(map: "years_idx") @db.Integer
   value     Float     @map("value") @db.DoublePrecision
   createdAt DateTime  @default(now()) @map("created_at") @db.Timestamp(6)
   createdBy String    @map("created_by") @db.VarChar(50)
-  updatedAt DateTime? @default(now()) @map("updated_at") @db.Timestamp(6)
+  updatedAt DateTime? @default(now()) @updatedAt @map("updated_at") @db.Timestamp(6)
   updatedBy String?   @map("updated_by") @db.VarChar(50)
 
   @@map("m_kurs")
 }
 
 model MStatus {
-  idStatus           Int                  @id @default(autoincrement()) @map("id_status")
-  uniqueId           String               @unique @default(uuid()) @map("unique_id") @db.VarChar(20)
-  createdAt          DateTime?            @default(now()) @map("created_at") @db.Timestamp(6)
-  createdBy          String               @map("created_by") @db.VarChar(50)
-  updatedAt          DateTime?            @default(now()) @map("updated_at") @db.Timestamp(6)
-  updatedBy          String?              @map("updated_by") @db.VarChar(50)
-  status             String?              @map("status") @db.VarChar(25)
+  idStatus           Int                   @id @default(autoincrement()) @map("id_status")
+  uniqueId           String                @unique @default(uuid()) @map("unique_id") @db.VarChar(20)
+  createdAt          DateTime?             @default(now()) @map("created_at") @db.Timestamp(6)
+  createdBy          String                @map("created_by") @db.VarChar(50)
+  updatedAt          DateTime?             @default(now()) @updatedAt @map("updated_at") @db.Timestamp(6)
+  updatedBy          String?               @map("updated_by") @db.VarChar(50)
+  status             String?               @map("status") @db.VarChar(25)
   realization        Realization[]
   realizationInvest  RealizationInvest[]
   reallocation       Reallocation[]
   reallocationBudget ReallocationBudget[]
-  reallocationInvest ReallocationInvest[]
+  reallocationInvest reallocation_invest[]
 
   @@map("m_status")
 }
@@ -274,7 +273,7 @@ model Realization {
   employeeNumberTo String              @map("nopeg_to") @db.VarChar(8)
   createdAt        DateTime            @default(now()) @map("created_at") @db.Timestamp(6)
   createdBy        String              @map("created_by") @db.VarChar(50)
-  updatedAt        DateTime?           @default(now()) @map("updated_at") @db.Timestamp(6)
+  updatedAt        DateTime?           @default(now()) @updatedAt @map("updated_at") @db.Timestamp(6)
   updatedBy        String?             @map("updated_by") @db.VarChar(50)
   mCostCenter      MCostCenter         @relation(fields: [idCostCenter], references: [idCostCenter], onDelete: NoAction, onUpdate: NoAction, map: "fk_m_cost_center_to_realization")
   mStatus          MStatus             @relation(fields: [idStatus], references: [idStatus], onDelete: NoAction, onUpdate: NoAction, map: "fk_m_status_to_realization")
@@ -305,7 +304,7 @@ model RealizationInvest {
   employeeNumberTo      String                  @map("nopeg_to") @db.VarChar(8)
   createdAt             DateTime                @default(now()) @map("created_at") @db.Timestamp(6)
   createdBy             String                  @map("created_by") @db.VarChar(50)
-  updatedAt             DateTime?               @default(now()) @map("updated_at") @db.Timestamp(6)
+  updatedAt             DateTime?               @default(now()) @updatedAt @map("updated_at") @db.Timestamp(6)
   updatedBy             String?                 @map("updated_by") @db.VarChar(50)
   mStatus               MStatus                 @relation(fields: [idStatus], references: [idStatus], onDelete: NoAction, onUpdate: NoAction, map: "fk_m_status_to_realization_invest")
   mTypeInvest           MTypeInvest             @relation(fields: [idTypeInvest], references: [idTypeInvest], onDelete: NoAction, onUpdate: NoAction, map: "fk_m_type_invest_to_realization_invest")
@@ -323,7 +322,7 @@ model MTypeInvest {
   name              String?             @map("name") @db.VarChar(12)
   createdAt         DateTime            @default(now()) @map("created_at") @db.Timestamp(6)
   createdBy         String              @map("created_by") @db.VarChar(50)
-  updatedAt         DateTime?           @default(now()) @map("updated_at") @db.Timestamp(6)
+  updatedAt         DateTime?           @default(now()) @updatedAt @map("updated_at") @db.Timestamp(6)
   updatedBy         String?             @map("updated_by") @db.VarChar(50)
   realizationInvest RealizationInvest[]
 
@@ -342,7 +341,7 @@ model RealizationInvestItem {
   note                    String?                  @map("note")
   createdAt               DateTime                 @default(now()) @map("created_at") @db.Timestamp(6)
   createdBy               String                   @map("created_by") @db.VarChar(50)
-  updatedAt               DateTime?                @default(now()) @map("updated_at") @db.Timestamp(6)
+  updatedAt               DateTime?                @default(now()) @updatedAt @map("updated_at") @db.Timestamp(6)
   updatedBy               String?                  @map("updated_by") @db.VarChar(50)
   budgetInvestation       BudgetInvestation        @relation(fields: [idRealizationInvest], references: [idBudgetInvestation], onDelete: NoAction, onUpdate: NoAction, map: "fk_budget_investation_to_realization_invest_item")
   realizationInvest       RealizationInvest        @relation(fields: [idBudgetInvestation], references: [idRealizationInvest], onDelete: NoAction, onUpdate: NoAction, map: "fk_realization_invest_to_realization_invest_item")
@@ -367,7 +366,7 @@ model RalizationItem {
   memo              String             @map("memo")
   createdAt         DateTime           @default(now()) @map("created_at") @db.Timestamp(6)
   createdBy         String             @map("created_by") @db.VarChar(50)
-  updatedAt         DateTime?          @default(now()) @map("updated_at") @db.Timestamp(6)
+  updatedAt         DateTime?          @default(now()) @updatedAt @map("updated_at") @db.Timestamp(6)
   updatedBy         String?            @map("updated_by") @db.VarChar(50)
   mGlAccount        MGlAccount         @relation(fields: [idGlAccount], references: [idGlAccount], onDelete: NoAction, onUpdate: NoAction, map: "fk_m_gl_account_to_realization_item")
   realization       Realization        @relation(fields: [idRealization], references: [idRealization], onDelete: NoAction, onUpdate: NoAction, map: "fk_realization_to_realization_item")
@@ -393,7 +392,7 @@ model Reallocation {
   employeeNumberTo String             @map("nopeg_to") @db.VarChar(8)
   createdAt        DateTime           @default(now()) @map("created_at") @db.Timestamp(6)
   createdBy        String             @map("created_by") @db.VarChar(50)
-  updatedAt        DateTime?          @default(now()) @map("updated_at") @db.Timestamp(6)
+  updatedAt        DateTime?          @default(now()) @updatedAt @map("updated_at") @db.Timestamp(6)
   updatedBy        String?            @map("updated_by") @db.VarChar(50)
   mStatus          MStatus            @relation(fields: [idStatus], references: [idStatus], onDelete: NoAction, onUpdate: NoAction, map: "fk_m_status_to_reallocation")
   realization      Realization        @relation(fields: [realizationId], references: [idRealization], onDelete: NoAction, onUpdate: NoAction, map: "fk_realization_to_reallocation")
@@ -416,7 +415,7 @@ model ReallocationBudget {
   employeeNumberTo       String                   @map("nopeg_to") @db.VarChar(8)
   createdAt              DateTime?                @default(now()) @map("created_at") @db.Timestamp(6)
   createdBy              String                   @map("created_by") @db.VarChar(50)
-  updatedAt              DateTime?                @default(now()) @map("updated_at") @db.Timestamp(6)
+  updatedAt              DateTime?                @default(now()) @updatedAt @map("updated_at") @db.Timestamp(6)
   updatedBy              String?                  @map("updated_by") @db.VarChar(50)
   mStatus                MStatus                  @relation(fields: [idStatus], references: [idStatus], onDelete: NoAction, onUpdate: NoAction, map: "fk_m_status_to_reallocation_budget")
   reallocationBudgetItem ReallocationBudgetItem[]
@@ -435,7 +434,7 @@ model ReallocationBudgetItem {
   amount                                                                  Float?             @map("amount") @db.DoublePrecision
   createdAt                                                               DateTime?          @default(now()) @map("created_at") @db.Timestamp(6)
   createdBy                                                               String             @map("created_by") @db.VarChar(50)
-  updatedAt                                                               DateTime?          @default(now()) @map("updated_at") @db.Timestamp(6)
+  updatedAt                                                               DateTime?          @default(now()) @updatedAt @map("updated_at") @db.Timestamp(6)
   updatedBy                                                               String?            @map("updated_by") @db.VarChar(50)
   m_cost_center_reallocation_budget_item_id_cost_centerTom_cost_center    MCostCenter        @relation("reallocation_budget_item_id_cost_centerTom_cost_center", fields: [idCostCenter], references: [idCostCenter], onDelete: NoAction, onUpdate: NoAction, map: "fk_m_cost_center_to_reallocation_budget_item")
   m_cost_center_reallocation_budget_item_id_cost_center_toTom_cost_center MCostCenter        @relation("reallocation_budget_item_id_cost_center_toTom_cost_center", fields: [idCostCenterTo], references: [idCostCenter], onDelete: NoAction, onUpdate: NoAction, map: "fk_m_cost_center_to_reallocation_budget_item1")
@@ -447,7 +446,7 @@ model ReallocationBudgetItem {
 }
 
 /// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
-model ReallocationInvest {
+model reallocation_invest {
   idReallocationInvest   Int                      @id @default(autoincrement()) @map("id_reallocation_invest")
   uniqueId               String                   @unique @map("unique_id") @db.VarChar(20)
   type                   String                   @map("type") @db.VarChar(30)
@@ -484,7 +483,7 @@ model ReallocationInvestItem {
   updatedBy                String?               @map("updated_by") @db.VarChar(50)
   budgetInvestation        BudgetInvestation     @relation(fields: [idBudgetInvestation], references: [idBudgetInvestation], onDelete: NoAction, onUpdate: NoAction, map: "fk_budget_investation_to_reallocation_invest_item")
   realizationInvestItem    RealizationInvestItem @relation(fields: [idRealizationInvestItem], references: [idRealizationInvestItem], onDelete: NoAction, onUpdate: NoAction, map: "fk_realization_invest_item_to_reallocation_invest_item")
-  reallocationInvest       ReallocationInvest    @relation(fields: [idReallocationInvest], references: [idReallocationInvest], onDelete: NoAction, onUpdate: NoAction, map: "fk_reallocation_invest_to_reallocation_invest_item")
+  reallocationInvest       reallocation_invest   @relation(fields: [idReallocationInvest], references: [idReallocationInvest], onDelete: NoAction, onUpdate: NoAction, map: "fk_reallocation_invest_to_reallocation_invest_item")
 
   @@map("reallocation_invest_item")
 }
