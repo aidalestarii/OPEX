@@ -10,8 +10,9 @@ import { randomUUID } from 'crypto';
 export class CreateKursDto {
   //@IsNotEmpty()
   //@IsString()
-  @IsUUID()
-  uniqueId: string = randomUUID();
+  // @IsUUID()
+  // Tidak ada processing di dto
+  // uniqueId: string = randomUUID();
 
   @IsNotEmpty()
   @IsNumber()

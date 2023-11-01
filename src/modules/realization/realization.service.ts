@@ -12,4 +12,23 @@ export class RealizationService {
   //   });
   //   return realization;
   //}
+
+  async getTest(dto) {
+    await this.prisma.realization.create({
+      data: {
+        titleRequest: '',
+        
+        mStatus: {
+          connect: {
+            uniqueId: dto
+          }
+        },
+        mCostCenter: {
+          connect: {
+            idCostCenter
+          }
+        }
+      }
+    })
+  }
 }

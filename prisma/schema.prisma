@@ -267,7 +267,7 @@ model Realization {
   titleRequest     String              @map("title_request")
   noteRequest      String              @map("note_request")
   status           StatusEnum          @default(PROGRESS) @map("status")
-  idStatus         Int                 @map("id_status") @db.Integer
+  statusId         Int                 @map("status_id") @db.Integer
   department       String              @map("department") @db.VarChar(8)
   personalNumber   String              @map("nopeg") @db.VarChar(8)
   departmentTo     String              @map("department_to") @db.VarChar(8)
@@ -276,10 +276,11 @@ model Realization {
   createdBy        String              @map("created_by") @db.VarChar(50)
   updatedAt        DateTime            @default(now()) @updatedAt @map("updated_at") @db.Timestamp(6)
   updatedBy        String?             @map("updated_by") @db.VarChar(50)
-  mCostCenter      MCostCenter         @relation(fields: [idCostCenter], references: [idCostCenter], onDelete: NoAction, onUpdate: NoAction, map: "fk_m_cost_center_to_realization")
-  mStatus          MStatus             @relation(fields: [idStatus], references: [idStatus], onDelete: NoAction, onUpdate: NoAction, map: "fk_m_status_to_realization")
-  realizationItem  RalizationItem[]
-  reallocation     Reallocation[]
+
+  mCostCenter     MCostCenter      @relation(fields: [idCostCenter], references: [idCostCenter], onDelete: NoAction, onUpdate: NoAction, map: "fk_m_cost_center_to_realization")
+  mStatus         MStatus          @relation(fields: [statusId], references: [idStatus], onDelete: NoAction, onUpdate: NoAction, map: "fk_m_status_to_realization")
+  realizationItem RalizationItem[]
+  reallocation    Reallocation[]
 
   @@index([years, idCostCenter], map: "realization_constraint")
   @@map("realization")
