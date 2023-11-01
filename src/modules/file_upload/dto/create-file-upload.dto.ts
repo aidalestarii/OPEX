@@ -17,20 +17,14 @@ export class CreateFileDto {
   // @IsNumber()
   idDocCategory: number;
 
-  @IsNotEmpty()
-  @IsString()
   docName: string;
 
-  @IsNotEmpty()
-  @IsString()
   docLink: string;
 
   // @IsNotEmpty()
   // @IsNumber()
   docSize: number;
 
-  @IsNotEmpty()
-  @IsString()
   docType: string;
 
   @IsNotEmpty()
