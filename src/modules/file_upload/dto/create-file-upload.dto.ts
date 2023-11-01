@@ -5,8 +5,8 @@ export class CreateFileDto {
   // @IsString()
   uniqueId: string;
 
-  @IsNotEmpty()
-  @IsString()
+  // @IsNotEmpty()
+  // @IsString()
   tableName: string;
 
   // @IsNotEmpty()
@@ -31,3 +31,16 @@ export class CreateFileDto {
   @IsString()
   createdBy: string;
 }
+
+// export class MDocCategory {
+//   idDocCategory;
+//   uniqueId;
+//   module;
+//   docCategory;
+//   description;
+//   createdAt;
+//   createdBy;
+//   updatedAt;
+//   updatedBy;
+//   fileUpload;
+// }

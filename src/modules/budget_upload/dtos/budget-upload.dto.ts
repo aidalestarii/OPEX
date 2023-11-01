@@ -8,6 +8,10 @@ import {
 import { StringNumberBigintObject } from 'src/core/types/string-number-bigint-object.types';
 
 export class ItemsBudgetUploadDto {
+  //result: object;
+
+  idBudget: number;
+
   @IsNotEmpty()
   @IsNumber()
   years: number;
@@ -19,9 +23,6 @@ export class ItemsBudgetUploadDto {
   // @IsNotEmpty()
   @IsNumber()
   idCostCenter: number;
-
-  // @IsString()
-  // indikatorKeuangan: string;
 
   @IsOptional()
   @IsNumber()

@@ -20,7 +20,7 @@ export const multerConfig = {
 export const multerOptions = {
   // Enable file size limits
   limits: {
-    fileSize: 1000000,
+    fileSize: 1000000000,
   },
   // Check the mimetypes to allow for upload
   fileFilter: (req: Request, file: Express.Multer.File, cb: Function) => {
@@ -49,7 +49,7 @@ export const multerOptions = {
     // File modification details
     filename: (req: Request, file: any, cb: any) => {
       const uploadedFileName = file.originalname;
-      // Validation years & configName
+      // Validation years & file
       if (!req?.body['years']) {
         cb(new BadRequestException([`years should not be empty`]), false);
       } else if (!file) {
@@ -60,4 +60,3 @@ export const multerOptions = {
     },
   }),
 };
-//file : multer-options.config.ts-------------------------------------------------------

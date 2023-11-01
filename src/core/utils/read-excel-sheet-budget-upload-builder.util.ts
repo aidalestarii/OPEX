@@ -14,12 +14,10 @@ export class ReadExcelSheetBudgetUploadBuilder {
   getSheetName(name: string): this {
     this.sheet = new BudgetUploadSheetsDto();
     this.sheet.name = name;
-    // console.log(this.sheet.name);
     return this;
   }
 
-  //Mulai baris berapa
-  ignoreHeaderRow(rows: number = 14): this {
+  ignoreHeaderRow(rows: number = 1): this {
     const header = new HeaderDto();
     header.rows = rows;
     this.sheet.header = header;
@@ -29,8 +27,6 @@ export class ReadExcelSheetBudgetUploadBuilder {
   setSheetNameToJsonFields(columns: string[]): this {
     const columnToKey: Record<string, string> = {};
     columns.forEach((col, index): void => {
-      //dganti 66 = b code CHARCODE
-      //Mulai column index berapa
       columnToKey[String.fromCharCode(65 + index)] = camelCase(col);
     });
 

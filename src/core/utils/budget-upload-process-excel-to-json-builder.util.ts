@@ -7,6 +7,8 @@ import { Request } from 'express';
 import { ReadBudgetUploadSheetDto } from 'src/modules/budget_upload/dtos/read-budget-upload.dto';
 import { BudgetUploadSheetsDto } from 'src/modules/budget_upload/dtos/budget-upload-sheets.dto';
 import { Observable, lastValueFrom, mergeMap, of } from 'rxjs';
+import { PrismaService } from '../service/prisma.service';
+import { ItemsBudgetUploadDto } from 'src/modules/budget_upload/dtos/budget-upload.dto';
 
 @Injectable()
 export class BudgetUploadProcessExcelToJsonBuilder {
@@ -55,7 +57,6 @@ export class BudgetUploadProcessExcelToJsonBuilder {
     sheetConfig: BudgetUploadSheetsDto,
   ): this {
     const columnName: string =
-      //CHARCODE -1 = A
       sheetConfig.columnToKey[String.fromCharCode(64 + cellIndex)];
     if (!columnName) return;
 
@@ -69,7 +70,7 @@ export class BudgetUploadProcessExcelToJsonBuilder {
     // console.log(`column-name : ${columnName}`);
     // console.log(`value : ${cellValue}`);
     // console.log(`type: ${typeof cellValue}`);
-    // console.log('______________________________ ');
+    // console.log("______________________________ ");
 
     if (Object(cellValue).toString().startsWith('Invalid')) {
       this.errorSheetName.push(sheetConfig.name);
@@ -143,24 +144,20 @@ export class BudgetUploadProcessExcelToJsonBuilder {
   }
 
   async build<T>(req: Request): Promise<ReadBudgetUploadSheetDto> {
-    const years: number = req?.body['years'];
+    //const configItems: ItemsBudgetUploadDto[] = await this.prisma.budget.findMany();
+    const years: string = req?.body['years'];
     const workbook: Workbook = new Workbook();
-    await workbook.xlsx.readFile(String(this.filePath));
-    // console.log(this.filePath);
-    // console.log(this.sheets);
-    // console.log(years);
+    await workbook.xlsx.readFile(this.filePath);
 
     const data: ReadBudgetUploadSheetDto = {
       budgetUpload: null,
     };
 
-    //console log in satu satu mulai dari isi rows, dll.
     const $dataSheets: Observable<BudgetUploadSheetsDto> = of(this.sheets).pipe(
       mergeMap((items) => items),
       mergeMap((sheet) => {
         const { name, header } = sheet;
         const worksheet: Worksheet = workbook.getWorksheet(name);
-        // console.log(sheet);
         if (worksheet) {
           const rows = this.readSheetData(
             worksheet,
@@ -174,6 +171,7 @@ export class BudgetUploadProcessExcelToJsonBuilder {
       }),
     );
     await lastValueFrom($dataSheets);
+
     if (this.errorSheetName.length > 0 && this.errorMessages.length > 0) {
       const uniqueSheetNames: string[] = [...new Set(this.errorSheetName)];
       const errors = uniqueSheetNames.map((sheetName) => {
@@ -188,9 +186,8 @@ export class BudgetUploadProcessExcelToJsonBuilder {
 
       throw new MessagesInvalidDataError(errors);
     }
-    data.budgetUpload = data['RKAP_2023'];
-    console.log(data);
+    data.budgetUpload = data['rkap_2023'];
+    //console.log(data);
     return data;
   }
 }
-//file: read-excel-sheet-your-module-builder.util.ts--------------------------------------------------------

@@ -5,26 +5,30 @@ import { ItemsBudgetUploadDto } from './dtos/budget-upload.dto';
 import { ExcelBudgetUploadService } from './excel_budget_upload.service';
 import { ReadBudgetUploadSheetDto } from './dtos/read-budget-upload.dto';
 import { WriteResponseBase } from '@elastic/elasticsearch/lib/api/types';
+import { PrismaService } from 'src/core/service/prisma.service';
 
 @Injectable()
 export class BudgetUploadService {
-  constructor(private readonly excelService: ExcelBudgetUploadService) {
+  // constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly excelService: ExcelBudgetUploadService,
+    private readonly prisma: PrismaService,
+  ) {
     BudgetUploadService?.name;
   }
 
-  async convertBudgetUploadFromExcelToJson<T>(
-    req: Request,
-    //WriteResponseBase
-  ): Promise<any> {
+  async convertBudgetUploadFromExcelToJson<T>(req: Request): Promise<any> {
     try {
-      const read = await this.excelService.readFormatExcel(req);
-      console.log(read);
+      const read: ReadBudgetUploadSheetDto =
+        await this.excelService.readFormatExcel(req);
       if (!read?.budgetUpload)
         throw new BadRequestException(
           `Failed to read Excel, sheetname invalid`,
         );
+
       const items: ItemsBudgetUploadDto[] = read?.budgetUpload;
-      // Mengganti respons dengan struktur yang sesuai dengan WriteResponseBase
+
+      console.log(items);
       return items;
     } catch (error) {
       throw new BadRequestException(error?.response);

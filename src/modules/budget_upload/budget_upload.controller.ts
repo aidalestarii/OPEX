@@ -13,9 +13,10 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { Response, Request, Express } from 'express';
 import { multerOptions } from 'src/config/multer-options.config';
 import { BudgetUploadService } from './budget_upload.service';
+
 @Controller('budget-upload')
 export class BudgetUploadController {
-  constructor(private readonly BudgetUploadService: BudgetUploadService) {
+  constructor(private readonly budgetUploadService: BudgetUploadService) {
     BudgetUploadController.name;
   }
 
@@ -28,7 +29,7 @@ export class BudgetUploadController {
   ): Promise<Response<T, Record<string, T>>> {
     try {
       const payload =
-        await this.BudgetUploadService.convertBudgetUploadFromExcelToJson(req);
+        await this.budgetUploadService.convertBudgetUploadFromExcelToJson(req);
       return res.status(201).json({
         data: payload,
         meta: {

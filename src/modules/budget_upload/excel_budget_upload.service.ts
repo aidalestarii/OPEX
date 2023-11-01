@@ -28,6 +28,7 @@ export class ExcelBudgetUploadService {
           .setSheetNameToJsonFields(ItemsBudgetUploadDto.propertyNames)
           .setColumnPropertyToJsonFields(ItemsBudgetUploadDto.propertyConfig)
           .build();
+      console.log(budgetUploadSheet);
       const filePath: string = req?.file?.path;
       const data = of(filePath).pipe(
         catchError((error) => {
@@ -42,7 +43,7 @@ export class ExcelBudgetUploadService {
       );
 
       const result = await lastValueFrom(data);
-      // await fs.remove(filePath);
+      await fs.remove(filePath);
 
       return result;
     } catch (error) {

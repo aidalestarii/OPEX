@@ -46,6 +46,7 @@ export class FileUploadController {
     try {
       createFileDto.idTable = 10;
       createFileDto.idDocCategory = 20;
+      createFileDto.tableName = 'nama table';
       createFileDto.docSize = file.size;
       createFileDto.docType = extname(file.originalname);
       createFileDto.docLink = file.path;
