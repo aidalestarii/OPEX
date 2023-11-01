@@ -11,7 +11,6 @@ generator dbml {
   provider = "prisma-dbml-generator"
 }
 
-/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
 model Approval {
   idApproval Int        @id @default(autoincrement()) @map("id_approval")
   uniqueId   String     @unique @default(uuid()) @map("unique_id") @db.VarChar(20)
@@ -27,13 +26,11 @@ model Approval {
   updatedAt  DateTime?  @default(now()) @updatedAt @map("updated_at") @db.Timestamp(6)
   updatedBy  String?    @map("updated_by") @db.VarChar(50)
   noteMemo   NoteMemo[]
-  //note_memo   note_memo[]
 
   @@index([tableName, tableId, createdBy], map: "approval_idx")
   @@map("approval")
 }
 
-/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
 model NoteMemo {
   idNoteMemo   Int       @id @default(autoincrement()) @map("id_note_memo")
   uniqueId     String    @unique @map("unique_id") @db.VarChar(20)
@@ -56,8 +53,8 @@ model Budget {
   idBudget     Int         @id @default(autoincrement()) @map("id_budget")
   uniqueId     String      @unique @default(uuid()) @map("unique_id") @db.VarChar(20)
   years        Int         @map("years") @db.Integer
-  idCostCenter Int         @map("id_cost_center") @db.Integer
   idGlAccount  Int         @map("id_gl_account") @db.Integer
+  idCostCenter Int         @map("id_cost_center") @db.Integer
   total        Float       @map("total") @db.DoublePrecision
   value01      Float       @map("value01") @db.DoublePrecision
   value02      Float       @map("value02") @db.DoublePrecision
@@ -86,21 +83,20 @@ model Budget {
   @@map("budget")
 }
 
-/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
 model BudgetInvestation {
   idBudgetInvestation    Int                      @id @default(autoincrement()) @map("id_budget_investation")
   uniqueId               String                   @unique @map("unique_id") @db.VarChar(20)
   years                  Int                      @map("years") @db.Integer
-  investNumber           Int?                     @map("no_invest") @db.Integer
+  investNumber           Int                      @map("no_invest") @db.Integer
   idCostCenter           Int                      @map("id_cost_center") @db.Integer
-  description            String?                  @map("description") @db.VarChar(255)
-  type                   InvestTypeEnum?          @map("type")
-  groupAsset             String?                  @map("group_asset") @db.VarChar(40)
-  usefull                Int?                     @map("usefull") @db.SmallInt
-  skala                  Int?                     @map("skala") @db.SmallInt
-  groupInvest            String?                  @map("group_invest") @db.VarChar(40)
-  category               String?                  @map("category") @db.VarChar(40)
-  new                    Boolean?                 @map("new")
+  description            String                   @map("description") @db.VarChar(255)
+  type                   InvestTypeEnum           @map("type")
+  groupAsset             String                   @map("group_asset") @db.VarChar(40)
+  usefull                Int                      @map("usefull") @db.SmallInt
+  skala                  Int                      @map("skala") @db.SmallInt
+  groupInvest            String                   @map("group_invest") @db.VarChar(40)
+  category               String                   @map("category") @db.VarChar(40)
+  new                    Boolean                  @map("new")
   total                  Float                    @map("total") @db.DoublePrecision
   plus                   Float                    @map("plus") @db.DoublePrecision
   minus                  Float                    @map("minus") @db.DoublePrecision
@@ -139,8 +135,8 @@ model FileUpload {
   idUpload      Int          @id @default(autoincrement()) @map("id_upload")
   uniqueId      String       @default(uuid()) @map("unique_id") @db.VarChar(20)
   tableName     String       @map("table_name") @db.VarChar(20)
-  idTable       Int          @map("id_table") @db.Integer
-  idDocCategory Int          @map("id_doc_category") @db.Integer
+  tableId       Int          @map("table_id") @db.Integer
+  docCategoryId Int          @map("id_doc_category") @db.Integer
   docName       String       @map("doc_name") @db.VarChar(100)
   docLink       String       @map("doc_link") @db.VarChar(255)
   docSize       Float        @map("doc_size")
@@ -149,9 +145,9 @@ model FileUpload {
   createdBy     String       @map("created_by") @db.VarChar(50)
   updatedAt     DateTime?    @updatedAt @map("updated_at") @db.Timestamp(6)
   updatedBy     String?      @map("updated_by") @db.VarChar(50)
-  mDocCategory  MDocCategory @relation(fields: [idDocCategory], references: [idDocCategory], onDelete: NoAction, onUpdate: NoAction, map: "fk_m_doc_category_to_file_upload")
+  mDocCategory  MDocCategory @relation(fields: [docCategoryId], references: [idDocCategory], onDelete: NoAction, onUpdate: NoAction, map: "fk_m_doc_category_to_file_upload")
 
-  @@unique([tableName, idTable, idDocCategory, docName], map: "file_upload_idx")
+  @@unique([tableName, tableId, docCategoryId, docName], map: "file_upload_idx")
   @@map("file_upload")
 }
 
@@ -161,7 +157,7 @@ model MDocCategory {
   module        ModulEnum    @map("module")
   docCategory   String       @map("doc_category") @db.VarChar(20)
   description   String       @map("description") @db.VarChar(100)
-  createdAt     DateTime?    @default(now()) @map("created_at") @db.Timestamp(6)
+  createdAt     DateTime     @default(now()) @map("created_at") @db.Timestamp(6)
   createdBy     String       @map("created_by") @db.VarChar(50)
   updatedAt     DateTime?    @default(now()) @updatedAt @map("updated_at") @db.Timestamp(6)
   updatedBy     String?      @map("updated_by") @db.VarChar(50)
@@ -196,16 +192,14 @@ model MCostCenter {
   @@map("m_cost_center")
 }
 
-/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
-
 model MGlAccount {
   idGlAccount                                                                      Int                      @id @default(autoincrement()) @map("id_gl_account")
   uniqueId                                                                         String                   @unique @default(uuid()) @map("unique_id") @db.VarChar(20)
   glAccount                                                                        Decimal                  @unique(map: "gl_account_idx") @db.Decimal
-  description                                                                      String                   @map("description") @db.VarChar(50)
   groupDetail                                                                      String                   @map("group_detail") @db.VarChar(50)
   groupGl                                                                          String                   @map("group_gl") @db.VarChar(20)
-  sap                                                                              Boolean                  @map("sap")
+  sap                                                                              Boolean                  @map("sap") @db.Boolean
+  description                                                                      String                   @map("description") @db.VarChar(50)
   active                                                                           Boolean                  @map("active")
   createdAt                                                                        DateTime                 @default(now()) @map("created_at") @db.Timestamp(6)
   createdBy                                                                        String                   @map("created_by") @db.VarChar(50)
@@ -217,6 +211,7 @@ model MGlAccount {
   reallocation_budget_item_reallocation_budget_item_id_gl_accountTom_gl_account    ReallocationBudgetItem[] @relation("reallocation_budget_item_id_gl_accountTom_gl_account")
   reallocation_budget_item_reallocation_budget_item_id_gl_account_toTom_gl_account ReallocationBudgetItem[] @relation("reallocation_budget_item_id_gl_account_toTom_gl_account")
   reallocation_item                                                                ReallocationItem[]
+  simulation                                                                       Simulation[]
 
   @@map("m_gl_account")
 }
@@ -234,14 +229,20 @@ model MKurs {
   @@map("m_kurs")
 }
 
+//ada perubahan
 model MStatus {
   idStatus           Int                   @id @default(autoincrement()) @map("id_status")
   uniqueId           String                @unique @default(uuid()) @map("unique_id") @db.VarChar(20)
-  createdAt          DateTime?             @default(now()) @map("created_at") @db.Timestamp(6)
+  type               String                @db.VarChar(50)
+  status             String                @map("status") @db.VarChar(25)
+  step               Int                   @db.SmallInt
+  department         String                @db.VarChar(8)
+  level              Int                   @db.SmallInt
+  function           String?               @db.VarChar(20)
+  createdAt          DateTime              @default(now()) @map("created_at") @db.Timestamp(6)
   createdBy          String                @map("created_by") @db.VarChar(50)
   updatedAt          DateTime?             @default(now()) @updatedAt @map("updated_at") @db.Timestamp(6)
   updatedBy          String?               @map("updated_by") @db.VarChar(50)
-  status             String?               @map("status") @db.VarChar(25)
   realization        Realization[]
   realizationInvest  RealizationInvest[]
   reallocation       Reallocation[]
@@ -251,7 +252,6 @@ model MStatus {
   @@map("m_status")
 }
 
-/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
 model Realization {
   idRealization    Int                 @id @default(autoincrement()) @map("id_realization")
   uniqueId         String              @default(uuid()) @map("unique_id") @db.VarChar(20)
@@ -284,7 +284,6 @@ model Realization {
   @@map("realization")
 }
 
-/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
 model RealizationInvest {
   idRealizationInvest   Int                     @id @default(autoincrement()) @map("id_realization_invest")
   uniqueId              String                  @default(uuid()) @map("unique_id") @db.VarChar(20)
@@ -314,12 +313,11 @@ model RealizationInvest {
   @@map("realization_invest")
 }
 
-/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
 model MTypeInvest {
   idTypeInvest      Int                 @id @default(autoincrement()) @map("id_type_invest")
   uniqueId          String              @default(uuid()) @map("unique_id") @db.VarChar(20)
   type              String              @unique(map: "type_invest_idx") @db.VarChar(1)
-  name              String?             @map("name") @db.VarChar(12)
+  name              String              @map("name") @db.VarChar(12)
   createdAt         DateTime            @default(now()) @map("created_at") @db.Timestamp(6)
   createdBy         String              @map("created_by") @db.VarChar(50)
   updatedAt         DateTime?           @default(now()) @updatedAt @map("updated_at") @db.Timestamp(6)
@@ -329,7 +327,6 @@ model MTypeInvest {
   @@map("m_type_invest")
 }
 
-/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
 model RealizationInvestItem {
   idRealizationInvestItem Int                      @id @default(autoincrement()) @map("id_realization_invest_item")
   uniqueId                String                   @default(uuid()) @map("unique_id") @db.VarChar(20)
@@ -376,7 +373,6 @@ model RalizationItem {
   @@map("realization_item")
 }
 
-/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
 model Reallocation {
   idReallocation   Int                @id @default(autoincrement()) @map("id_reallocation")
   uniqueId         String             @default(uuid()) @map("unique_id") @db.VarChar(20)
@@ -401,7 +397,6 @@ model Reallocation {
   @@map("reallocation")
 }
 
-/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
 model ReallocationBudget {
   idReallocationBudget   Int                      @id @default(autoincrement()) @map("id_reallocation_budget")
   uniqueId               String                   @unique @default(uuid()) @map("unique_id") @db.VarChar(20)
@@ -445,7 +440,6 @@ model ReallocationBudgetItem {
   @@map("reallocation_budget_item")
 }
 
-/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
 model reallocation_invest {
   idReallocationInvest   Int                      @id @default(autoincrement()) @map("id_reallocation_invest")
   uniqueId               String                   @unique @map("unique_id") @db.VarChar(20)
@@ -509,14 +503,16 @@ model ReallocationItem {
 }
 
 model Simulation {
-  idSimulation     Int       @id @default(autoincrement()) @map("id_simulation")
-  uniqueId         String    @default(uuid()) @map("unique_id") @db.VarChar(20)
-  years            Int       @map("years") @db.Integer
-  simulationBudget Float?    @map("simulation_budget") @db.Real
-  createdAt        DateTime  @default(now()) @map("created_at") @db.Timestamp(6)
-  createdBy        String    @map("created_by") @db.VarChar(50)
-  updatedAt        DateTime? @default(now()) @updatedAt @map("updated_at") @db.Timestamp(6)
-  updatedBy        String?   @map("updated_by") @db.VarChar(50)
+  idSimulation          Int         @id @default(autoincrement()) @map("id_simulation")
+  uniqueId              String      @default(uuid()) @map("unique_id") @db.VarChar(20)
+  years                 Int         @map("years") @db.Integer
+  simulationBudget      Float?      @map("simulation_budget") @db.Real
+  createdAt             DateTime    @default(now()) @map("created_at") @db.Timestamp(6)
+  createdBy             String      @map("created_by") @db.VarChar(50)
+  updatedAt             DateTime?   @default(now()) @updatedAt @map("updated_at") @db.Timestamp(6)
+  updatedBy             String?     @map("updated_by") @db.VarChar(50)
+  MGlAccount            MGlAccount? @relation(fields: [mGlAccountIdGlAccount], references: [idGlAccount])
+  mGlAccountIdGlAccount Int?
 
   @@map("simulation")
 }
