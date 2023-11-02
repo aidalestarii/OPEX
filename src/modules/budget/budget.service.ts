@@ -9,10 +9,10 @@ export class BudgetService {
   constructor(private readonly prisma: PrismaService) {}
 
   async create(createBudgetDto: CreateBudgetDto) {
-    const kurs = await this.prisma.budget.create({
+    const budget = await this.prisma.budget.create({
       data: createBudgetDto,
     });
-    return kurs;
+    return budget;
   }
 
   async findAll() {

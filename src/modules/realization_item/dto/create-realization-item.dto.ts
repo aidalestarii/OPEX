@@ -1,3 +1,19 @@
 export class CreateRealizationItemDto {
-          
+  idRealizationItem;
+  uniqueId;
+  realizationId;
+  glAccountId;
+  amount;
+  amountSubmission;
+  amountHps;
+  amountCorrection;
+  periodStart;
+  periodFinish;
+  descPby;
+  remarkPby;
+  memo;
+  createdAt;
+  createdBy;
+  updatedAt;
+  updatedBy;
 }

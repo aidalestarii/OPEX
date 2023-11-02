@@ -76,7 +76,7 @@ model Budget {
   updatedBy    String?  @map("updated_by") @db.VarChar(50)
 
   mCostCenter MCostCenter @relation(fields: [costCenterId], references: [idCostCenter], onDelete: NoAction, onUpdate: NoAction, map: "fk_m_cost_center_to_budget")
-  mGlAccount  MGlAccount  @relation(fields: [costCenterId], references: [idGlAccount], onDelete: NoAction, onUpdate: NoAction, map: "fk_m_gl_account_to_budget")
+  mGlAccount  MGlAccount  @relation(fields: [glAccountId], references: [idGlAccount], onDelete: NoAction, onUpdate: NoAction, map: "fk_m_gl_account_to_budget")
 
   @@unique([years, glAccountId, costCenterId], map: "budget_constraint")
   @@map("budget")
@@ -140,7 +140,7 @@ model FileUpload {
   docCategoryId Int      @map("doc_category_id") @db.Integer
   docName       String   @map("doc_name") @db.VarChar(100)
   docLink       String   @map("doc_link") @db.VarChar(255)
-  docSize       Float    @map("doc_size")
+  docSize       Int      @map("doc_size") @db.Integer
   docType       String   @map("doc_type") @db.VarChar(5)
   createdAt     DateTime @default(now()) @map("created_at") @db.Timestamp(6)
   createdBy     String   @map("created_by") @db.VarChar(50)
@@ -157,11 +157,11 @@ model MDocCategory {
   idDocCategory Int       @id @default(autoincrement()) @map("id_doc_category")
   uniqueId      String    @unique @default(uuid()) @map("unique_id") @db.Uuid
   module        ModulEnum @default(OPEX) @map("module")
-  docCategory   String    @map("doc_category") @db.VarChar(20)
+  docCategory   String    @map("doc_category") @db.VarChar(200)
   description   String    @map("description") @db.VarChar(100)
   createdAt     DateTime  @default(now()) @map("created_at") @db.Timestamp(6)
   createdBy     String    @map("created_by") @db.VarChar(50)
-  updatedAt     DateTime? @default(now()) @updatedAt @map("updated_at") @db.Timestamp(6)
+  updatedAt     DateTime  @default(now()) @updatedAt @map("updated_at") @db.Timestamp(6)
   updatedBy     String?   @map("updated_by") @db.VarChar(50)
 
   fileUpload FileUpload[]
@@ -253,7 +253,7 @@ model MStatus {
   realization_invest_realization_invest_id_statusTom_status            RealizationInvest[]     @relation("realization_invest_id_statusTom_status")
   realization_invest_realization_invest_id_status_toTom_status         RealizationInvest[]     @relation("realization_invest_id_status_toTom_status")
   reallocation_reallocation_id_statusTom_status                        Reallocation[]          @relation("reallocation_id_statusTom_status")
-  //reallocation_reallocation_id_status_toTom_status                     Reallocation[]          @relation("reallocation_id_status_toTom_status")
+  // reallocation_reallocation_id_status_toTom_status                     Reallocation[]          @relation("reallocation_id_status_toTom_status")
   reallocation_corporate_reallocation_corporate_id_statusTom_status    ReallocationCorporate[] @relation("reallocation_corporate_id_statusTom_status")
   reallocation_corporate_reallocation_corporate_id_status_toTom_status ReallocationCorporate[] @relation("reallocation_corporate_id_status_toTom_status")
   reallocation_invest_reallocation_invest_id_statusTom_status          ReallocationInvest[]    @relation("reallocation_invest_id_statusTom_status")
@@ -284,7 +284,7 @@ model Realization {
   personalNumberTo String              @map("nopeg_to") @db.VarChar(8)
   createdAt        DateTime            @default(now()) @map("created_at") @db.Timestamp(6)
   createdBy        String              @map("created_by") @db.VarChar(50)
-  updatedAt        DateTime?           @default(now()) @updatedAt @map("updated_at") @db.Timestamp(6)
+  updatedAt        DateTime            @default(now()) @updatedAt @map("updated_at") @db.Timestamp(6)
   updatedBy        String?             @map("updated_by") @db.VarChar(50)
 
   m_cost_center                               MCostCenter       @relation(fields: [costCenterId], references: [idCostCenter], onDelete: NoAction, onUpdate: NoAction, map: "fk_m_cost_center_to_realization")
@@ -412,7 +412,7 @@ model Reallocation {
   updatedBy        String?    @map("updated_by") @db.VarChar(50)
 
   m_status_reallocation_id_statusTom_status MStatus            @relation("reallocation_id_statusTom_status", fields: [statusId], references: [idStatus], onDelete: NoAction, onUpdate: NoAction, map: "fk_m_status_to_reallocation")
-  //m_status_reallocation_id_status_toTom_status MStatus            @relation("reallocation_id_status_toTom_status", fields: [statusToId], references: [idStatus], onDelete: NoAction, onUpdate: NoAction, map: "fk_m_status_to_reallocation1")
+  // m_status_reallocation_id_status_toTom_status MStatus            @relation("reallocation_id_status_toTom_status", fields: [statusToId], references: [idStatus], onDelete: NoAction, onUpdate: NoAction, map: "fk_m_status_to_reallocation1")
   realization                               Realization        @relation(fields: [realizationId], references: [idRealization], onDelete: NoAction, onUpdate: NoAction, map: "fk_realization_to_reallocation")
   reallocation_item                         ReallocationItem[]
 

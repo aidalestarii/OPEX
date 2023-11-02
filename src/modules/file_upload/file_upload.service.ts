@@ -2,9 +2,13 @@ import {
   BadRequestException,
   Body,
   Injectable,
+  NotFoundException,
   ValidationPipe,
 } from '@nestjs/common';
-import { CreateFileDto } from './dto/create-file-upload.dto';
+import {
+  CreateFileDto,
+  CreateMDocCategoryDto,
+} from './dto/create-file-upload.dto';
 import { PrismaService } from 'src/core/service/prisma.service';
 import { error } from 'console';
 
@@ -12,10 +16,35 @@ import { error } from 'console';
 export class FileUploadService {
   constructor(private readonly prisma: PrismaService) {}
 
-  async create(createFileDto: CreateFileDto): Promise<any> {
-    const upload = await this.prisma.fileUpload.create({
-      data: createFileDto,
+  // async create(createFileDto: CreateFileDto): Promise<any> {
+  //   const upload = await this.prisma.fileUpload.create({
+  //     data: createFileDto,
+  //   });
+  //   return upload;
+  // }
+
+  async createdoc(data: CreateMDocCategoryDto) {
+    return this.prisma.mDocCategory.create({
+      data,
     });
-    return upload;
+  }
+
+  async createFileDto(docCategoryId: number, data: CreateFileDto) {
+    return this.prisma.fileUpload.create({
+      data: {
+        tableId: data.tableId,
+        tableName: data.tableName,
+        createdBy: data.createdBy,
+        docName: data.docName,
+        docSize: data.docSize,
+        docType: data.docType,
+        docLink: data.docLink,
+        mDocCategory: {
+          connect: {
+            idDocCategory: +docCategoryId,
+          },
+        },
+      },
+    });
   }
 }

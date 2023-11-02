@@ -7,6 +7,7 @@ import { MGlAccountModule } from './modules/m_gl_account/m_gl_account.module';
 import { KursModule } from './modules/kurs/kurs.module';
 import { FileUploadModule } from './modules/file_upload/file_upload.module';
 import { BudgetUploadModule } from './modules/budget_upload/budget_upload.module';
+import { MasterModule } from './modules/master/master.module';
 
 @Module({
   imports: [
@@ -17,6 +18,7 @@ import { BudgetUploadModule } from './modules/budget_upload/budget_upload.module
     KursModule,
     FileUploadModule,
     BudgetUploadModule,
+    MasterModule,
   ],
   controllers: [AppController],
   providers: [AppService],

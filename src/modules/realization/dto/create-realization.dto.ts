@@ -39,14 +39,21 @@ export class CreateRealizationDto {
   @IsEnum(StatusEnum)
   status: StatusEnum;
 
+  statusId;
+
   @IsString()
   department: string;
+
+  personalNumber;
+  statusToId;
 
   @IsString()
   employeeNumber: string;
 
   @IsString()
   departmentTo: string;
+
+  personalNumberTo;
 
   @IsString()
   employeeNumberTo: string;
