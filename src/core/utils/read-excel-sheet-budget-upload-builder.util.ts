@@ -19,7 +19,7 @@ export class ReadExcelSheetBudgetUploadBuilder {
   }
 
   //Mulai baris berapa
-  ignoreHeaderRow(rows: number = 14): this {
+  ignoreHeaderRow(rows: number = 1): this {
     const header = new HeaderDto();
     header.rows = rows;
     this.sheet.header = header;
