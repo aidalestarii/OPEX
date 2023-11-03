@@ -2,13 +2,7 @@
 import { extname } from 'path';
 import { existsSync, mkdirSync } from 'fs';
 import { diskStorage } from 'multer';
-//import { v4 as uuid } from 'uuid';
-import {
-  BadRequestException,
-  HttpCode,
-  HttpException,
-  HttpStatus,
-} from '@nestjs/common';
+import { BadRequestException } from '@nestjs/common';
 import { Request, Express } from 'express';
 
 // Multer configuration
