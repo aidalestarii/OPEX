@@ -11,52 +11,15 @@ import {
 } from 'class-validator';
 
 export class CreateFileDto {
-  // @IsNotEmpty()
-  // @IsString()
-  // uniqueId: string;
-
-  // @IsNotEmpty()
-  // @IsString()
-  // tableName: string;
-
-  // // @IsNotEmpty()
-  // // @IsNumber()
-  // tableId: number;
-
-  // // @IsNotEmpty()
-  // // @IsNumber()
-  // docCategoryId: number;
-
-  // docName: string;
-
-  // docLink: string;
-
-  // // @IsNotEmpty()
-  // // @IsNumber()
-  // docSize: number;
-
-  // docType: string;
-
-  // @IsNotEmpty()
-  // @IsString()
-  // createdBy: string;
-
-  // @IsNotEmpty()
-  // @IsString()
-  uniqueId: string;
-
-  // @IsNotEmpty()
-  // @IsString()
+  @IsNotEmpty()
+  @IsString()
   tableName: string;
+
   docCategoryId: number;
 
   // @IsNotEmpty()
   // @IsNumber()
   tableId: number;
-
-  //@IsNotEmpty()
-  //@IsNumber()
-  //docCategoryId: number;
 
   // @IsNotEmpty()
   // @IsString()
@@ -74,34 +37,26 @@ export class CreateFileDto {
   // @IsString()
   docType: string;
 
-  // @IsNotEmpty()
-  // @IsString()
+  @IsNotEmpty()
+  @IsString()
   createdBy: string;
 }
 
 export class CreateMDocCategoryDto {
-  // @IsNotEmpty()
-  // @IsNumber()
-  //idDocCategory: number;
-
-  // @IsNotEmpty()
-  // @IsString()
-  //uniqueId: string;
-
-  //@IsNotEmpty()
-  //@IsEnum(ModulEnum)
+  @IsNotEmpty()
+  @IsEnum(ModulEnum)
   module: ModulEnum;
 
-  // @IsNotEmpty()
-  // @IsString()
+  @IsNotEmpty()
+  @IsString()
   docCategory: string;
 
-  // @IsNotEmpty()
-  // @IsString()
+  @IsNotEmpty()
+  @IsString()
   description: string;
 
-  // @IsNotEmpty()
-  // @IsString()
+  @IsNotEmpty()
+  @IsString()
   createdBy: string;
 
   // fileUpload: CreateFileDto[];

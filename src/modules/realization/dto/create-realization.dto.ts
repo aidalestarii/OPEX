@@ -1,60 +1,39 @@
 import { IsInt, IsOptional, IsString, IsEnum, IsNumber } from 'class-validator';
 import { Prisma, RealizationTypeEnum, StatusEnum } from '@prisma/client';
 
+//
+
 export class CreateRealizationDto {
-  @IsOptional() // Tandai opsional jika dibutuhkan
-  @IsInt()
-  years: number;
+  readonly years: number;
+  readonly month: number;
+  readonly costCenterId: number;
+  readonly draftNumber: number;
+  readonly requestNumber?: number;
+  readonly taReff?: number;
+  readonly type?: string;
+  readonly responsibleNopeg: string;
+  readonly titleRequest: string;
+  readonly noteRequest: string;
+  readonly status?: string;
+  readonly statusId: number;
+  readonly department: string;
+  readonly personalNumber: string;
+  readonly statusToId: number;
+  readonly departmentTo: string;
+  readonly personalNumberTo: string;
+  readonly createdBy: string;
+  readonly realizationItems: CreateRealizationItemDto[];
+}
 
-  @IsOptional()
-  @IsInt()
-  month: number;
-
-  @IsInt()
-  costCenterId: number;
-
-  @IsInt()
-  draftNumber: number;
-
-  @IsOptional()
-  @IsInt()
-  requestNumber: number;
-
-  @IsOptional()
-  @IsInt()
-  taReff: number;
-
-  @IsEnum(RealizationTypeEnum)
-  type: RealizationTypeEnum;
-
-  @IsString()
-  responsibleNopeg: string;
-
-  @IsString()
-  titleRequest: string;
-
-  @IsString()
-  noteRequest: string;
-
-  @IsEnum(StatusEnum)
-  status: StatusEnum;
-
-  @IsInt()
-  statusId: number;
-
-  @IsString()
-  department: string;
-
-  personalNumber;
-  statusToId;
-
-  @IsString()
-  departmentTo: string;
-
-  personalNumberTo: string;
-
-  @IsString()
-  createdBy: string;
-
-  realization_item: Prisma.RealizationItemCreateManyRealizationInput[];
+export class CreateRealizationItemDto {
+  readonly glAccountId: number;
+  readonly amount: number;
+  readonly amountSubmission: number;
+  readonly amountHps?: number;
+  readonly amountCorrection?: number;
+  readonly periodStart: Date;
+  readonly periodFinish: Date;
+  readonly descPby: string;
+  readonly remarkPby: string;
+  readonly memo?: string;
 }
