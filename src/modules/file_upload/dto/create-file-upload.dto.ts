@@ -40,6 +40,7 @@ export class CreateFileDto {
   // @IsNotEmpty()
   // @IsString()
   tableName: string;
+  docCategoryId: number;
 
   // @IsNotEmpty()
   // @IsNumber()

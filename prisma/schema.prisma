@@ -149,7 +149,7 @@ model FileUpload {
 
   mDocCategory MDocCategory @relation(fields: [docCategoryId], references: [idDocCategory], onDelete: NoAction, onUpdate: NoAction, map: "fk_m_doc_category_to_file_upload")
 
-  @@unique([tableName, tableId, docCategoryId, docName], map: "file_upload_constraint")
+  // @@unique([tableName, tableId, docCategoryId, docName], map: "file_upload_constraint")
   @@map("file_upload")
 }
 

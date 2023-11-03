@@ -28,6 +28,7 @@ import { extname } from 'path';
   path: 'api/uploadfile',
 })
 export class FileUploadController {
+  prisma: any;
   constructor(private readonly fileUploadService: FileUploadService) {}
 
   /**
@@ -130,46 +131,95 @@ export class FileUploadController {
   createdoc(@Body() CreateMDocCategoryDto: CreateMDocCategoryDto) {
     return this.fileUploadService.createdoc(CreateMDocCategoryDto);
   }
-
-  @Post(':id/posts')
+  @Post('fileupload')
   @UsePipes(new ValidationPipe())
   @UseInterceptors(FileInterceptor('file', multerPdfOptions))
   async createPost(
     @UploadedFile() file: Express.Multer.File,
-    @Param('id') docCategoryId: number,
     @Body(new ValidationPipe()) CreateFileDto: CreateFileDto,
     @Res() res: Response,
   ): Promise<Response> {
     try {
-      CreateFileDto.tableId = 10;
+      if (!file) {
+        return res
+          .status(HttpStatus.BAD_REQUEST)
+          .send({ message: 'File not uploaded' });
+      }
+
+      CreateFileDto.tableId = 1;
       CreateFileDto.docSize = file.size;
       CreateFileDto.docType = extname(file.originalname);
       CreateFileDto.docLink = file.path;
       CreateFileDto.docName = file.filename;
+      CreateFileDto.docCategoryId = 1; // Set docCategoryId here or pass it in the request body
 
-      // const data = await this.fileUploadService.createFileDto(
-      //   docCategoryId,
-      //   CreateFileDto,
-      // );
+      const uploadedFileInfo = await this.fileUploadService.createFileDto(
+        CreateFileDto.docCategoryId, // Pass docCategoryId from the DTO
+        CreateFileDto,
+      );
 
       const response = {
-        //data: data.uploadedFileInfo,
+        data: uploadedFileInfo,
         meta: {
-          //data,
           file,
         },
         time: new Date(),
       };
-      console.log(file);
-      //return res.status(HttpStatus.OK).send(response);
+
+      return res.status(HttpStatus.OK).send(response);
     } catch (error) {
       console.error(error);
       return res
-        .status(HttpStatus.BAD_REQUEST)
+        .status(HttpStatus.INTERNAL_SERVER_ERROR)
         .send({ message: 'Internal server error' });
     }
-    {
-      return this.fileUploadService.createFileDto(docCategoryId, CreateFileDto);
-    }
   }
+
+  // @Post(':id/posts')
+  // @UsePipes(new ValidationPipe())
+  // @UseInterceptors(FileInterceptor('file', multerPdfOptions))
+  // async createPost(
+  //   @UploadedFile() file: Express.Multer.File,
+  //   @Param('id') docCategoryId: number,
+  //   @Body(new ValidationPipe()) CreateFileDto: CreateFileDto,
+  //   @Res() res: Response,
+  // ): Promise<Response> {
+  //   try {
+  //     CreateFileDto.tableId = 10;
+  //     CreateFileDto.docSize = file.size;
+  //     CreateFileDto.docType = extname(file.originalname);
+  //     CreateFileDto.docLink = file.path;
+  //     CreateFileDto.docName = file.filename;
+  //     CreateFileDto.tableName = 'namatable';
+
+  //     // const data = await this.fileUploadService.createFileDto(
+  //     //   docCategoryId,
+  //     //   CreateFileDto,
+  //     // );
+
+  //     const response = {
+  //       //data: data.uploadedFileInfo,
+  //       meta: {
+  //         //data,
+  //         file,
+  //       },
+  //       time: new Date(),
+  //     };
+  //     console.log(file);
+  //     //return res.status(HttpStatus.OK).send(response);
+  //   } catch (error) {
+  //     console.error(error);
+  //     return res
+  //       .status(HttpStatus.BAD_REQUEST)
+  //       .send({ message: 'Internal server error' });
+  //   }
+  //   {
+  //     return this.fileUploadService.createFileDto(docCategoryId, CreateFileDto);
+  //   }
+  // }
 }
+
+// @Post(':id/posts')
+// createPost(@Param('id') userId: number, @Body() createPostDto: CreatePostDto) {
+//   return this.userService.createPost(userId, createPostDto);
+// }

@@ -1,5 +1,5 @@
-import { IsInt, IsOptional, IsString, IsEnum } from 'class-validator';
-import { RealizationTypeEnum, StatusEnum } from '@prisma/client';
+import { IsInt, IsOptional, IsString, IsEnum, IsNumber } from 'class-validator';
+import { Prisma, RealizationTypeEnum, StatusEnum } from '@prisma/client';
 
 export class CreateRealizationDto {
   @IsOptional() // Tandai opsional jika dibutuhkan
@@ -10,8 +10,8 @@ export class CreateRealizationDto {
   @IsInt()
   month: number;
 
-  //   @IsInt()
-  //   idCostCenter: number;
+  @IsInt()
+  costCenterId: number;
 
   @IsInt()
   draftNumber: number;
@@ -39,7 +39,8 @@ export class CreateRealizationDto {
   @IsEnum(StatusEnum)
   status: StatusEnum;
 
-  statusId;
+  @IsInt()
+  statusId: number;
 
   @IsString()
   department: string;
@@ -48,16 +49,12 @@ export class CreateRealizationDto {
   statusToId;
 
   @IsString()
-  employeeNumber: string;
-
-  @IsString()
   departmentTo: string;
 
-  personalNumberTo;
-
-  @IsString()
-  employeeNumberTo: string;
+  personalNumberTo: string;
 
   @IsString()
   createdBy: string;
+
+  realization_item: Prisma.RealizationItemCreateManyRealizationInput[];
 }

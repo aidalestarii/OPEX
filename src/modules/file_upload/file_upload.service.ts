@@ -29,12 +29,31 @@ export class FileUploadService {
     });
   }
 
+  // async createFileDto(docCategoryId: number, data: CreateFileDto) {
+  //   return this.prisma.fileUpload.create({
+  //     data: {
+  //       tableId: data.tableId,
+  //       tableName: data.tableName,
+  //       createdBy: data.createdBy,
+  //       docName: data.docName,
+  //       docSize: data.docSize,
+  //       docType: data.docType,
+  //       docLink: data.docLink,
+  //       mDocCategory: {
+  //         connect: {
+  //           idDocCategory: +docCategoryId,
+  //         },
+  //       },
+  //     },
+  //   });
+  // }
+
   async createFileDto(docCategoryId: number, data: CreateFileDto) {
     return this.prisma.fileUpload.create({
       data: {
         tableId: data.tableId,
         tableName: data.tableName,
-        createdBy: data.createdBy,
+        createdBy: data.createdBy, // Add createdBy field here
         docName: data.docName,
         docSize: data.docSize,
         docType: data.docType,
@@ -48,3 +67,16 @@ export class FileUploadService {
     });
   }
 }
+
+// async createPost(userId: number, data: CreatePostDto) {
+// return this.prisma.post.create({
+//   data: {
+//     title: data.title,
+//     content: data.content,
+//     user: {
+//       connect: {
+//         id: +userId,
+//       },
+//     },
+//   },
+// });

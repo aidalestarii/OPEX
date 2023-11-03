@@ -31,4 +31,38 @@ export class RealizationService {
   //     }
   //   })
   // }
+
+  // async createRealization(createUserDto: CreateRealizationDto): Promise<any> {
+  //   const { years, month, costCenterId, draftNumber, requestNumber, taReff, type,
+  //     responsibleNopeg, titleRequest, noteRequest, status, statusId, department,
+  //     personalNumber, statusToId, departmentTo, personalNumberTo,
+  //     createdBy, realization_item } = createUserDto;
+
+  //   return this.prisma.$transaction(async (prisma) => {
+  //     // Membuat pengguna
+  //     const realization = await prisma.realization.create({
+  //       data: {
+  //         years, month, draftNumber, requestNumber, taReff, type,
+  //         responsibleNopeg, titleRequest, noteRequest, status, statusId, department,
+  //         personalNumber, statusToId, departmentTo, personalNumberTo,
+  //         createdBy,
+  //         m_cost_center:{
+  //           connect:{
+  //             idCostCenter: +costCenterId,
+  //           }
+  //         },
+  //         realization_item: {
+  //           createMany: {
+  //             data: realization_item,
+  //           },
+  //         },
+  //       },
+  //       include: {
+  //         realization_item: true,
+  //       },
+  //     });
+
+  //     return realization;
+  //   });
+  // }
 }
