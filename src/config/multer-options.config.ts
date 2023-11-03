@@ -13,7 +13,7 @@ import { Request, Express } from 'express';
 
 // Multer configuration
 export const multerConfig = {
-  dest: process.env.UPLOAD_LOCATION,
+  dest: './uploads/excel',
 };
 
 // Multer upload options
