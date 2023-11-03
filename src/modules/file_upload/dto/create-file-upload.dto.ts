@@ -1,6 +1,14 @@
+import { float } from '@elastic/elasticsearch/lib/api/types';
 import { ModulEnum } from '@prisma/client';
 import { Decimal } from '@prisma/client/runtime/library';
-import { IsEnum, IsNotEmpty, IsString, IsNumber } from 'class-validator';
+import {
+  IsEnum,
+  IsNotEmpty,
+  IsString,
+  IsNumber,
+  isDecimal,
+  IsDecimal,
+} from 'class-validator';
 
 export class CreateFileDto {
   // @IsNotEmpty()

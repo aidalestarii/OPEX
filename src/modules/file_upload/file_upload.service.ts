@@ -55,7 +55,7 @@ export class FileUploadService {
         tableName: data.tableName,
         createdBy: data.createdBy, // Add createdBy field here
         docName: data.docName,
-        docSize: data.docSize,
+        docSize: parseFloat((data.docSize / 1000000).toFixed(2)),
         docType: data.docType,
         docLink: data.docLink,
         mDocCategory: {

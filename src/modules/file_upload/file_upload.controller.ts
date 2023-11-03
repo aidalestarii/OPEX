@@ -131,7 +131,7 @@ export class FileUploadController {
   createdoc(@Body() CreateMDocCategoryDto: CreateMDocCategoryDto) {
     return this.fileUploadService.createdoc(CreateMDocCategoryDto);
   }
-  @Post('fileupload')
+  @Post('')
   @UsePipes(new ValidationPipe())
   @UseInterceptors(FileInterceptor('file', multerPdfOptions))
   async createPost(
@@ -166,6 +166,7 @@ export class FileUploadController {
         time: new Date(),
       };
 
+      console.log(file);
       return res.status(HttpStatus.OK).send(response);
     } catch (error) {
       console.error(error);
