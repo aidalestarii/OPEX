@@ -1,19 +1,35 @@
+import { IsNotEmpty, IsNumber, IsOptional, IsString } from 'class-validator';
+
 export class CreateRealizationItemDto {
-  idRealizationItem;
-  uniqueId;
-  realizationId;
-  glAccountId;
-  amount;
-  amountSubmission;
-  amountHps;
-  amountCorrection;
-  periodStart;
-  periodFinish;
-  descPby;
-  remarkPby;
-  memo;
-  createdAt;
-  createdBy;
-  updatedAt;
-  updatedBy;
+  @IsNotEmpty()
+  @IsNumber()
+  amount: number;
+
+  amountSubmission: number;
+
+  @IsOptional()
+  amountHps: number;
+
+  @IsOptional()
+  amountCorrection: number;
+
+  periodStart: number;
+
+  periodFinish: number;
+
+  @IsNotEmpty()
+  @IsString()
+  descPby: string;
+
+  @IsNotEmpty()
+  @IsString()
+  remarkPby: string;
+
+  @IsOptional()
+  @IsString()
+  memo: string;
+
+  @IsNotEmpty()
+  @IsString()
+  createdBy: string;
 }

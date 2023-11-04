@@ -9,6 +9,8 @@ import {
   ValidationPipe,
   UsePipes,
   Param,
+  Delete,
+  NotFoundException,
 } from '@nestjs/common';
 import { FileUploadService } from './file_upload.service';
 import {
@@ -30,7 +32,6 @@ import { extname } from 'path';
 export class FileUploadController {
   prisma: any;
   constructor(private readonly fileUploadService: FileUploadService) {}
-
   /**
    * Upload docs
    * JSDoc
@@ -39,95 +40,7 @@ export class FileUploadController {
    * @returns
    */
 
-  // @Post('/postpdf')
-  // @UsePipes(new ValidationPipe())
-  // @UseInterceptors(FileInterceptor('file', multerPdfOptions))
-  // async uploadpdf(
-  //   @UploadedFile() file: Express.Multer.File,
-  //   @Body(new ValidationPipe())
-  //   createFileDto: CreateFileDto,
-  //   @Res() res: Response,
-  // ): Promise<Response> {
-  //   try {
-  //     createFileDto.tableId = 10;
-  //     createFileDto.docCategoryId = 20;
-  //     createFileDto.docSize = file.size;
-  //     createFileDto.docType = extname(file.originalname);
-  //     createFileDto.docLink = file.path;
-  //     createFileDto.docName = file.filename;
-  //     const data = await this.fileUploadService.create(createFileDto);
-
-  //     const response = {
-  //       data: data.uploadedFileInfo,
-  //       meta: {
-  //         data,
-  //         file,
-  //       },
-  //       time: new Date(),
-  //     };
-
-  //     console.log(file);
-  //     return res.status(HttpStatus.OK).send(response);
-  //   } catch (error) {
-  //     console.error(error);
-  //     return res
-  //       .status(HttpStatus.BAD_REQUEST)
-  //       .send({ message: 'Internal server error' });
-  //   }
-  // }
-
-  // @Post('/upload')
-  // async uploadFile(
-  //   @Body(ValidationPipe) createFileUploadDto: CreateFileDto,
-  //   @Body(ValidationPipe) createMDocCategoryDto: CreateMDocCategoryDto,
-  //   @Res() res: Response,
-  // ): Promise<Response> {
-  //   try {
-  //     const data = await this.fileUploadService.createFileUpload(
-  //       createFileUploadDto,
-  //       createMDocCategoryDto,
-  //     );
-  //     return res.status(HttpStatus.OK).json({ data });
-  //   } catch (error) {
-  //     console.error(error);
-  //     return res
-  //       .status(HttpStatus.BAD_REQUEST)
-  //       .json({ message: 'Internal server error' });
-  //   }
-
-  //   @Post('/postexcel')
-  //   @UsePipes(new ValidationPipe())
-  //   @UseInterceptors(FileInterceptor('file', multerConfig))
-  //   async uploadexcel(
-  //     @UploadedFile() file: Express.Multer.File,
-  //     @Body(new ValidationPipe())
-  //     createFileDto: CreateFileDto,
-  //     @Res() res: Response,
-  //   ): Promise<Response> {
-  //     try {
-  //       createFileDto.docSize = file.size;
-  //       const data = await this.fileUploadService.create(createFileDto);
-
-  //       const response = {
-  //         data: data.uploadedFileInfo,
-  //         meta: {
-  //           data,
-  //           file,
-  //         },
-  //         time: new Date(),
-  //       };
-
-  //       console.log(file);
-  //       return res.status(HttpStatus.OK).send(response);
-  //     } catch (error) {
-  //       console.error(error);
-  //       return res
-  //         .status(HttpStatus.BAD_REQUEST)
-  //         .send({ message: 'Internal server error' });
-  //     }
-  //   }
-
-  @Post('doccategory')
+  @Post('category')
   createdoc(@Body() CreateMDocCategoryDto: CreateMDocCategoryDto) {
     return this.fileUploadService.createdoc(CreateMDocCategoryDto);
   }
@@ -146,7 +59,7 @@ export class FileUploadController {
           .send({ message: 'File not uploaded' });
       }
 
-      CreateFileDto.tableId = 1;
+      CreateFileDto.tableName = 'Realization';
       CreateFileDto.docSize = file.size;
       CreateFileDto.docType = extname(file.originalname);
       CreateFileDto.docLink = file.path;
@@ -176,6 +89,32 @@ export class FileUploadController {
     }
   }
 
+  @Delete(':id')
+  async deleteFile(
+    @Param('id') fileId: number,
+    @Res() res: Response,
+  ): Promise<Response> {
+    try {
+      const deletedFile = await this.fileUploadService.deleteFile(+fileId);
+      if (!deletedFile) {
+        throw new NotFoundException(`File with id ${fileId} not found`);
+      }
+
+      const response = {
+        message: 'File deleted successfully',
+        data: deletedFile,
+        time: new Date(),
+      };
+
+      return res.status(HttpStatus.OK).send(response);
+    } catch (error) {
+      console.error(error);
+      return res
+        .status(HttpStatus.INTERNAL_SERVER_ERROR)
+        .send({ message: 'Internal server error' });
+    }
+  }
+
   @Post('excel')
   @UsePipes(new ValidationPipe())
   @UseInterceptors(FileInterceptor('file', multerConfig))
@@ -191,7 +130,6 @@ export class FileUploadController {
           .send({ message: 'File not uploaded' });
       }
 
-      CreateFileDto.tableId = 1;
       CreateFileDto.docSize = file.size;
       CreateFileDto.docType = extname(file.originalname);
       CreateFileDto.docLink = file.path;

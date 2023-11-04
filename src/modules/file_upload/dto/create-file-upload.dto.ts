@@ -1,40 +1,19 @@
-import { float } from '@elastic/elasticsearch/lib/api/types';
 import { ModulEnum } from '@prisma/client';
-import { Decimal } from '@prisma/client/runtime/library';
-import {
-  IsEnum,
-  IsNotEmpty,
-  IsString,
-  IsNumber,
-  isDecimal,
-  IsDecimal,
-} from 'class-validator';
+import { IsEnum, IsNotEmpty, IsOptional, IsString } from 'class-validator';
 
 export class CreateFileDto {
-  @IsNotEmpty()
-  @IsString()
   tableName: string;
 
   docCategoryId: number;
 
-  // @IsNotEmpty()
-  // @IsNumber()
   tableId: number;
 
-  // @IsNotEmpty()
-  // @IsString()
   docName: string;
 
-  // @IsNotEmpty()
-  // @IsString()
   docLink: string;
 
-  // @IsNotEmpty()
-  // @IsNumber()
   docSize: number;
 
-  // @IsNotEmpty()
-  // @IsString()
   docType: string;
 
   @IsNotEmpty()
@@ -43,7 +22,7 @@ export class CreateFileDto {
 }
 
 export class CreateMDocCategoryDto {
-  @IsNotEmpty()
+  @IsOptional()
   @IsEnum(ModulEnum)
   module: ModulEnum;
 
@@ -58,6 +37,4 @@ export class CreateMDocCategoryDto {
   @IsNotEmpty()
   @IsString()
   createdBy: string;
-
-  // fileUpload: CreateFileDto[];
 }
