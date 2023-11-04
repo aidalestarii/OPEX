@@ -189,7 +189,7 @@ export class BudgetUploadProcessExcelToJsonBuilder {
       throw new MessagesInvalidDataError(errors);
     }
     data.budgetUpload = data['td2023'];
-    console.log(data);
+    // console.log(data);
     return data;
   }
 }
