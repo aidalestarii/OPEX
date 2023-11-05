@@ -1,53 +1,58 @@
-import {
-    IsInt,
-    IsOptional,
-    IsString,
-    IsEnum,
-    IsNumber,
-    IsNotEmpty,
-  } from 'class-validator';
-  import { Prisma, RealizationTypeEnum, StatusEnum } from '@prisma/client';
-  
-  export class CreateRealizationDto {
-    years: number;
-  
-    month: number;
-  
-    costCenterId: number;
-  
-    draftNumber: number;
-  
-    @IsOptional()
-    requestNumber: number;
-  
-    @IsOptional()
-    taReff: number;
-  
-    @IsOptional()
-    type: string;
-  
-    responsibleNopeg: string;
-  
-    titleRequest: string;
-  
-    noteRequest: string;
-  
-    @IsOptional()
-    status: string;
-  
-    statusId: number;
-  
-    department: string;
-  
-    personalNumber: string;
-  
-    statusToId: number;
-  
-    departmentTo: string;
-  
-    personalNumberTo: string;
-  
-    @IsNotEmpty()
-    @IsString()
-    createdBy: string;
-  }
+// import {
+//   IsInt,
+//   IsOptional,
+//   IsString,
+//   IsEnum,
+//   IsNumber,
+//   IsNotEmpty,
+// } from 'class-validator';
+// import { Prisma, RealizationTypeEnum, StatusEnum } from '@prisma/client';
+
+import { integer } from '@elastic/elasticsearch/lib/api/types';
+import { RealizationTypeEnum, StatusEnum } from '@prisma/client';
+import { Decimal, DecimalJsLike } from '@prisma/client/runtime/library';
+import { IsDecimal, IsEnum, IsNumber, IsOptional } from 'class-validator';
+
+export class CreateRealizationItemDto {
+  readonly realizationId: number;
+  readonly glAccountId: number;
+  readonly mGlAccountIdGlAccount: number;
+  readonly amount: number;
+  readonly amountSubmission: number;
+  readonly amountHps?: number;
+  readonly amountCorrection: number;
+  readonly periodStart: Date;
+  readonly periodFinish: Date;
+  readonly remarkPby: string;
+  readonly memo?: string;
+  readonly descPby: string;
+  readonly createdBy: string;
+}
+
+export class CreateRealizationWithItemsDto {
+  readonly years: number;
+  readonly month: number;
+  readonly costCenterId: number;
+  readonly draftNumber: number;
+  readonly requestNumber: number;
+  readonly taReff: number;
+
+  @IsOptional()
+  @IsEnum(RealizationTypeEnum)
+  type: RealizationTypeEnum;
+
+  readonly responsibleNopeg: string;
+  readonly titleRequest: string;
+  readonly noteRequest: string;
+
+  @IsOptional()
+  @IsEnum(StatusEnum)
+  status: StatusEnum;
+
+  readonly department: string;
+  readonly personalNumber: string;
+  readonly departmentTo: string;
+  readonly personalNumberTo: string;
+  readonly createdBy: string;
+  readonly realizationItems: CreateRealizationItemDto[];
+}

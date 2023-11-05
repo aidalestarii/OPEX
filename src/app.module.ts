@@ -8,6 +8,7 @@ import { KursModule } from './modules/kurs/kurs.module';
 import { FileUploadModule } from './modules/file_upload/file_upload.module';
 import { BudgetUploadModule } from './modules/budget_upload/budget_upload.module';
 import { MasterModule } from './modules/master/master.module';
+import { RealizationModule } from './modules/realization/realization.module';
 
 @Module({
   imports: [
@@ -19,6 +20,7 @@ import { MasterModule } from './modules/master/master.module';
     FileUploadModule,
     BudgetUploadModule,
     MasterModule,
+    RealizationModule,
   ],
   controllers: [AppController],
   providers: [AppService],
