@@ -17,15 +17,16 @@ import { UpdateFileDto } from './dto/update-file-upload.dto';
 export class FileUploadService {
   constructor(private readonly prisma: PrismaService) {}
 
-  async createdoc(data: CreateMDocCategoryDto) {
-    return this.prisma.mDocCategory.create({
-      data,
+  async createdoc(createmDocCategoryDto: CreateMDocCategoryDto) {
+    const data = await this.prisma.mDocCategory.create({
+      data: createmDocCategoryDto,
     });
+    return { data };
   }
 
   async findAllDoc() {
-    const docCategory = await this.prisma.mDocCategory.findMany();
-    return docCategory;
+    const data = await this.prisma.mDocCategory.findMany();
+    return { data };
   }
 
   async createFileDto(docCategoryId: number, data: CreateFileDto) {
@@ -55,31 +56,31 @@ export class FileUploadService {
     if (!existingFile) {
       throw new NotFoundException(`File with ID ${id} not found`);
     }
-    const updateFile = await this.prisma.fileUpload.update({
+    const data = await this.prisma.fileUpload.update({
       where: { idUpload: id },
       data: updateFileDto,
     });
-    return updateFile;
+    return { data };
   }
 
   async deleteFile(fileId: number): Promise<any> {
-    const deletedFile = await this.prisma.fileUpload.delete({
+    const data = await this.prisma.fileUpload.delete({
       where: {
         idUpload: fileId,
       },
     });
 
-    if (!deletedFile) {
+    if (!data) {
       throw new NotFoundException(`File with id ${fileId} not found`);
     }
 
-    return deletedFile;
+    return { data };
   }
 
   async remove(id: number) {
-    const deletedMDocCategory = await this.prisma.mDocCategory.delete({
+    const data = await this.prisma.mDocCategory.delete({
       where: { idDocCategory: id },
     });
-    return deletedMDocCategory;
+    return { data };
   }
 }

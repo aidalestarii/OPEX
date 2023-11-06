@@ -6,6 +6,7 @@ import { PrismaService } from 'src/core/service/prisma.service';
 @Injectable()
 export class KursService {
   constructor(private readonly prisma: PrismaService) {}
+
   async create(createKursDto: CreateKursDto) {
     const data = await this.prisma.mKurs.create({
       data: createKursDto,

@@ -8,32 +8,36 @@ export class MCostCenterService {
   constructor(private readonly prisma: PrismaService) {}
 
   async create(createMCostCenterDto: CreateMCostCenterDto) {
-    const mcost = await this.prisma.mCostCenter.create({
+    const data = await this.prisma.mCostCenter.create({
       data: createMCostCenterDto,
     });
-    return mcost;
+    return { data };
   }
 
   async findAll() {
-    const mcost = await this.prisma.mCostCenter.findMany();
-    return mcost;
+    const data = await this.prisma.mCostCenter.findMany();
+    return { data };
   }
 
   async findOne(id: number) {
-    const mcost = await this.prisma.mCostCenter.findUnique({ where: { idCostCenter: id } });
-    return mcost;
+    const data = await this.prisma.mCostCenter.findUnique({
+      where: { idCostCenter: id },
+    });
+    return { data };
   }
 
   async update(id: number, updateMCostCenterDto: UpdateMCostCenterDto) {
-    const mcost = await this.prisma.mCostCenter.update({
+    const data = await this.prisma.mCostCenter.update({
       where: { idCostCenter: id },
       data: updateMCostCenterDto,
     });
-    return mcost;
+    return { data };
   }
 
   async remove(id: number) {
-    const mcost = await this.prisma.mCostCenter.delete({ where: { idCostCenter: id } });
-    return mcost;
+    const data = await this.prisma.mCostCenter.delete({
+      where: { idCostCenter: id },
+    });
+    return { data };
   }
 }
