@@ -6,6 +6,7 @@ import { PrismaService } from 'src/core/service/prisma.service';
 @Injectable()
 export class MGlAccountService {
   constructor(private readonly prisma: PrismaService) {}
+
   async create(createMGlAccountDto: CreateMGlAccountDto) {
     const mgl = await this.prisma.mGlAccount.create({
       data: createMGlAccountDto,
@@ -14,12 +15,14 @@ export class MGlAccountService {
   }
 
   async findAll() {
-    const mgl = await this.prisma.mGlAccount.findMany();
-    return mgl;
+    const data = await this.prisma.mGlAccount.findMany();
+    return { data };
   }
 
   async findOne(id: number) {
-    const mgl = await this.prisma.mGlAccount.findUnique({ where: { idGlAccount: id } });
+    const mgl = await this.prisma.mGlAccount.findUnique({
+      where: { idGlAccount: id },
+    });
     return mgl;
   }
 
@@ -32,7 +35,9 @@ export class MGlAccountService {
   }
 
   async remove(id: number) {
-    const mgl = await this.prisma.mGlAccount.delete({ where: { idGlAccount: id } });
+    const mgl = await this.prisma.mGlAccount.delete({
+      where: { idGlAccount: id },
+    });
     return mgl;
   }
 }
