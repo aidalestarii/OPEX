@@ -14,11 +14,11 @@ export class ItemsBudgetUploadDto {
 
   // @IsNotEmpty()
   @IsNumber()
-  idGlAccount: number;
+  glAccountId: number;
 
   // @IsNotEmpty()
   @IsNumber()
-  idCostCenter: number;
+  costCenterId: number;
 
   @IsOptional()
   @IsNumber()
@@ -88,6 +88,10 @@ export class ItemsBudgetUploadDto {
   @IsNumber()
   total: number;
 
+  // @IsOptional()
+  // @IsString()
+  // createdBy: string;
+
   static propertyConfig: Partial<
     Record<
       keyof ItemsBudgetUploadDto,
@@ -95,8 +99,8 @@ export class ItemsBudgetUploadDto {
     >
   > = {
     years: { dataType: 'number', maxLength: 300 },
-    idCostCenter: { dataType: 'string', maxLength: 300 },
-    idGlAccount: { dataType: 'number', maxLength: 300 },
+    costCenterId: { dataType: 'number', maxLength: 300 },
+    glAccountId: { dataType: 'number', maxLength: 300 },
     value01: { dataType: 'decimal', maxLength: 300 },
     value02: { dataType: 'decimal', maxLength: 300 },
     value03: { dataType: 'decimal', maxLength: 300 },
@@ -117,8 +121,8 @@ export class ItemsBudgetUploadDto {
 
   static propertyNames: (keyof ItemsBudgetUploadDto)[] = [
     'years',
-    'idCostCenter',
-    'idGlAccount',
+    'costCenterId',
+    'glAccountId',
     'value01',
     'value02',
     'value03',
