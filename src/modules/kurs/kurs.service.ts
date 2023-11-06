@@ -7,16 +7,15 @@ import { PrismaService } from 'src/core/service/prisma.service';
 export class KursService {
   constructor(private readonly prisma: PrismaService) {}
   async create(createKursDto: CreateKursDto) {
-
-    const kurs = await this.prisma.mKurs.create({
+    const data = await this.prisma.mKurs.create({
       data: createKursDto,
     });
-    return kurs;
+    return { data };
   }
 
   async findAll() {
-    const kurs = await this.prisma.mKurs.findMany();
-    return kurs;
+    const data = await this.prisma.mKurs.findMany();
+    return { data };
   }
 
   async findOne(id: number) {
@@ -32,17 +31,17 @@ export class KursService {
     if (!existingKurs) {
       throw new NotFoundException(`Kurs with ID ${id} not found`);
     }
-    const kurs = await this.prisma.mKurs.update({
+    const data = await this.prisma.mKurs.update({
       where: { idKurs: id },
       data: updateKursDto,
     });
-    return kurs;
+    return { data };
   }
 
   async remove(id: number) {
-    const kurs = await this.prisma.mKurs.delete({
+    const data = await this.prisma.mKurs.delete({
       where: { idKurs: id },
     });
-    return kurs;
+    return { data };
   }
 }

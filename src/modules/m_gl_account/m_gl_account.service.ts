@@ -8,10 +8,10 @@ export class MGlAccountService {
   constructor(private readonly prisma: PrismaService) {}
 
   async create(createMGlAccountDto: CreateMGlAccountDto) {
-    const mgl = await this.prisma.mGlAccount.create({
+    const data = await this.prisma.mGlAccount.create({
       data: createMGlAccountDto,
     });
-    return mgl;
+    return { data };
   }
 
   async findAll() {
@@ -20,24 +20,24 @@ export class MGlAccountService {
   }
 
   async findOne(id: number) {
-    const mgl = await this.prisma.mGlAccount.findUnique({
+    const data = await this.prisma.mGlAccount.findUnique({
       where: { idGlAccount: id },
     });
-    return mgl;
+    return { data };
   }
 
   async update(id: number, updateMGlAccountDto: UpdateMGlAccountDto) {
-    const mgl = await this.prisma.mGlAccount.update({
+    const data = await this.prisma.mGlAccount.update({
       where: { idGlAccount: id },
       data: updateMGlAccountDto,
     });
-    return mgl;
+    return { data };
   }
 
   async remove(id: number) {
-    const mgl = await this.prisma.mGlAccount.delete({
+    const data = await this.prisma.mGlAccount.delete({
       where: { idGlAccount: id },
     });
-    return mgl;
+    return { data };
   }
 }
