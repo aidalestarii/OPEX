@@ -10,26 +10,9 @@
 
 import { integer } from '@elastic/elasticsearch/lib/api/types';
 import { RealizationTypeEnum, StatusEnum } from '@prisma/client';
-import { Decimal, DecimalJsLike } from '@prisma/client/runtime/library';
 import { IsDecimal, IsEnum, IsNumber, IsOptional } from 'class-validator';
 
-export class CreateRealizationItemDto {
-  readonly realizationId: number;
-  readonly glAccountId: number;
-  readonly mGlAccountIdGlAccount: number;
-  readonly amount: number;
-  readonly amountSubmission: number;
-  readonly amountHps?: number;
-  readonly amountCorrection: number;
-  readonly periodStart: Date;
-  readonly periodFinish: Date;
-  readonly remarkPby: string;
-  readonly memo?: string;
-  readonly descPby: string;
-  readonly createdBy: string;
-}
-
-export class CreateRealizationWithItemsDto {
+export class CreateRealization {
   readonly years: number;
   readonly month: number;
   readonly costCenterId: number;
@@ -44,6 +27,8 @@ export class CreateRealizationWithItemsDto {
   readonly responsibleNopeg: string;
   readonly titleRequest: string;
   readonly noteRequest: string;
+  // readonly statusId: number;
+  // readonly StatusToId: number;
 
   @IsOptional()
   @IsEnum(StatusEnum)
@@ -54,5 +39,30 @@ export class CreateRealizationWithItemsDto {
   readonly departmentTo: string;
   readonly personalNumberTo: string;
   readonly createdBy: string;
-  readonly realizationItems: CreateRealizationItemDto[];
+  readonly realizationItems: CreateRealizationItem[];
+}
+
+export class CreateRealizationItem {
+  readonly realizationId: number;
+  readonly glAccountId: number;
+  readonly amount: number;
+  readonly amountSubmission: number;
+  readonly amountHps?: number;
+  readonly amountCorrection: number;
+  readonly periodStart: Date;
+  readonly periodFinish: Date;
+  readonly remarkPby: string;
+  readonly memo?: string;
+  readonly descPby: string;
+  readonly createdBy: string;
+}
+
+export class MStatus {
+  readonly type: string;
+  readonly status: string;
+  readonly step: number;
+  readonly department: string;
+  readonly level: number;
+  readonly function: string;
+  readonly createdBy: string;
 }

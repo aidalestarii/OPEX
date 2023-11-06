@@ -24,8 +24,9 @@ export class MGlAccountController {
   }
 
   @Get()
-  findAll() {
-    return this.mGlAccountService.findAll();
+  async findAll() {
+    const data = await this.mGlAccountService.findAll();
+    return { data };
   }
 
   @Get(':id')

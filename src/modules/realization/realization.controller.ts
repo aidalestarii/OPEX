@@ -1,6 +1,6 @@
 import { Body, Controller, Post } from '@nestjs/common';
 import { RealizationService } from './realization.service';
-import { CreateRealizationWithItemsDto } from './dto/create-realization.dto';
+import { CreateRealization, MStatus } from './dto/create-realization.dto';
 
 @Controller({
   version: '1',
@@ -11,10 +11,13 @@ export class RealizationController {
 
   @Post()
   async createRealizationWithItems(
-    @Body() createRealizationWithItemsDto: CreateRealizationWithItemsDto,
+    @Body() createRealization: CreateRealization,
   ) {
-    return this.realizationService.createRealizationWithItems(
-      createRealizationWithItemsDto,
-    );
+    return this.realizationService.createRealizationItems(createRealization);
+  }
+
+  @Post('/mstatus')
+  async createMStatus(@Body() mStatus: MStatus) {
+    return this.realizationService.createMStatus(mStatus);
   }
 }

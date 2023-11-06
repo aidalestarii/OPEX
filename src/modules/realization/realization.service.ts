@@ -4,21 +4,28 @@ import { PrismaService } from 'src/core/service/prisma.service';
 import { CreateMCostCenterDto } from '../m_cost_center/dto/create-m_cost_center.dto';
 import { CreateMGlAccountDto } from '../m_gl_account/dto/create-m_gl_account.dto';
 import {
-  CreateRealizationWithItemsDto,
-  CreateRealizationItemDto,
+  CreateRealization,
+  CreateRealizationItem,
+  MStatus,
 } from './dto/create-realization.dto';
 
 @Injectable()
 export class RealizationService {
   constructor(private readonly prisma: PrismaService) {}
 
-  async createRealizationWithItems(
-    createRealizationWithItemsDto: CreateRealizationWithItemsDto,
-  ) {
-    // Extract Realization data from the DTO
-    const { realizationItems, ...realizationData } =
-      createRealizationWithItemsDto;
+  async createMStatus(mstatus: MStatus) {
+    console.log(mstatus);
+    const status = await this.prisma.mStatus.create({
+      data: mstatus,
+    });
+    return status;
+  }
 
+  async createRealizationItems(createRealization: CreateRealization) {
+    // Extract Realization data from the DTO
+    const { realizationItems, ...realizationData } = createRealization;
+
+    //create realization
     return await this.prisma.$transaction(async (prisma) => {
       const createdRealization = await prisma.realization.create({
         data: {
@@ -45,8 +52,9 @@ export class RealizationService {
         },
       });
 
+      //create realization item
       const createdItems = await Promise.all(
-        realizationItems.map((item: CreateRealizationItemDto) => {
+        realizationItems.map((item: CreateRealizationItem) => {
           return prisma.realizationItem.create({
             data: {
               ...item,
@@ -55,7 +63,17 @@ export class RealizationService {
           });
         }),
       );
-      return { ...createdRealization, realizationItems: createdItems };
+      // const createdOtherTableData = await prisma.mStatus.create({
+      //   data: {
+      //     // ... otherTableData (sesuaikan dengan struktur data tabel lainnya)
+      //     idStatus: createRealization.statusId
+      //     // idStatus: createRealization.statusToId,
+      //   },
+      // });
+      return {
+        ...createdRealization,
+        realizationItems: createdItems,
+      };
     });
   }
 }
