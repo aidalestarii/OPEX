@@ -14,13 +14,13 @@ export class MCostCenterService {
 
   async create(createMCostCenterDto: CreateMCostCenterDto) {
     try {
-      const kurs = await this.prisma.mCostCenter.create({
+      const costcenter = await this.prisma.mCostCenter.create({
         data: createMCostCenterDto,
       });
       return {
-        data: kurs,
+        data: costcenter,
         meta: null,
-        message: 'Kurs created successfully',
+        message: 'Cost center created successfully',
         status: HttpStatus.CREATED,
         time: new Date(),
       };
@@ -29,7 +29,7 @@ export class MCostCenterService {
         {
           data: null,
           meta: null,
-          message: 'Failed to create kurs',
+          message: 'Failed to create cost center',
           status: HttpStatus.INTERNAL_SERVER_ERROR,
           time: new Date(),
         },
@@ -39,21 +39,21 @@ export class MCostCenterService {
   }
 
   async findAll() {
-    const data = await this.prisma.mCostCenter.findMany();
+    const costcenter = await this.prisma.mCostCenter.findMany();
     return {
-      data: data,
+      data: costcenter,
       meta: null,
-      message: 'All kurs retrieved',
+      message: 'All cost center retrieved',
       status: HttpStatus.OK,
       time: new Date(),
     };
   }
 
   async findOne(id: number) {
-    const kurs = await this.prisma.mCostCenter.findUnique({
+    const costcenter = await this.prisma.mCostCenter.findUnique({
       where: { idCostCenter: id },
     });
-    if (!kurs) {
+    if (!costcenter) {
       throw new HttpException(
         {
           data: null,
@@ -66,7 +66,7 @@ export class MCostCenterService {
       );
     }
     return {
-      data: kurs,
+      data: costcenter,
       meta: null,
       message: 'Cost Center found',
       status: HttpStatus.OK,
@@ -80,7 +80,7 @@ export class MCostCenterService {
       where: { idCostCenter: id },
     });
     if (!existingCostCenter) {
-      throw new NotFoundException(`Cost Center with ID ${id} not found`);
+      throw new NotFoundException(`Cost center with ID ${id} not found`);
     }
     try {
       const updatedKurs = await this.prisma.mCostCenter.update({
@@ -90,7 +90,7 @@ export class MCostCenterService {
       return {
         data: updateMCostCenterDto,
         meta: null,
-        message: 'Cost Center updated successfully',
+        message: 'Cost center updated successfully',
         status: HttpStatus.OK,
         time: new Date(),
       };
@@ -99,7 +99,7 @@ export class MCostCenterService {
         {
           data: null,
           meta: null,
-          message: 'Failed to update Cost Center',
+          message: 'Failed to update cost center',
           status: HttpStatus.INTERNAL_SERVER_ERROR,
           time: new Date(),
         },
@@ -109,9 +109,34 @@ export class MCostCenterService {
   }
 
   async remove(id: number) {
-    const data = await this.prisma.mCostCenter.delete({
+    const existingCostCenter = await this.prisma.mCostCenter.findUnique({
       where: { idCostCenter: id },
     });
-    return { data };
+    if (!existingCostCenter) {
+      throw new NotFoundException(`Cost center with id ${id} not found`);
+    }
+    try {
+      const deleteCostCenter = await this.prisma.mCostCenter.delete({
+        where: { idCostCenter: id },
+      });
+      return {
+        data: deleteCostCenter,
+        meta: null,
+        message: 'Cost center deleted successfully',
+        status: HttpStatus.OK,
+        time: new Date(),
+      };
+    } catch (error) {
+      throw new HttpException(
+        {
+          data: null,
+          meta: null,
+          message: 'Failed to delete cost center',
+          status: HttpStatus.INTERNAL_SERVER_ERROR,
+          time: new Date(),
+        },
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
   }
 }

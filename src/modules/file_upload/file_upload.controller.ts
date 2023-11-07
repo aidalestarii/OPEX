@@ -68,7 +68,7 @@ export class FileUploadController {
       CreateFileDto.docName = file.filename;
       CreateFileDto.docCategoryId = CreateFileDto.docCategoryId; // Set docCategoryId here or pass it in the request body
 
-      const uploadedFileInfo = await this.fileUploadService.createFileDto(
+      const uploadedFileInfo = await this.fileUploadService.createFile(
         CreateFileDto.docCategoryId, // Pass docCategoryId from the DTO
         CreateFileDto,
       );
@@ -135,40 +135,27 @@ export class FileUploadController {
     @Body(new ValidationPipe()) CreateFileDto: CreateFileDto,
     @Res() res: Response,
   ): Promise<Response> {
-    try {
-      if (!file) {
-        return res
-          .status(HttpStatus.BAD_REQUEST)
-          .send({ message: 'File not uploaded' });
-      }
+    CreateFileDto.docSize = file.size;
+    CreateFileDto.docType = extname(file.originalname);
+    CreateFileDto.docLink = file.path;
+    CreateFileDto.docName = file.filename;
+    CreateFileDto.docCategoryId = 1; // Set docCategoryId here or pass it in the request body
 
-      CreateFileDto.docSize = file.size;
-      CreateFileDto.docType = extname(file.originalname);
-      CreateFileDto.docLink = file.path;
-      CreateFileDto.docName = file.filename;
-      CreateFileDto.docCategoryId = 1; // Set docCategoryId here or pass it in the request body
+    const uploadedFileInfo = await this.fileUploadService.createFile(
+      CreateFileDto.docCategoryId, // Pass docCategoryId from the DTO
+      CreateFileDto,
+    );
 
-      const uploadedFileInfo = await this.fileUploadService.createFileDto(
-        CreateFileDto.docCategoryId, // Pass docCategoryId from the DTO
-        CreateFileDto,
-      );
+    const response = {
+      data: uploadedFileInfo,
+      meta: {
+        file,
+      },
+      time: new Date(),
+    };
 
-      const response = {
-        data: uploadedFileInfo,
-        meta: {
-          file,
-        },
-        time: new Date(),
-      };
-
-      console.log(file);
-      return res.status(HttpStatus.OK).send(response);
-    } catch (error) {
-      console.error(error);
-      return res
-        .status(HttpStatus.INTERNAL_SERVER_ERROR)
-        .send({ message: 'Internal server error' });
-    }
+    console.log(file);
+    return res.status(HttpStatus.OK).send(CreateFileDto);
   }
 
   @Delete(':id')

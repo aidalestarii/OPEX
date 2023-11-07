@@ -83,12 +83,12 @@ export class MGlAccountService {
       throw new NotFoundException(`Gl Account with ID ${id} not found`);
     }
     try {
-      const updatedKurs = await this.prisma.mGlAccount.update({
+      const updatedMGlAccount = await this.prisma.mGlAccount.update({
         where: { idGlAccount: id },
         data: updateMGlAccountDto,
       });
       return {
-        data: updateMGlAccountDto,
+        data: updatedMGlAccount,
         meta: null,
         message: 'Gl Account updated successfully',
         status: HttpStatus.OK,
@@ -109,9 +109,34 @@ export class MGlAccountService {
   }
 
   async remove(id: number) {
-    const data = await this.prisma.mGlAccount.delete({
+    const existingGlAccount = await this.prisma.mGlAccount.findUnique({
       where: { idGlAccount: id },
     });
-    return { data };
+    if (!existingGlAccount) {
+      throw new NotFoundException(`GL Account with id ${id} not found`);
+    }
+    try {
+      const deleteGlAccount = await this.prisma.mGlAccount.delete({
+        where: { idGlAccount: id },
+      });
+      return {
+        data: deleteGlAccount,
+        meta: null,
+        message: 'GL Account deleted successfully',
+        status: HttpStatus.OK,
+        time: new Date(),
+      };
+    } catch (error) {
+      throw new HttpException(
+        {
+          data: null,
+          meta: null,
+          message: 'Failed to delete GL Account',
+          status: HttpStatus.INTERNAL_SERVER_ERROR,
+          time: new Date(),
+        },
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
   }
 }

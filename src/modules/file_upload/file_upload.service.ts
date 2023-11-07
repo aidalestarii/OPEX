@@ -1,6 +1,8 @@
 import {
   BadRequestException,
   Body,
+  HttpException,
+  HttpStatus,
   Injectable,
   NotFoundException,
   ValidationPipe,
@@ -17,19 +19,76 @@ import { UpdateFileDto } from './dto/update-file-upload.dto';
 export class FileUploadService {
   constructor(private readonly prisma: PrismaService) {}
 
-  async createdoc(createmDocCategoryDto: CreateMDocCategoryDto) {
-    const data = await this.prisma.mDocCategory.create({
-      data: createmDocCategoryDto,
-    });
-    return { data };
+  async createdoc(createMDocCategoryDto: CreateMDocCategoryDto) {
+    try {
+      const docCategory = await this.prisma.mDocCategory.create({
+        data: createMDocCategoryDto,
+      });
+      return {
+        data: docCategory,
+        meta: null,
+        message: 'Document category created successfully',
+        status: HttpStatus.CREATED,
+        time: new Date(),
+      };
+    } catch (error) {
+      throw new HttpException(
+        {
+          data: null,
+          meta: null,
+          message: 'Failed to create document category',
+          status: HttpStatus.INTERNAL_SERVER_ERROR,
+          time: new Date(),
+        },
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
   }
 
   async findAllDoc() {
-    const data = await this.prisma.mDocCategory.findMany();
-    return { data };
+    const docCategory = await this.prisma.mDocCategory.findMany();
+    return {
+      data: docCategory,
+      meta: null,
+      message: 'All document category retrieved',
+      status: HttpStatus.OK,
+      time: new Date(),
+    };
   }
 
-  async createFileDto(docCategoryId: number, data: CreateFileDto) {
+  async removeDocCategory(id: number) {
+    const existingDocCategory = await this.prisma.mDocCategory.findUnique({
+      where: { idDocCategory: id },
+    });
+    if (!existingDocCategory) {
+      throw new NotFoundException(`Document category with id ${id} not found`);
+    }
+    try {
+      const deleteDocCategory = await this.prisma.mDocCategory.delete({
+        where: { idDocCategory: id },
+      });
+      return {
+        data: deleteDocCategory,
+        meta: null,
+        message: 'Document category deleted successfully',
+        status: HttpStatus.OK,
+        time: new Date(),
+      };
+    } catch (error) {
+      throw new HttpException(
+        {
+          data: null,
+          meta: null,
+          message: 'Failed to delete document category',
+          status: HttpStatus.INTERNAL_SERVER_ERROR,
+          time: new Date(),
+        },
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+  }
+
+  async createFile(docCategoryId: number, data: CreateFileDto) {
     return this.prisma.fileUpload.create({
       data: {
         tableId: data.tableId,
@@ -56,31 +115,61 @@ export class FileUploadService {
     if (!existingFile) {
       throw new NotFoundException(`File with ID ${id} not found`);
     }
-    const data = await this.prisma.fileUpload.update({
-      where: { idUpload: id },
-      data: updateFileDto,
-    });
-    return { data };
-  }
-
-  async deleteFile(fileId: number): Promise<any> {
-    const data = await this.prisma.fileUpload.delete({
-      where: {
-        idUpload: fileId,
-      },
-    });
-
-    if (!data) {
-      throw new NotFoundException(`File with id ${fileId} not found`);
+    try {
+      const updatedFile = await this.prisma.fileUpload.update({
+        where: { idUpload: id },
+        data: updateFileDto,
+      });
+      return {
+        data: updatedFile,
+        meta: null,
+        message: 'File updated successfully',
+        status: HttpStatus.OK,
+        time: new Date(),
+      };
+    } catch (error) {
+      throw new HttpException(
+        {
+          data: null,
+          meta: null,
+          message: 'Failed to update file',
+          status: HttpStatus.INTERNAL_SERVER_ERROR,
+          time: new Date(),
+        },
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
     }
-
-    return { data };
   }
 
-  async remove(id: number) {
-    const data = await this.prisma.mDocCategory.delete({
+  async deleteFile(id: number): Promise<any> {
+    const existingFile = await this.prisma.mDocCategory.findUnique({
       where: { idDocCategory: id },
     });
-    return { data };
+    if (!existingFile) {
+      throw new NotFoundException(`File with id ${id} not found`);
+    }
+    try {
+      const deleteFile = await this.prisma.mDocCategory.delete({
+        where: { idDocCategory: id },
+      });
+      return {
+        data: deleteFile,
+        meta: null,
+        message: 'File deleted successfully',
+        status: HttpStatus.OK,
+        time: new Date(),
+      };
+    } catch (error) {
+      throw new HttpException(
+        {
+          data: null,
+          meta: null,
+          message: 'Failed to delete File',
+          status: HttpStatus.INTERNAL_SERVER_ERROR,
+          time: new Date(),
+        },
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
   }
 }
