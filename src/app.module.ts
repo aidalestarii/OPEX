@@ -7,8 +7,8 @@ import { MGlAccountModule } from './modules/m_gl_account/m_gl_account.module';
 import { KursModule } from './modules/kurs/kurs.module';
 import { FileUploadModule } from './modules/file_upload/file_upload.module';
 import { BudgetUploadModule } from './modules/budget_upload/budget_upload.module';
-import { MasterModule } from './modules/master/master.module';
 import { RealizationModule } from './modules/realization/realization.module';
+import { GetAllModule } from './modules/get-all/get-all.module';
 
 @Module({
   imports: [
@@ -19,8 +19,8 @@ import { RealizationModule } from './modules/realization/realization.module';
     KursModule,
     FileUploadModule,
     BudgetUploadModule,
-    MasterModule,
     RealizationModule,
+    GetAllModule,
   ],
   controllers: [AppController],
   providers: [AppService],
