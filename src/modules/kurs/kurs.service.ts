@@ -39,9 +39,9 @@ export class KursService {
   }
 
   async findAll() {
-    const data = await this.prisma.mKurs.findMany();
+    const kurs = await this.prisma.mKurs.findMany();
     return {
-      data: data,
+      data: kurs,
       meta: null,
       message: 'All kurs retrieved',
       status: HttpStatus.OK,
@@ -86,7 +86,7 @@ export class KursService {
         data: updateKursDto,
       });
       return {
-        data: updateKursDto,
+        data: updatedKurs,
         meta: null,
         message: 'Kurs updated successfully',
         status: HttpStatus.OK,
@@ -107,9 +107,34 @@ export class KursService {
   }
 
   async remove(id: number) {
-    const data = await this.prisma.mKurs.delete({
+    const existingkurs = await this.prisma.mKurs.findUnique({
       where: { idKurs: id },
     });
-    return { data };
+    if (!existingkurs) {
+      throw new NotFoundException(`Kurs with id ${id} not found`);
+    }
+    try {
+      const deleteKurs = await this.prisma.mKurs.delete({
+        where: { idKurs: id },
+      });
+      return {
+        data: deleteKurs,
+        meta: null,
+        message: 'Kurs deleted successfully',
+        status: HttpStatus.OK,
+        time: new Date(),
+      };
+    } catch (error) {
+      throw new HttpException(
+        {
+          data: null,
+          meta: null,
+          message: 'Failed to delete Kurs',
+          status: HttpStatus.INTERNAL_SERVER_ERROR,
+          time: new Date(),
+        },
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
   }
 }

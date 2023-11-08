@@ -240,7 +240,7 @@ model MStatus {
   type       String   @db.VarChar(50)
   status     String   @map("status") @db.VarChar(25)
   step       Int      @db.Integer
-  department String   @db.VarChar(8)
+  department String?  @db.VarChar(8)
   level      Int      @db.Integer
   function   String?  @db.VarChar(20)
   createdAt  DateTime @default(now()) @map("created_at") @db.Timestamp(6)
@@ -276,7 +276,7 @@ model Realization {
   titleRequest     String              @map("title_request")
   noteRequest      String              @map("note_request")
   status           StatusEnum          @default(PROGRESS) @map("status")
-  // statusId         Int                 @map("status_id") @db.Integer
+  // statusId         Int               @map("status_id") @db.Integer
   department       String              @map("department") @db.VarChar(8)
   personalNumber   String              @map("nopeg") @db.VarChar(8)
   // statusToId       Int
@@ -288,7 +288,7 @@ model Realization {
   updatedBy        String?             @map("updated_by") @db.VarChar(50)
 
   m_cost_center    MCostCenter       @relation(fields: [costCenterId], references: [idCostCenter], onDelete: NoAction, onUpdate: NoAction, map: "fk_m_cost_center_to_realization")
-  // m_status_realization_id_statusTom_status MStatus           @relation("realization_id_statusTom_status", fields: [statusId], references: [idStatus], onDelete: NoAction, onUpdate: NoAction, map: "fk_m_status_to_realization")
+  // m_status_realization_id_statusTom_status    MStatus           @relation("realization_id_statusTom_status", fields: [statusId], references: [idStatus], onDelete: NoAction, onUpdate: NoAction, map: "fk_m_status_to_realization")
   // m_status_realization_id_status_toTom_status MStatus           @relation("realization_id_status_toTom_status", fields: [statusToId], references: [idStatus], onDelete: NoAction, onUpdate: NoAction, map: "fk_m_status_to_realization1")
   realization_item RealizationItem[]
   reallocation     Reallocation[]
