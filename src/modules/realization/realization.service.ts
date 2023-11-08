@@ -32,8 +32,6 @@ export class RealizationService {
   async createRealizationItems(createRealization: CreateRealization) {
     // Extract Realization data from the DTO
     const { realizationItems, ...realizationData } = createRealization;
-    const statusId = 1;
-    const statusToId = 2;
     //create realization
     return await this.prisma.$transaction(async (prisma) => {
       const createdRealization = await prisma.realization.create({
@@ -48,13 +46,21 @@ export class RealizationService {
           noteRequest: realizationData.noteRequest,
           department: realizationData.department,
           personalNumber: realizationData.personalNumber,
-          // statusId,
-          // statusToId: realizationData.statusToId,
           departmentTo: realizationData.departmentTo,
           personalNumberTo: realizationData.personalNumberTo,
           createdBy: realizationData.createdBy,
           status: realizationData.status,
           type: realizationData.type,
+          m_status_realization_id_statusTom_status: {
+            connect: {
+              idStatus: +realizationData.statusId,
+            },
+          },
+          m_status_realization_id_status_toTom_status: {
+            connect: {
+              idStatus: +realizationData.statusToId,
+            },
+          },
           m_cost_center: {
             connect: {
               idCostCenter: +realizationData.costCenterId,
