@@ -29,12 +29,12 @@ export class BudgetService {
   }
 
   async update(id: number, updateBudgetDto: UpdateBudgetDto) {
-    // const existingKurs = await this.prisma.kurs.findUnique({
-    //   where: { idKurs: id },
-    // });
-    // if (!existingKurs) {
-    //   throw new NotFoundException(`Budget with ID ${id} not found`);
-    // }
+    const existingBudget = await this.prisma.budget.findUnique({
+      where: { idBudget: id },
+    });
+    if (!existingBudget) {
+      throw new NotFoundException(`Budget with ID ${id} not found`);
+    }
     const budget = await this.prisma.budget.update({
       where: { idBudget: id },
       data: updateBudgetDto,
