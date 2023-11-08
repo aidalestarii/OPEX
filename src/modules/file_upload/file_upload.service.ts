@@ -107,6 +107,31 @@ export class FileUploadService {
     });
   }
 
+  async findFile(id: number) {
+    const file = await this.prisma.fileUpload.findUnique({
+      where: { idUpload: id },
+    });
+    if (!file) {
+      throw new HttpException(
+        {
+          data: null,
+          meta: null,
+          message: 'File not found',
+          status: HttpStatus.NOT_FOUND,
+          time: new Date(),
+        },
+        HttpStatus.NOT_FOUND,
+      );
+    }
+    return {
+      data: file,
+      meta: null,
+      message: 'File found',
+      status: HttpStatus.OK,
+      time: new Date(),
+    };
+  }
+
   async updateFile(id: number, updateFileDto: UpdateFileDto) {
     //Validation ID
     const existingFile = await this.prisma.fileUpload.findUnique({
