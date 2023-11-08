@@ -1,14 +1,13 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { CreateBudgetDto } from './dto/create-budget.dto';
-import { UpdateBudgetDto } from './dto/update-budget.dto';
+import { ItemsBudgetUploadDto } from './dtos/budget-upload.dto';
+import { UpdateBudgetDto } from './dtos/update-budget.dto';
 import { PrismaService } from 'src/core/service/prisma.service';
-import { Budget } from './entities/budget.entity';
 
 @Injectable()
 export class BudgetService {
   constructor(private readonly prisma: PrismaService) {}
 
-  async create(createBudgetDto: CreateBudgetDto) {
+  async create(createBudgetDto: ItemsBudgetUploadDto) {
     const budget = await this.prisma.budget.create({
       data: createBudgetDto,
     });
@@ -48,6 +47,11 @@ export class BudgetService {
       where: { idBudget: id },
     });
     return budget;
+  }
+
+  async deleteAll() {
+    // Use the Prisma client to delete all records in the Budget table
+    await this.prisma.budget.deleteMany({});
   }
 
   // async totalBudget() {
