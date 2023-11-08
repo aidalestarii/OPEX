@@ -27,8 +27,8 @@ export class CreateRealization {
   readonly responsibleNopeg: string;
   readonly titleRequest: string;
   readonly noteRequest: string;
-  // readonly statusId: number;
-  // readonly StatusToId: number;
+  statusId: number = 1;
+  statusToId: number = 1;
 
   @IsOptional()
   @IsEnum(StatusEnum)

@@ -276,7 +276,7 @@ model Realization {
   titleRequest     String              @map("title_request")
   noteRequest      String              @map("note_request")
   status           StatusEnum          @default(PROGRESS) @map("status")
-  // statusId         Int               @map("status_id") @db.Integer
+  // statusId         Int                 @map("status_id") @db.Integer
   department       String              @map("department") @db.VarChar(8)
   personalNumber   String              @map("nopeg") @db.VarChar(8)
   // statusToId       Int

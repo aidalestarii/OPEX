@@ -25,6 +25,8 @@ export class RealizationController {
   async createRealizationWithItems(
     @Body() createRealization: CreateRealization,
   ) {
+    createRealization.statusId = 1;
+    createRealization.statusToId = 2;
     return this.realizationService.createRealizationItems(createRealization);
   }
 

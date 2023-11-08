@@ -29,25 +29,11 @@ export class RealizationService {
     return { data };
   }
 
-  // async updateFile(id: number, updateRealization: UpdateRealization) {
-  //   //Validation ID
-  //   const existingFile = await this.prisma.fileUpload.findUnique({
-  //     where: { idUpload: id },
-  //   });
-  //   if (!existingFile) {
-  //     throw new NotFoundException(`File with ID ${id} not found`);
-  //   }
-  //   const data = await this.prisma.fileUpload.update({
-  //     where: { idUpload: id },
-  //     data: updateRealization,
-  //   });
-  //   return { data };
-  // }
-
   async createRealizationItems(createRealization: CreateRealization) {
     // Extract Realization data from the DTO
     const { realizationItems, ...realizationData } = createRealization;
-
+    const statusId = 1;
+    const statusToId = 2;
     //create realization
     return await this.prisma.$transaction(async (prisma) => {
       const createdRealization = await prisma.realization.create({
@@ -62,6 +48,8 @@ export class RealizationService {
           noteRequest: realizationData.noteRequest,
           department: realizationData.department,
           personalNumber: realizationData.personalNumber,
+          // statusId,
+          // statusToId: realizationData.statusToId,
           departmentTo: realizationData.departmentTo,
           personalNumberTo: realizationData.personalNumberTo,
           createdBy: realizationData.createdBy,

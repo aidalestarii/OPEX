@@ -158,6 +158,11 @@ export class FileUploadController {
     return res.status(HttpStatus.OK).send(CreateFileDto);
   }
 
+  @Get(':id')
+  findFile(@Param('id') id: number) {
+    return this.fileUploadService.findFile(+id);
+  }
+
   @Delete(':id')
   async deleteFile(
     @Param('id') fileId: number,
