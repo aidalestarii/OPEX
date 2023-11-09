@@ -32,8 +32,8 @@ export class BudgetUploadService {
       items?.map(async (item) => {
         const data = {
           years: Number(item.years),
-          glAccountId: Number(item.glAccountId),
-          costCenterId: Number(item.costCenterId),
+          costCenter: String(item.costCenter),
+          glAccount: Number(item.glAccount),
           total: parseFloat(
             String(
               item.value01 +
@@ -81,8 +81,8 @@ export class BudgetUploadService {
       //   items?.map(async (item) => {
       //     const data = {
       //       years: Number(item.years),
-      //       glAccountId: Number(item.glAccountId),
-      //       costCenterId: Number(item.costCenterId),
+      //       glAccount: Number(item.glAccount),
+      //       costCenter: Number(item.costCenter),
       //       total: parseFloat(
       //         String(
       //           item.value01 +
@@ -127,7 +127,7 @@ export class BudgetUploadService {
 
       // const data = {
       //   years: 2023,
-      //   glAccountId: 1,
+      //   glAccount: 1,
       //   costCenterId: 1,
       //   total: 1000.6,
       //   value01: 1.02,

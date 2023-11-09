@@ -29,57 +29,57 @@ export class RealizationService {
     return { data };
   }
 
-  async createRealizationItems(createRealization: CreateRealization) {
-    // Extract Realization data from the DTO
-    const { realizationItems, ...realizationData } = createRealization;
-    const statusId = 1;
-    const statusToId = 2;
-    //create realization
-    return await this.prisma.$transaction(async (prisma) => {
-      const createdRealization = await prisma.realization.create({
-        data: {
-          years: realizationData.years,
-          month: realizationData.month,
-          draftNumber: realizationData.draftNumber,
-          requestNumber: realizationData.requestNumber,
-          taReff: realizationData.taReff,
-          responsibleNopeg: realizationData.responsibleNopeg,
-          titleRequest: realizationData.titleRequest,
-          noteRequest: realizationData.noteRequest,
-          department: realizationData.department,
-          personalNumber: realizationData.personalNumber,
-          // statusId,
-          // statusToId: realizationData.statusToId,
-          departmentTo: realizationData.departmentTo,
-          personalNumberTo: realizationData.personalNumberTo,
-          createdBy: realizationData.createdBy,
-          status: realizationData.status,
-          type: realizationData.type,
-          m_cost_center: {
-            connect: {
-              idCostCenter: +realizationData.costCenterId,
-            },
-          },
-        },
-      });
+  // async createRealizationItems(createRealization: CreateRealization) {
+  //   // Extract Realization data from the DTO
+  //   const { realizationItems, ...realizationData } = createRealization;
+  //   const statusId = 1;
+  //   const statusToId = 2;
+  //   //create realization
+  //   return await this.prisma.$transaction(async (prisma) => {
+  //     const createdRealization = await prisma.realization.create({
+  //       data: {
+  //         years: realizationData.years,
+  //         month: realizationData.month,
+  //         draftNumber: realizationData.draftNumber,
+  //         requestNumber: realizationData.requestNumber,
+  //         taReff: realizationData.taReff,
+  //         responsibleNopeg: realizationData.responsibleNopeg,
+  //         titleRequest: realizationData.titleRequest,
+  //         noteRequest: realizationData.noteRequest,
+  //         department: realizationData.department,
+  //         personalNumber: realizationData.personalNumber,
+  //         // statusId,
+  //         // statusToId: realizationData.statusToId,
+  //         departmentTo: realizationData.departmentTo,
+  //         personalNumberTo: realizationData.personalNumberTo,
+  //         createdBy: realizationData.createdBy,
+  //         status: realizationData.status,
+  //         type: realizationData.type,
+  //         m_cost_center: {
+  //           connect: {
+  //             idCostCenter: +realizationData.costCenterId,
+  //           },
+  //         },
+  //       },
+  //     });
 
-      //create realization item
-      const createdItems = await Promise.all(
-        realizationItems.map((item: CreateRealizationItem) => {
-          return prisma.realizationItem.create({
-            data: {
-              ...item,
-              realizationId: createdRealization.idRealization,
-            },
-          });
-        }),
-      );
-      return {
-        ...createdRealization,
-        realizationItems: createdItems,
-      };
-    });
-  }
+  //     //create realization item
+  //     const createdItems = await Promise.all(
+  //       realizationItems.map((item: CreateRealizationItem) => {
+  //         return prisma.realizationItem.create({
+  //           data: {
+  //             ...item,
+  //             realizationId: createdRealization.idRealization,
+  //           },
+  //         });
+  //       }),
+  //     );
+  //     return {
+  //       ...createdRealization,
+  //       realizationItems: createdItems,
+  //     };
+  //   });
+  // }
 
   async updateRealization(
     id: number,

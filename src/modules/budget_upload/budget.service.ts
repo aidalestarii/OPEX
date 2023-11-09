@@ -6,14 +6,6 @@ import { PrismaService } from 'src/core/service/prisma.service';
 @Injectable()
 export class BudgetService {
   constructor(private readonly prisma: PrismaService) {}
-
-  async create(createBudgetDto: ItemsBudgetUploadDto) {
-    const budget = await this.prisma.budget.create({
-      data: createBudgetDto,
-    });
-    return budget;
-  }
-
   async findAll() {
     const budget = this.prisma.budget.findMany();
     return budget;

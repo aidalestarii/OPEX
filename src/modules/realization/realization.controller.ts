@@ -21,14 +21,14 @@ import {
 export class RealizationController {
   constructor(private readonly realizationService: RealizationService) {}
 
-  @Post()
-  async createRealizationWithItems(
-    @Body() createRealization: CreateRealization,
-  ) {
-    createRealization.statusId = 1;
-    createRealization.statusToId = 2;
-    return this.realizationService.createRealizationItems(createRealization);
-  }
+  // @Post()
+  // async createRealizationWithItems(
+  //   @Body() createRealization: CreateRealization,
+  // ) {
+  //   createRealization.statusId = 1;
+  //   createRealization.statusToId = 2;
+  //   return this.realizationService.createRealizationItems(createRealization);
+  // }
 
   @Get()
   findRealization() {

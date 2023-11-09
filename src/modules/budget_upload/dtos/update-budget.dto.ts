@@ -15,11 +15,11 @@ export class UpdateBudgetDto {
 
   @IsOptional()
   @IsNumber()
-  glAccountId: number;
+  glAccount: number;
 
   @IsOptional()
-  @IsNumber()
-  costCenterId: number;
+  @IsString()
+  costCenter: string;
 
   @IsOptional()
   @IsDecimal()
