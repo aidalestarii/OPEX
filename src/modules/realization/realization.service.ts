@@ -87,6 +87,70 @@ export class RealizationService {
     });
   }
 
+  async createRealizationItems2(createRealization: CreateRealization) {
+    // Extract Realization data from the DTO
+    const { realizationItems, ...realizationData } = createRealization;
+
+    const duplicatedRealizations = [
+      { ...realizationData, years: realizationData.years },
+      { ...realizationData, years: 2023 },
+    ];
+
+    //create realization
+    return await this.prisma.$transaction(async (prisma) => {
+      const createdRealization = await prisma.realization.create({
+        data: {
+          years: realizationData.years,
+          month: realizationData.month,
+          draftNumber: realizationData.draftNumber,
+          requestNumber: realizationData.requestNumber,
+          taReff: realizationData.taReff,
+          responsibleNopeg: realizationData.responsibleNopeg,
+          titleRequest: realizationData.titleRequest,
+          noteRequest: realizationData.noteRequest,
+          department: realizationData.department,
+          personalNumber: realizationData.personalNumber,
+          departmentTo: realizationData.departmentTo,
+          personalNumberTo: realizationData.personalNumberTo,
+          createdBy: realizationData.createdBy,
+          status: realizationData.status,
+          type: realizationData.type,
+          m_status_realization_id_statusTom_status: {
+            connect: {
+              idStatus: +realizationData.statusId,
+            },
+          },
+          m_status_realization_id_status_toTom_status: {
+            connect: {
+              idStatus: +realizationData.statusToId,
+            },
+          },
+          m_cost_center: {
+            connect: {
+              idCostCenter: +realizationData.costCenterId,
+            },
+          },
+        },
+      });
+
+      //create realization item
+      const createdItems = await Promise.all(
+        realizationItems.map((item: CreateRealizationItem) => {
+          return prisma.realizationItem.create({
+            data: {
+              ...item,
+              realizationId: createdRealization.idRealization,
+            },
+          });
+        }),
+      );
+      return {
+        ...createdRealization,
+        realizationItems: createdItems,
+      };
+    });
+  }
+
   async updateRealization(
     id: number,
     updateData: UpdateRealization,
