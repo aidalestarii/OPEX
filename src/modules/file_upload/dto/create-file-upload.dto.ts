@@ -6,8 +6,6 @@ export class CreateFileDto {
 
   docCategoryId: number;
 
-  tableId: number;
-
   docName: string;
 
   docLink: string;
@@ -16,7 +14,7 @@ export class CreateFileDto {
 
   docType: string;
 
-  @IsNotEmpty()
+  //@IsNotEmpty()
   @IsString()
   createdBy: string;
 }
