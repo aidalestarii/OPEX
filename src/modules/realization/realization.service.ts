@@ -3,6 +3,7 @@ import { PrismaService } from 'src/core/service/prisma.service';
 //import { CreateRealizationDto } from './dto/create-realization.dto';
 import { CreateMCostCenterDto } from '../m_cost_center/dto/create-m_cost_center.dto';
 import { CreateMGlAccountDto } from '../m_gl_account/dto/create-m_gl_account.dto';
+
 import {
   CreateRealization,
   CreateRealizationItem,
@@ -29,9 +30,151 @@ export class RealizationService {
     return { data };
   }
 
+  // async createRealizationItems(createRealization: CreateRealization) {
+  //   // Extract Realization data from the DTO
+  //   const { realizationItems, ...realizationData } = createRealization;
+
+  //   // Check if realizationItems is an array before attempting to map over it
+  //   // if (!Array.isArray(realizationItems)) {
+  //   //   throw new Error('realizationItems must be an array.');
+  //   // }
+
+  //   // create realization
+  //   return await this.prisma.$transaction(async (prisma) => {
+  //     const createdRealization = await prisma.realization.create({
+  //       data: {
+  //         years: realizationData.years,
+  //         month: realizationData.month,
+  //         requestNumber: realizationData.requestNumber,
+  //         taReff: realizationData.taReff,
+  //         responsibleNopeg: realizationData.responsibleNopeg,
+  //         titleRequest: realizationData.titleRequest,
+  //         noteRequest: realizationData.noteRequest,
+  //         department: realizationData.department,
+  //         personalNumber: realizationData.personalNumber,
+  //         departmentTo: realizationData.departmentTo,
+  //         personalNumberTo: realizationData.personalNumberTo,
+  //         createdBy: realizationData.createdBy,
+  //         status: realizationData.status,
+  //         type: realizationData.type,
+  //         m_status_realization_id_statusTom_status: {
+  //           connect: {
+  //             idStatus: 1,
+  //           },
+  //         },
+  //         m_status_realization_id_status_toTom_status: {
+  //           connect: {
+  //             idStatus: 2,
+  //           },
+  //         },
+  //         m_cost_center: {
+  //           connect: {
+  //             idCostCenter: +realizationData.costCenterId,
+  //           },
+  //         },
+  //       },
+  //     });
+
+  //     // create realization item only if realizationItems is not empty
+  //     const createdItems =
+  //       realizationItems.length > 0
+  //         ? await Promise.all(
+  //             realizationItems((item: CreateRealizationItem) => {
+  //               return prisma.realizationItem.create({
+  //                 data: {
+  //                   ...item,
+  //                   realizationId: createdRealization.idRealization,
+  //                 },
+  //               });
+  //             }),
+  //           )
+  //         : [];
+
+  //     return {
+  //       data: {
+  //         ...createdRealization,
+  //         realizationItems: createdItems,
+  //       },
+  //       meta: null,
+  //       time: new Date(),
+  //     };
+  //   });
+  // }
+
+  ////2
   async createRealizationItems(createRealization: CreateRealization) {
     // Extract Realization data from the DTO
     const { realizationItems, ...realizationData } = createRealization;
+
+    const item = createRealization.realizationItems;
+
+    //create realization
+    return await this.prisma.$transaction(async (prisma) => {
+      const createdRealization = await prisma.realization.create({
+        data: {
+          years: realizationData.years,
+          month: realizationData.month,
+          requestNumber: realizationData.requestNumber,
+          taReff: realizationData.taReff,
+          responsibleNopeg: realizationData.responsibleNopeg,
+          titleRequest: realizationData.titleRequest,
+          noteRequest: realizationData.noteRequest,
+          department: realizationData.department,
+          personalNumber: realizationData.personalNumber,
+          departmentTo: realizationData.departmentTo,
+          personalNumberTo: realizationData.personalNumberTo,
+          createdBy: realizationData.createdBy,
+          status: realizationData.status,
+          type: realizationData.type,
+          m_status_realization_id_statusTom_status: {
+            connect: {
+              idStatus: 1,
+            },
+          },
+          m_status_realization_id_status_toTom_status: {
+            connect: {
+              idStatus: 2,
+            },
+          },
+          m_cost_center: {
+            connect: {
+              idCostCenter: +realizationData.costCenterId,
+            },
+          },
+        },
+      });
+
+      //create realization item
+      const createdItems = await Promise.all(
+        realizationItems.map((item: CreateRealizationItem) => {
+          return prisma.realizationItem.create({
+            data: {
+              ...item,
+              realizationId: createdRealization.idRealization,
+            },
+          });
+        }),
+      );
+      return {
+        data: {
+          ...createdRealization,
+          realizationItems: createdItems,
+        },
+        meta: null,
+        time: new Date(),
+      };
+    });
+  }
+
+  async createRealizationItems2(createRealization: CreateRealization) {
+    // Extract Realization data from the DTO
+    const { realizationItems, ...realizationData } = createRealization;
+
+    const duplicatedRealizations = [
+      { ...realizationData, years: realizationData.years },
+      { ...realizationData, years: 2023 },
+    ];
+
     //create realization
     return await this.prisma.$transaction(async (prisma) => {
       const createdRealization = await prisma.realization.create({
