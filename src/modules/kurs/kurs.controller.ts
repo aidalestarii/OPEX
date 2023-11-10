@@ -28,6 +28,11 @@ export class KursController {
     return this.kursService.findAll();
   }
 
+  @Get(':years')
+  findYears(@Param('years') years: number) {
+    return this.kursService.findYears(+years);
+  }
+
   @Get(':id')
   findOne(@Param('id') id: number) {
     return this.kursService.findOne(+id);

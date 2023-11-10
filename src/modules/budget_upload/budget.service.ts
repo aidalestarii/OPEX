@@ -7,7 +7,12 @@ import { PrismaService } from 'src/core/service/prisma.service';
 export class BudgetService {
   constructor(private readonly prisma: PrismaService) {}
   async findAll() {
-    const budget = this.prisma.budget.findMany();
+    const budget = this.prisma.budget.findMany({
+      include: {
+        mGlAccount: true,
+        mCostCenter: true,
+      },
+    });
     return budget;
   }
 

@@ -13,6 +13,7 @@ import {
   Delete,
   NotFoundException,
   Put,
+  UploadedFiles,
 } from '@nestjs/common';
 import { FileUploadService } from './file_upload.service';
 import {
@@ -48,40 +49,50 @@ export class FileUploadController {
 
   @Post('/pdf')
   @UsePipes(new ValidationPipe())
-  @UseInterceptors(FileInterceptor('file', multerPdfOptions))
+  @UseInterceptors(FileInterceptor('files', multerPdfOptions))
   async createPostPdf(
+    @UploadedFiles() files: Express.Multer.File[],
     @UploadedFile() file: Express.Multer.File,
     @Body(new ValidationPipe()) CreateFileDto: CreateFileDto,
     @Res() res: Response,
   ): Promise<Response> {
     try {
-      if (!file) {
+      if (!files || files.length === 0) {
         return res
           .status(HttpStatus.BAD_REQUEST)
           .send({ message: 'File not uploaded' });
       }
 
-      CreateFileDto.tableName = 'Realization';
-      CreateFileDto.docSize = file.size;
-      CreateFileDto.docType = extname(file.originalname);
-      CreateFileDto.docLink = file.path;
-      CreateFileDto.docName = file.filename;
-      CreateFileDto.docCategoryId = CreateFileDto.docCategoryId; // Set docCategoryId here or pass it in the request body
+      const uploads = await Promise.all(
+        files.map(async (file) => {
+          CreateFileDto.tableName = 'Realization';
+          CreateFileDto.docSize = file.size;
+          CreateFileDto.docType = extname(file.originalname);
+          CreateFileDto.docLink = file.path;
+          CreateFileDto.docName = file.filename;
+          CreateFileDto.docCategoryId = CreateFileDto.docCategoryId; // Set docCategoryId here or pass it in the request body
 
-      const uploadedFileInfo = await this.fileUploadService.createFile(
-        CreateFileDto.docCategoryId, // Pass docCategoryId from the DTO
-        CreateFileDto,
+          const uploadedFileInfo = await this.fileUploadService.createFile(
+            CreateFileDto.docCategoryId, // Pass docCategoryId from the DTO
+            CreateFileDto,
+          );
+
+          return {
+            file,
+            fileInfo: uploadedFileInfo,
+          };
+        }),
       );
 
       const response = {
-        data: uploadedFileInfo,
+        data: uploads,
         meta: {
           file,
         },
         time: new Date(),
       };
 
-      console.log(file);
+      console.log(files);
       return res.status(HttpStatus.OK).send(response);
     } catch (error) {
       console.error(error);

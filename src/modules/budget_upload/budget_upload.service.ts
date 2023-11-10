@@ -28,6 +28,9 @@ export class BudgetUploadService {
           'Failed to read Excel, sheetname invalid',
         );
       const items: ItemsBudgetUploadDto[] = read?.budgetUpload;
+
+      await this.prisma.budget.deleteMany();
+
       const results = [];
       items?.map(async (item) => {
         const data = {
@@ -67,14 +70,19 @@ export class BudgetUploadService {
           updatedAt: new Date(),
         };
         results.push(data);
+
         // return data;
         const prismaResult = await this.prisma.budget.create({
           data,
+          include: {
+            mCostCenter: true,
+            mGlAccount: true,
+          },
         });
+        console.log(prismaResult);
         return prismaResult;
       });
 
-      console.log(results);
       return results;
       // const result = await Promise.all(
 

@@ -72,6 +72,31 @@ export class KursService {
     };
   }
 
+  async findYears(years: number) {
+    const kurs = await this.prisma.mKurs.findUnique({
+      where: { years: years },
+    });
+    if (!kurs) {
+      throw new HttpException(
+        {
+          data: null,
+          meta: null,
+          message: 'Kurs not found',
+          status: HttpStatus.NOT_FOUND,
+          time: new Date(),
+        },
+        HttpStatus.NOT_FOUND,
+      );
+    }
+    return {
+      data: kurs,
+      meta: null,
+      message: 'Kurs found',
+      status: HttpStatus.OK,
+      time: new Date(),
+    };
+  }
+
   async update(id: number, updateKursDto: UpdateKursDto) {
     //Validation ID
     const existingKurs = await this.prisma.mKurs.findUnique({
