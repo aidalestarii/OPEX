@@ -6,6 +6,7 @@ import {
   Param,
   Delete,
   Put,
+  Query,
 } from '@nestjs/common';
 import { KursService } from './kurs.service';
 import { CreateKursDto } from './dto/create-kurs.dto';
@@ -21,6 +22,14 @@ export class KursController {
   @Post()
   create(@Body() createKursDto: CreateKursDto) {
     return this.kursService.create(createKursDto);
+  }
+
+  @Get()
+  findAllPaginated(
+    @Query('page') page: number,
+    @Query('perPage') perPage: number,
+  ) {
+    return this.kursService.findAllPaginated(page, perPage);
   }
 
   @Get()

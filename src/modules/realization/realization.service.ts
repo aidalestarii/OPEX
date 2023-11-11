@@ -181,7 +181,6 @@ export class RealizationService {
         data: {
           years: realizationData.years,
           month: realizationData.month,
-          draftNumber: realizationData.draftNumber,
           requestNumber: realizationData.requestNumber,
           taReff: realizationData.taReff,
           responsibleNopeg: realizationData.responsibleNopeg,

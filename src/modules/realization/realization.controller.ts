@@ -88,15 +88,6 @@ export class RealizationController {
     };
   }
 
-  @Post('/submit')
-  async createRealizationWithItems2(
-    @Body() createRealization: CreateRealization,
-  ) {
-    const createRealizationanditem =
-      await this.realizationService.createdRealizationItems(createRealization);
-    return createRealizationanditem;
-  }
-
   @Post('pdf')
   @UsePipes(new ValidationPipe())
   @UseInterceptors(FilesInterceptor('files', 5, multerPdfOptions))

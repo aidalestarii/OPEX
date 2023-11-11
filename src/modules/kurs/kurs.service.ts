@@ -39,7 +39,12 @@ export class KursService {
   }
 
   async findAll() {
-    const kurs = await this.prisma.mKurs.findMany();
+    const kurs = await this.prisma.mKurs.findMany({
+      orderBy: {
+        // Specify the field you want to sort by (e.g., 'createdAt') in descending order.
+        years: 'desc', // Replace 'createdAt' with the actual field name you want to use.
+      },
+    });
     return {
       data: kurs,
       meta: null,
@@ -92,6 +97,33 @@ export class KursService {
       data: kurs,
       meta: null,
       message: 'Kurs found',
+      status: HttpStatus.OK,
+      time: new Date(),
+    };
+  }
+
+  async findAllPaginated(page: number, perPage) {
+    const skip = (page - 1) * perPage;
+
+    const kurs = await this.prisma.mKurs.findMany({
+      skip,
+      take: parseInt(perPage),
+      orderBy: {
+        years: 'desc',
+      },
+    });
+
+    const totalItems = await this.prisma.mKurs.count();
+
+    return {
+      data: kurs,
+      meta: {
+        currentPage: Number(page),
+        totalItems,
+        lastpage: Math.ceil(totalItems / perPage),
+        totalItemsPerPage: Number(perPage),
+      },
+      message: 'Paginated kurs retrieved',
       status: HttpStatus.OK,
       time: new Date(),
     };
