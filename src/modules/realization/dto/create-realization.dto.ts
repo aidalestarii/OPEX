@@ -1,14 +1,3 @@
-// import {
-//   IsInt,
-//   IsOptional,
-//   IsString,
-//   IsEnum,
-//   IsNumber,
-//   IsNotEmpty,
-// } from 'class-validator';
-// import { Prisma, RealizationTypeEnum, StatusEnum } from '@prisma/client';
-
-import { integer } from '@elastic/elasticsearch/lib/api/types';
 import { RealizationTypeEnum, StatusEnum } from '@prisma/client';
 import { Type } from 'class-transformer';
 import { IsDecimal, IsEnum, IsNumber, IsOptional } from 'class-validator';
@@ -51,18 +40,6 @@ export class CreateRealization {
   readonly createdBy: string;
 
   realizationItems: CreateRealizationItem[];
-  // const amounts: number[] = realizationItems.map(item => item.amount);
-
-  // static fromRequest(data: CreateRealization): CreateRealization {
-  //   data.years = Number(data.years);
-  //   data.month = Number(data.month);
-  //   data.costCenterId = Number(data.costCenterId);
-  //   data.requestNumber = Number(data.requestNumber);
-  //   data.taReff = Number(data.taReff);
-  //   data.realizationItems;
-
-  //   return data;
-  // }
 
   static fromRequest(data: CreateRealization): CreateRealization {
     data.years = Number(data.years);
@@ -101,14 +78,6 @@ export class CreateRealizationItem {
   readonly memo?: string;
   readonly descPby: string;
   readonly createdBy: string;
-
-  // static fromRequest(data: CreateRealizationItem): CreateRealizationItem {
-  //   data.amount = Number(data.amount);
-  //   data.amountSubmission = Number(data.amountSubmission);
-  //   data.amountHps = Number(data.amountHps);
-  //   data.amountCorrection = Number(data.amountCorrection);
-  //   return data;
-  // }
 
   static fromRequestArray(
     data: CreateRealizationItem[],

@@ -57,7 +57,6 @@ export class RealizationController {
   async createRealizationWithItems3(
     @UploadedFiles() files: Express.Multer.File[],
     @Body(new ValidationPipe()) createRealization: CreateRealization,
-    createFileDto: CreateFileDto,
   ): Promise<any> {
     const createFileDtos: CreateFileDto[] = [];
     for (const file of files) {
@@ -88,14 +87,14 @@ export class RealizationController {
     };
   }
 
-  @Post('/submit')
-  async createRealizationWithItems2(
-    @Body() createRealization: CreateRealization,
-  ) {
-    const createRealizationanditem =
-      await this.realizationService.createdRealizationItems(createRealization);
-    return createRealizationanditem;
-  }
+  // @Post('/submit')
+  // async createRealizationWithItems2(
+  //   @Body() createRealization: CreateRealization,
+  // ) {
+  //   const createRealizationanditem =
+  //     await this.realizationService.createdRealizationItems(createRealization);
+  //   return createRealizationanditem;
+  // }
 
   @Post('pdf')
   @UsePipes(new ValidationPipe())
@@ -128,23 +127,6 @@ export class RealizationController {
   @Get()
   findRealization() {
     return this.realizationService.findRealization();
-  }
-
-  @Patch(':id')
-  async updateRealization(
-    @Param('id') id: number,
-    @Body() updateData: UpdateRealization,
-  ): Promise<any> {
-    try {
-      const updatedRealization =
-        await this.realizationService.updateRealization(+id, updateData);
-      return updatedRealization;
-    } catch (error) {
-      if (error instanceof NotFoundException) {
-        throw new NotFoundException(error.message);
-      }
-      throw error;
-    }
   }
 
   @Post('/mstatus')
