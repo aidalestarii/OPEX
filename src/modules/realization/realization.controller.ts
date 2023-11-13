@@ -25,7 +25,11 @@ import {
   UpdateRealization,
   UpdateRealizationItem,
 } from './dto/update-realization.dto';
-import { FileInterceptor, FilesInterceptor } from '@nestjs/platform-express';
+import {
+  AnyFilesInterceptor,
+  FileInterceptor,
+  FilesInterceptor,
+} from '@nestjs/platform-express';
 import { extname } from 'path';
 import { multerPdfOptions } from 'src/config/multer.config';
 import { multerConfig } from 'src/config/multer-options.config';
@@ -53,7 +57,7 @@ export class RealizationController {
 
   @Post('/save')
   @UsePipes(new ValidationPipe())
-  @UseInterceptors(FilesInterceptor('files', 5, multerPdfOptions))
+  @UseInterceptors(AnyFilesInterceptor(multerPdfOptions))
   async createRealizationWithItems3(
     @UploadedFiles() files: Express.Multer.File[],
     @Body(new ValidationPipe()) createRealization: CreateRealization,

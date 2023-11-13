@@ -217,7 +217,7 @@ model MGlAccount {
   glAccount   Decimal  @unique(map: "gl_account_idx") @db.Decimal
   description String   @map("description") @db.VarChar(50)
   groupDetail String   @map("group_detail") @db.VarChar(50)
-  groupGl     String   @map("group_gl") @db.VarChar(20)
+  groupGl     String   @map("group_gl") @db.VarChar(50)
   sap         Boolean  @map("sap") @db.Boolean
   active      Boolean  @map("active") @db.Boolean
   createdAt   DateTime @default(now()) @map("created_at") @db.Timestamp(6)
@@ -286,7 +286,7 @@ model Realization {
   draftNumber      Int                 @default(autoincrement()) @map("no_draft") @db.Integer
   requestNumber    Int?                @map("no_request") @db.Integer
   taReff           Int?                @map("ta_reff") @db.Integer
-  type             RealizationTypeEnum @default(UANG) @map("type")
+  type             RealizationTypeEnum @default(UANG_MUKA) @map("type")
   responsibleNopeg String              @map("responsible_nopeg") @db.VarChar(8)
   titleRequest     String              @map("title_request")
   noteRequest      String              @map("note_request")
@@ -620,9 +620,13 @@ enum ModulEnum {
 }
 
 enum RealizationTypeEnum {
-  UANG
+  UANG_MUKA
   ENTERTAINMENT
   PENGADAAN
+  QUALITY
+  FACILITY
+  ICT
+  REIMBURSEMENT
 }
 
 enum StatusEnum {

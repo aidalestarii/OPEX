@@ -40,8 +40,8 @@ export class RealizationService {
     return await this.prisma.$transaction(async (prisma) => {
       const createdRealization = await prisma.realization.create({
         data: {
-          years: realizationData.years,
-          month: realizationData.month,
+          years: new Date().getFullYear(),
+          month: new Date().getMonth() + 1,
           requestNumber: realizationData.requestNumber,
           taReff: realizationData.taReff,
           responsibleNopeg: realizationData.responsibleNopeg,

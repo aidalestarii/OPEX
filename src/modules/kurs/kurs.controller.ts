@@ -38,7 +38,7 @@ export class KursController {
     return this.kursService.findAll();
   }
 
-  @Get(':years')
+  @Get('/years/:years')
   findYears(@Param('years') years: number) {
     return this.kursService.findYears(+years);
   }
