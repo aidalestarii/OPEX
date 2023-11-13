@@ -87,43 +87,6 @@ export class RealizationController {
     };
   }
 
-  // @Post('/submit')
-  // async createRealizationWithItems2(
-  //   @Body() createRealization: CreateRealization,
-  // ) {
-  //   const createRealizationanditem =
-  //     await this.realizationService.createdRealizationItems(createRealization);
-  //   return createRealizationanditem;
-  // }
-
-  @Post('pdf')
-  @UsePipes(new ValidationPipe())
-  @UseInterceptors(FilesInterceptor('files', 5, multerPdfOptions))
-  async uploadFiles(
-    @UploadedFiles() files: Express.Multer.File[],
-    @Body(new ValidationPipe()) createFileDto: CreateFileDto,
-  ): Promise<CreateFileDto[]> {
-    const createFileDtos: CreateFileDto[] = [];
-    for (const file of files) {
-      const newCreateFileDto: CreateFileDto = {
-        //send response
-        tableName: 'Realization',
-        docName: file.filename,
-        docLink: file.path,
-        docSize: parseFloat((file.size / 1000000).toFixed(2)),
-        docType: extname(file.originalname),
-        createdBy: createFileDto.createdBy,
-        docCategoryId: 1,
-      };
-
-      createFileDtos.push(newCreateFileDto);
-    }
-    const createFiles = await this.fileUploadService.createFiles(
-      createFileDtos,
-    );
-    return createFiles;
-  }
-
   @Get()
   findRealization() {
     return this.realizationService.findRealization();
