@@ -1,9 +1,11 @@
+import { Type } from 'class-transformer';
 import {
   IsNumber,
   IsNotEmpty,
   IsDate,
   IsString,
   IsOptional,
+  ValidateNested,
 } from 'class-validator';
 import { StringNumberBigintObject } from 'src/core/types/string-number-bigint-object.types';
 
@@ -15,6 +17,14 @@ export class ItemsBudgetUploadDto {
   // @IsNotEmpty()
   @IsString()
   costCenter: string;
+
+  //@IsNotEmpty()
+  @IsString()
+  financialIndicator: string;
+
+  //@IsNotEmpty()
+  @IsString()
+  subFinancialIndicator: string;
 
   // @IsNotEmpty()
   @IsNumber()
@@ -100,6 +110,8 @@ export class ItemsBudgetUploadDto {
   > = {
     years: { dataType: 'number', maxLength: 300 },
     costCenter: { dataType: 'string', maxLength: 300 },
+    financialIndicator: { dataType: 'string', maxLength: 300 },
+    subFinancialIndicator: { dataType: 'string', maxLength: 300 },
     glAccount: { dataType: 'number', maxLength: 300 },
     value01: { dataType: 'decimal', maxLength: 300 },
     value02: { dataType: 'decimal', maxLength: 300 },
@@ -122,6 +134,8 @@ export class ItemsBudgetUploadDto {
   static propertyNames: (keyof ItemsBudgetUploadDto)[] = [
     'years',
     'costCenter',
+    'financialIndicator',
+    'subFinancialIndicator',
     'glAccount',
     'value01',
     'value02',

@@ -71,6 +71,26 @@ export class RealizationService {
           },
         },
       });
+
+      //create realization item
+      const createdItems = await Promise.all(
+        realizationItems.map((item: CreateRealizationItem) => {
+          return prisma.realizationItem.create({
+            data: {
+              ...item,
+              realizationId: createdRealization.idRealization,
+            },
+          });
+        }),
+      );
+      return {
+        data: {
+          ...createdRealization,
+          realizationItems: createdItems,
+        },
+        meta: null,
+        time: new Date(),
+      };
     });
   }
 }

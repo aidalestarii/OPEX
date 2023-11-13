@@ -15,7 +15,7 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { Response, Request, Express } from 'express';
 import { multerOptions } from 'src/config/multer-options.config';
 import { BudgetUploadService } from './budget_upload.service';
-import { UpdateBudgetDto } from './dtos/update-budget.dto';
+// import { UpdateBudgetDto } from './dtos/update-budget.dto';
 import { ItemsBudgetUploadDto } from './dtos/budget-upload.dto';
 import { BudgetService } from './budget.service';
 
@@ -67,10 +67,10 @@ export class BudgetUploadController {
     return this.budgetService.findOne(+id);
   }
 
-  @Put(':id')
-  update(@Param('id') id: number, @Body() updateBudgetDto: UpdateBudgetDto) {
-    return this.budgetService.update(+id, updateBudgetDto);
-  }
+  // @Put(':id')
+  // update(@Param('id') id: number, @Body() updateBudgetDto: UpdateBudgetDto) {
+  //   return this.budgetService.update(+id, updateBudgetDto);
+  // }
 
   @Delete(':id')
   remove(@Param('id') id: string) {

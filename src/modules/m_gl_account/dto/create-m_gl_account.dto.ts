@@ -18,11 +18,11 @@ export class CreateMGlAccountDto {
 
   @IsNotEmpty()
   @IsString()
-  groupDetail: string;
+  groupGl: string;
 
   @IsNotEmpty()
   @IsString()
-  groupGl: string;
+  groupDetail: string;
 
   @IsNotEmpty()
   @IsBoolean()

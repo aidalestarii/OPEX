@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   HttpException,
   HttpStatus,
   Injectable,
@@ -7,6 +8,7 @@ import {
 import { CreateKursDto } from './dto/create-kurs.dto';
 import { UpdateKursDto } from './dto/update-kurs.dto';
 import { PrismaService } from 'src/core/service/prisma.service';
+import { SortOrder } from '@elastic/elasticsearch/lib/api/types';
 
 @Injectable()
 export class KursService {
@@ -102,14 +104,20 @@ export class KursService {
     };
   }
 
-  async findAllPaginated(page: number, perPage) {
+  async findAllPaginated(page: number, perPage, order: string = 'asc') {
+    // Validate order input
+    if (!['asc', 'desc'].includes(order.toLowerCase())) {
+      throw new BadRequestException(
+        'Invalid order parameter. Use "asc" or "desc".',
+      );
+    }
     const skip = (page - 1) * perPage;
 
     const kurs = await this.prisma.mKurs.findMany({
       skip,
       take: parseInt(perPage),
       orderBy: {
-        years: 'desc',
+        years: order.toLowerCase() as SortOrder,
       },
     });
 

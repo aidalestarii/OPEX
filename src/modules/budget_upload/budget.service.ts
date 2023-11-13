@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { ItemsBudgetUploadDto } from './dtos/budget-upload.dto';
-import { UpdateBudgetDto } from './dtos/update-budget.dto';
+// import { UpdateBudgetDto } from './dtos/update-budget.dto';
 import { PrismaService } from 'src/core/service/prisma.service';
 
 @Injectable()
@@ -25,19 +25,19 @@ export class BudgetService {
     return budget;
   }
 
-  async update(id: number, updateBudgetDto: UpdateBudgetDto) {
-    const existingBudget = await this.prisma.budget.findUnique({
-      where: { idBudget: id },
-    });
-    if (!existingBudget) {
-      throw new NotFoundException(`Budget with ID ${id} not found`);
-    }
-    const budget = await this.prisma.budget.update({
-      where: { idBudget: id },
-      data: updateBudgetDto,
-    });
-    return budget;
-  }
+  // async update(id: number, updateBudgetDto: UpdateBudgetDto) {
+  //   const existingBudget = await this.prisma.budget.findUnique({
+  //     where: { idBudget: id },
+  //   });
+  //   if (!existingBudget) {
+  //     throw new NotFoundException(`Budget with ID ${id} not found`);
+  //   }
+  //   const budget = await this.prisma.budget.update({
+  //     where: { idBudget: id },
+  //     data: updateBudgetDto,
+  //   });
+  //   return budget;
+  // }
 
   async remove(id: number) {
     const budget = await this.prisma.budget.delete({

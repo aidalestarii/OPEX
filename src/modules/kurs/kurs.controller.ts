@@ -28,8 +28,9 @@ export class KursController {
   findAllPaginated(
     @Query('page') page: number,
     @Query('perPage') perPage: number,
+    @Query('orderBy') orderBy: string,
   ) {
-    return this.kursService.findAllPaginated(page, perPage);
+    return this.kursService.findAllPaginated(page, perPage, orderBy);
   }
 
   @Get()

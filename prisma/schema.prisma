@@ -48,32 +48,34 @@ model NoteMemo {
 }
 
 model Budget {
-  idBudget   Int      @id @default(autoincrement()) @map("id_budget")
-  uniqueId   String   @unique @default(uuid()) @map("unique_id") @db.Uuid
-  years      Int      @map("years") @db.Integer
-  glAccount  Decimal  @map("gl_account") @db.Decimal
-  costCenter String   @map("cost_center") @db.VarChar(20)
-  total      Float    @map("total") @db.DoublePrecision
-  value01    Float    @map("value01") @db.DoublePrecision
-  value02    Float    @map("value02") @db.DoublePrecision
-  value03    Float    @map("value03") @db.DoublePrecision
-  value04    Float    @map("value04") @db.DoublePrecision
-  value05    Float    @map("value05") @db.DoublePrecision
-  value06    Float    @map("value06") @db.DoublePrecision
-  value07    Float    @map("value07") @db.DoublePrecision
-  value08    Float    @map("value08") @db.DoublePrecision
-  value09    Float    @map("value09") @db.DoublePrecision
-  value10    Float    @map("value10") @db.DoublePrecision
-  value11    Float    @map("value11") @db.DoublePrecision
-  value12    Float    @map("value12") @db.DoublePrecision
-  value13    Float?   @map("value13") @db.DoublePrecision
-  value14    Float?   @map("value14") @db.DoublePrecision
-  value15    Float?   @map("value15") @db.DoublePrecision
-  value16    Float?   @map("value16") @db.DoublePrecision
-  createdAt  DateTime @default(now()) @map("created_at") @db.Timestamp(6)
-  createdBy  String?  @map("created_by") @db.VarChar(50)
-  updatedAt  DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamp(6)
-  updatedBy  String?  @map("updated_by") @db.VarChar(50)
+  idBudget              Int      @id @default(autoincrement()) @map("id_budget")
+  uniqueId              String   @unique @default(uuid()) @map("unique_id") @db.Uuid
+  years                 Int      @map("years") @db.Integer
+  glAccount             Decimal  @map("gl_account") @db.Decimal
+  costCenter            String   @map("cost_center") @db.VarChar(20)
+  financialIndicator    String   @map("group_gl") @db.VarChar(20)
+  subFinancialIndicator String   @map("group_detail") @db.VarChar(50)
+  total                 Float    @map("total") @db.DoublePrecision
+  value01               Float    @map("value01") @db.DoublePrecision
+  value02               Float    @map("value02") @db.DoublePrecision
+  value03               Float    @map("value03") @db.DoublePrecision
+  value04               Float    @map("value04") @db.DoublePrecision
+  value05               Float    @map("value05") @db.DoublePrecision
+  value06               Float    @map("value06") @db.DoublePrecision
+  value07               Float    @map("value07") @db.DoublePrecision
+  value08               Float    @map("value08") @db.DoublePrecision
+  value09               Float    @map("value09") @db.DoublePrecision
+  value10               Float    @map("value10") @db.DoublePrecision
+  value11               Float    @map("value11") @db.DoublePrecision
+  value12               Float    @map("value12") @db.DoublePrecision
+  value13               Float?   @map("value13") @db.DoublePrecision
+  value14               Float?   @map("value14") @db.DoublePrecision
+  value15               Float?   @map("value15") @db.DoublePrecision
+  value16               Float?   @map("value16") @db.DoublePrecision
+  createdAt             DateTime @default(now()) @map("created_at") @db.Timestamp(6)
+  createdBy             String?  @map("created_by") @db.VarChar(50)
+  updatedAt             DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamp(6)
+  updatedBy             String?  @map("updated_by") @db.VarChar(50)
 
   mCostCenter MCostCenter @relation(fields: [costCenter], references: [costCenter], onDelete: NoAction, onUpdate: NoAction, map: "fk_m_cost_center_to_budget")
   mGlAccount  MGlAccount  @relation(fields: [glAccount], references: [glAccount], onDelete: NoAction, onUpdate: NoAction, map: "fk_m_gl_account_to_budget")
@@ -393,7 +395,7 @@ model RealizationItem {
   remarkPby         String   @map("remark_pby")
   memo              String?  @map("memo")
   createdAt         DateTime @default(now()) @map("created_at") @db.Timestamp(6)
-  createdBy         String   @map("created_by") @db.VarChar(50)
+  createdBy         String?  @map("created_by") @db.VarChar(50)
   updatedAt         DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamp(6)
   updatedBy         String?  @map("updated_by") @db.VarChar(50)
 
