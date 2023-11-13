@@ -101,14 +101,14 @@ export class BudgetUploadService {
         }),
       );
 
-      const sumMaterialExpenses = results
-        .filter((item) => item.financialIndicator === 'MATERIAL EXPENSES')
-        .reduce((sum, item) => sum + item.total, 0);
-      const sumSubcontractExpenses = results
-        .filter((item) => item.financialIndicator === 'SUBCONTRACT EXPENSES')
-        .reduce((sum, item) => sum + item.total, 0);
-      console.log(sumMaterialExpenses);
-      return { results, sumMaterialExpenses, sumSubcontractExpenses };
+      // const sumMaterialExpenses = results
+      //   .filter((item) => item.financialIndicator === 'MATERIAL EXPENSES')
+      //   .reduce((sum, item) => sum + item.total, 0);
+      // const sumSubcontractExpenses = results
+      //   .filter((item) => item.financialIndicator === 'SUBCONTRACT EXPENSES')
+      //   .reduce((sum, item) => sum + item.total, 0);
+      // console.log(sumMaterialExpenses);
+      // return { results, sumMaterialExpenses, sumSubcontractExpenses };
     } catch (error) {
       throw new BadRequestException(error?.response);
     }

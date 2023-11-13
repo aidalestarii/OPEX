@@ -46,6 +46,10 @@ export class FileUploadController {
   findAllDoc() {
     return this.fileUploadService.findAllDoc();
   }
+  @Delete('/category/:id')
+  removeDoc(@Param('id') id: number) {
+    return this.fileUploadService.removeDocCategory(+id);
+  }
 
   @Post('/pdf')
   @UsePipes(new ValidationPipe())

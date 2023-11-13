@@ -1,4 +1,5 @@
 import {
+  Bind,
   Body,
   Controller,
   Get,
@@ -25,7 +26,11 @@ import {
   UpdateRealization,
   UpdateRealizationItem,
 } from './dto/update-realization.dto';
-import { FileInterceptor, FilesInterceptor } from '@nestjs/platform-express';
+import {
+  AnyFilesInterceptor,
+  FileInterceptor,
+  FilesInterceptor,
+} from '@nestjs/platform-express';
 import { extname } from 'path';
 import { multerPdfOptions } from 'src/config/multer.config';
 import { multerConfig } from 'src/config/multer-options.config';
@@ -33,6 +38,8 @@ import {
   CreateFileDto,
   CreateMDocCategoryDto,
 } from '../file_upload/dto/create-file-upload.dto';
+import { IndexName } from '@elastic/elasticsearch/lib/api/typesWithBodyKey';
+import { IndexAlias } from '@elastic/elasticsearch/lib/api/types';
 
 @Controller({
   version: '1',
@@ -51,17 +58,24 @@ export class RealizationController {
   //   return this.realizationService.createRealizationItems(createRealization);
   // }
 
+  @Post('/test')
+  @UseInterceptors(FilesInterceptor('files'))
+  uploadFiles(@UploadedFiles() files: Express.Multer.File[]) {
+    console.log('Received files:', files);
+    // Process uploaded files here
+  }
+
   @Post('/save')
   @UsePipes(new ValidationPipe())
-  @UseInterceptors(FilesInterceptor('files', 5, multerPdfOptions))
+  @UseInterceptors(AnyFilesInterceptor(multerPdfOptions))
   async createRealizationWithItems3(
     @UploadedFiles() files: Express.Multer.File[],
     @Body(new ValidationPipe()) createRealization: CreateRealization,
   ): Promise<any> {
     const createFileDtos: CreateFileDto[] = [];
-    for (const file of files) {
+
+    files.forEach((file) => {
       const newCreateFileDto: CreateFileDto = {
-        //send response
         tableName: 'Realization',
         docName: file.filename,
         docLink: file.path,
@@ -70,9 +84,9 @@ export class RealizationController {
         createdBy: 'createFileDto.createdBy',
         docCategoryId: 1,
       };
-
       createFileDtos.push(newCreateFileDto);
-    }
+    });
+
     const createFiles = await this.fileUploadService.createFiles(
       createFileDtos,
     );
@@ -80,7 +94,7 @@ export class RealizationController {
 
     const createRealizationanditem =
       await this.realizationService.createRealizationItems(fromRequest);
-    //console.log(createRealizationanditem);
+
     return {
       createRealizationanditem,
       createFiles,

@@ -23,7 +23,10 @@ export class KursController {
   create(@Body() createKursDto: CreateKursDto) {
     return this.kursService.create(createKursDto);
   }
-
+  @Get()
+  findAll() {
+    return this.kursService.findAll();
+  }
   @Get()
   findAllPaginated(
     @Query('page') page: number,
@@ -31,11 +34,6 @@ export class KursController {
     @Query('orderBy') orderBy: string,
   ) {
     return this.kursService.findAllPaginated(page, perPage, orderBy);
-  }
-
-  @Get()
-  findAll() {
-    return this.kursService.findAll();
   }
 
   @Get(':years')
