@@ -3,11 +3,11 @@ import { Type } from 'class-transformer';
 import { IsDecimal, IsEnum, IsNumber, IsOptional } from 'class-validator';
 
 export class CreateRealization {
-  @IsNumber()
-  @Type(() => Number)
+  // @IsNumber()
+  // @Type(() => Number)
   years: number;
 
-  @Type(() => Number)
+  // @Type(() => Number)
   month: number;
 
   @Type(() => Number)

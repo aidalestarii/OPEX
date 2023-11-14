@@ -8,6 +8,7 @@ import { FileUploadModule } from './modules/file_upload/file_upload.module';
 import { BudgetUploadModule } from './modules/budget_upload/budget_upload.module';
 import { RealizationModule } from './modules/realization/realization.module';
 import { GetAllModule } from './modules/get-all/get-all.module';
+import { VariableModule } from './modules/variable/variable.module';
 
 @Module({
   imports: [
@@ -19,6 +20,7 @@ import { GetAllModule } from './modules/get-all/get-all.module';
     BudgetUploadModule,
     RealizationModule,
     GetAllModule,
+    VariableModule,
   ],
   controllers: [AppController],
   providers: [AppService],

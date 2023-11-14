@@ -102,13 +102,8 @@ export class FileUploadService {
           createdBy: fileDto.createdBy,
         })),
       });
-      return {
-        data: fileDtos,
-        meta: null,
-        message: 'File uploaded successfully',
-        status: HttpStatus.CREATED,
-        time: new Date(),
-      };
+
+      return fileDtos;
     } catch (error) {
       throw new HttpException(
         {

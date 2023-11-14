@@ -62,7 +62,7 @@ export class RealizationController {
   @Post('/test')
   @UseInterceptors(FilesInterceptor('files'))
   uploadFiles(@UploadedFiles() files: Express.Multer.File[]) {
-    console.log('Received files:', files);
+    //console.log('Received files:', files);
     // Process uploaded files here
   }
 
@@ -110,28 +110,35 @@ export class RealizationController {
     @Body(new ValidationPipe()) createRealization: CreateRealization,
     @Body() createFileDto: CreateFileDto,
   ): Promise<any> {
-    console.log(req.body, req.files);
+    // console.log(req.body, req.files);
     const createFileDtos: CreateFileDto[] = files.map((file, index) => ({
       tableName: 'Realization',
       docName: file.filename,
       docLink: file.path,
       docSize: parseFloat((file.size / 1000000).toFixed(2)),
       docType: extname(file.originalname),
-      createdBy: 'createFileDto.createdBy',
+      createdBy: '',
       docCategoryId: createFileDto.docCategoryId[index], // Access the corresponding docCategoryId
     }));
 
     const fromRequest2 = createFileDtos.map(CreateFileDto.fromRequest);
-
-    const createFiles = await this.fileUploadService.createFiles(fromRequest2);
     const fromRequest = CreateRealization.fromRequest(createRealization);
 
-    const createRealizationanditem =
-      await this.realizationService.createRealizationItems(fromRequest);
+    const items = await this.realizationService.createRealizationItems(
+      fromRequest,
+    );
+    const rows: CreateFileDto[] = await this.fileUploadService.createFiles(
+      fromRequest2,
+    );
 
     return {
-      createRealizationanditem,
-      createFiles,
+      data: {
+        ...items,
+        rows,
+      },
+      message: 'File uploaded successfully',
+      status: HttpStatus.CREATED,
+      time: new Date(),
     };
   }
 
