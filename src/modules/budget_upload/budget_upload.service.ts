@@ -42,29 +42,29 @@ export class BudgetUploadService {
             glAccount: Number(item.glAccount),
             total: parseFloat(
               String(
-                item.value01 +
-                  item.value02 +
-                  item.value03 +
-                  item.value04 +
-                  item.value05 +
-                  item.value06 +
-                  item.value07 +
-                  item.value08 +
-                  item.value09 +
+                item.value1 +
+                  item.value2 +
+                  item.value3 +
+                  item.value4 +
+                  item.value5 +
+                  item.value6 +
+                  item.value7 +
+                  item.value8 +
+                  item.value9 +
                   item.value10 +
                   item.value11 +
                   item.value12,
               ),
             ),
-            value01: parseFloat(String(item.value01)),
-            value02: parseFloat(String(item.value02)),
-            value03: parseFloat(String(item.value03)),
-            value04: parseFloat(String(item.value04)),
-            value05: parseFloat(String(item.value05)),
-            value06: parseFloat(String(item.value06)),
-            value07: parseFloat(String(item.value07)),
-            value08: parseFloat(String(item.value08)),
-            value09: parseFloat(String(item.value09)),
+            value1: parseFloat(String(item.value1)),
+            value2: parseFloat(String(item.value2)),
+            value3: parseFloat(String(item.value3)),
+            value4: parseFloat(String(item.value4)),
+            value5: parseFloat(String(item.value5)),
+            value6: parseFloat(String(item.value6)),
+            value7: parseFloat(String(item.value7)),
+            value8: parseFloat(String(item.value8)),
+            value9: parseFloat(String(item.value9)),
             value10: parseFloat(String(item.value10)),
             value11: parseFloat(String(item.value11)),
             value12: parseFloat(String(item.value12)),
@@ -101,275 +101,184 @@ export class BudgetUploadService {
         }),
       );
 
-      //Material expenses Section
+      const months = [
+        'JAN',
+        'FEB',
+        'MAR',
+        'APR',
+        'MEI',
+        'JUN',
+        'JUL',
+        'AGS',
+        'SEP',
+        'OKT',
+        'NOV',
+        'DES',
+      ];
+
+      //[PARENT] Material expenses Section & Month
       const sumMaterialExpenses = results
         .filter((item) => item.financialIndicator === 'MATERIAL EXPENSES')
         .reduce((sum, item) => sum + item.total, 0);
-      const sumMaterialExpensesValue01 = results
-        .filter((item) => item.financialIndicator === 'MATERIAL EXPENSES')
-        .reduce((sum, item) => sum + (item.value01 || 0), 0);
+      const sumMaterialExpensesMonth = months.reduce((result, month, i) => {
+        result[month] = results
+          .filter((item) => item.financialIndicator === 'MATERIAL EXPENSES')
+          .reduce((sum, item) => sum + (item[`value${i + 1}`] || 0), 0);
+        return result;
+      }, {});
 
-      //Expand per month ExpendableMaterial
+      //[CHILD] Expand per month ExpendableMaterial
       const sumExpendableMaterial = results
         .filter((item) => item.subFinancialIndicator === 'Expendable-Material')
         .reduce((sum, item) => sum + item.total, 0);
-      const sumExpendableMaterialValue01 = results
-        .filter(
-          (item) =>
-            item.financialIndicator === 'MATERIAL EXPENSES' &&
-            item.subFinancialIndicator === 'Expendable-Material',
-        )
-        .reduce((sum, item) => sum + (item.value01 || 0), 0);
-      const sumExpendableMaterialValue02 = results
-        .filter(
-          (item) =>
-            item.financialIndicator === 'MATERIAL EXPENSES' &&
-            item.subFinancialIndicator === 'Expendable-Material',
-        )
-        .reduce((sum, item) => sum + (item.value02 || 0), 0);
-      const sumExpendableMaterialValue03 = results
-        .filter(
-          (item) =>
-            item.financialIndicator === 'MATERIAL EXPENSES' &&
-            item.subFinancialIndicator === 'Expendable-Material',
-        )
-        .reduce((sum, item) => sum + (item.value03 || 0), 0);
-      const sumExpendableMaterialValue04 = results
-        .filter(
-          (item) =>
-            item.financialIndicator === 'MATERIAL EXPENSES' &&
-            item.subFinancialIndicator === 'Expendable-Material',
-        )
-        .reduce((sum, item) => sum + (item.value04 || 0), 0);
-      const sumExpendableMaterialValue05 = results
-        .filter(
-          (item) =>
-            item.financialIndicator === 'MATERIAL EXPENSES' &&
-            item.subFinancialIndicator === 'Expendable-Material',
-        )
-        .reduce((sum, item) => sum + (item.value05 || 0), 0);
-      const sumExpendableMaterialValue06 = results
-        .filter(
-          (item) =>
-            item.financialIndicator === 'MATERIAL EXPENSES' &&
-            item.subFinancialIndicator === 'Expendable-Material',
-        )
-        .reduce((sum, item) => sum + (item.value06 || 0), 0);
-      const sumExpendableMaterialValue07 = results
-        .filter(
-          (item) =>
-            item.financialIndicator === 'MATERIAL EXPENSES' &&
-            item.subFinancialIndicator === 'Expendable-Material',
-        )
-        .reduce((sum, item) => sum + (item.value07 || 0), 0);
-      const sumExpendableMaterialValue08 = results
-        .filter(
-          (item) =>
-            item.financialIndicator === 'MATERIAL EXPENSES' &&
-            item.subFinancialIndicator === 'Expendable-Material',
-        )
-        .reduce((sum, item) => sum + (item.value08 || 0), 0);
-      const sumExpendableMaterialValue09 = results
-        .filter(
-          (item) =>
-            item.financialIndicator === 'MATERIAL EXPENSES' &&
-            item.subFinancialIndicator === 'Expendable-Material',
-        )
-        .reduce((sum, item) => sum + (item.value09 || 0), 0);
-      const sumExpendableMaterialValue10 = results
-        .filter(
-          (item) =>
-            item.financialIndicator === 'MATERIAL EXPENSES' &&
-            item.subFinancialIndicator === 'Expendable-Material',
-        )
-        .reduce((sum, item) => sum + (item.value10 || 0), 0);
-      const sumExpendableMaterialValue11 = results
-        .filter(
-          (item) =>
-            item.financialIndicator === 'MATERIAL EXPENSES' &&
-            item.subFinancialIndicator === 'Expendable-Material',
-        )
-        .reduce((sum, item) => sum + (item.value11 || 0), 0);
-      const sumExpendableMaterialValue12 = results
-        .filter(
-          (item) =>
-            item.financialIndicator === 'MATERIAL EXPENSES' &&
-            item.subFinancialIndicator === 'Expendable-Material',
-        )
-        .reduce((sum, item) => sum + (item.value12 || 0), 0);
+      const sumExpendableMaterialMonth = months.reduce((result, month, i) => {
+        result[month] = results
+          .filter(
+            (item) =>
+              item.financialIndicator === 'MATERIAL EXPENSES' &&
+              item.subFinancialIndicator === 'Expendable-Material',
+          )
+          .reduce((sum, item) => sum + (item[`value${i + 1}`] || 0), 0);
+        return result;
+      }, {});
 
-      //RepairableMaterial
+      //[CHILD] Expand Per Month RepairableMaterial
       const sumRepairableMaterial = results
         .filter((item) => item.subFinancialIndicator === 'Repairable-Material')
         .reduce((sum, item) => sum + item.total, 0);
-      const sumRepairableMaterialValue01 = results
-        .filter(
-          (item) =>
-            item.financialIndicator === 'MATERIAL EXPENSES' &&
-            item.subFinancialIndicator === 'Repairable-Material',
-        )
-        .reduce((sum, item) => sum + (item.value01 || 0), 0);
-      const sumRepairableMaterialValue02 = results
-        .filter(
-          (item) =>
-            item.financialIndicator === 'MATERIAL EXPENSES' &&
-            item.subFinancialIndicator === 'Repairable-Material',
-        )
-        .reduce((sum, item) => sum + (item.value02 || 0), 0);
-      const sumRepairableMaterialValue03 = results
-        .filter(
-          (item) =>
-            item.financialIndicator === 'MATERIAL EXPENSES' &&
-            item.subFinancialIndicator === 'Repairable-Material',
-        )
-        .reduce((sum, item) => sum + (item.value03 || 0), 0);
-      const sumRepairableMaterialValue04 = results
-        .filter(
-          (item) =>
-            item.financialIndicator === 'MATERIAL EXPENSES' &&
-            item.subFinancialIndicator === 'Repairable-Material',
-        )
-        .reduce((sum, item) => sum + (item.value04 || 0), 0);
-      const sumRepairableMaterialValue05 = results
-        .filter(
-          (item) =>
-            item.financialIndicator === 'MATERIAL EXPENSES' &&
-            item.subFinancialIndicator === 'Repairable-Material',
-        )
-        .reduce((sum, item) => sum + (item.value05 || 0), 0);
-      const sumRepairableMaterialValue06 = results
-        .filter(
-          (item) =>
-            item.financialIndicator === 'MATERIAL EXPENSES' &&
-            item.subFinancialIndicator === 'Repairable-Material',
-        )
-        .reduce((sum, item) => sum + (item.value06 || 0), 0);
-      const sumRepairableMaterialValue07 = results
-        .filter(
-          (item) =>
-            item.financialIndicator === 'MATERIAL EXPENSES' &&
-            item.subFinancialIndicator === 'Repairable-Material',
-        )
-        .reduce((sum, item) => sum + (item.value07 || 0), 0);
-      const sumRepairableMaterialValue08 = results
-        .filter(
-          (item) =>
-            item.financialIndicator === 'MATERIAL EXPENSES' &&
-            item.subFinancialIndicator === 'Repairable-Material',
-        )
-        .reduce((sum, item) => sum + (item.value08 || 0), 0);
-      const sumRepairableMaterialValue09 = results
-        .filter(
-          (item) =>
-            item.financialIndicator === 'MATERIAL EXPENSES' &&
-            item.subFinancialIndicator === 'Repairable-Material',
-        )
-        .reduce((sum, item) => sum + (item.value09 || 0), 0);
-      const sumRepairableMaterialValue10 = results
-        .filter(
-          (item) =>
-            item.financialIndicator === 'MATERIAL EXPENSES' &&
-            item.subFinancialIndicator === 'Repairable-Material',
-        )
-        .reduce((sum, item) => sum + (item.value10 || 0), 0);
-      const sumRepairableMaterialValue11 = results
-        .filter(
-          (item) =>
-            item.financialIndicator === 'MATERIAL EXPENSES' &&
-            item.subFinancialIndicator === 'Repairable-Material',
-        )
-        .reduce((sum, item) => sum + (item.value11 || 0), 0);
-      const sumRepairableMaterialValue12 = results
-        .filter(
-          (item) =>
-            item.financialIndicator === 'MATERIAL EXPENSES' &&
-            item.subFinancialIndicator === 'Repairable-Material',
-        )
-        .reduce((sum, item) => sum + (item.value12 || 0), 0);
-    //RepairableMaterial
+      const sumRepairableMaterialMonth = months.reduce((result, month, i) => {
+        result[month] = results
+          .filter(
+            (item) =>
+              item.financialIndicator === 'MATERIAL EXPENSES' &&
+              item.subFinancialIndicator === 'Repairable-Material',
+          )
+          .reduce((sum, item) => sum + (item[`value${i + 1}`] || 0), 0);
+        return result;
+      }, {});
 
-      //Subcontract Expenses Section
+      //[PARENT] Subcontract Expenses Section
       const sumSubcontractExpenses = results
         .filter((item) => item.financialIndicator === 'SUBCONTRACT EXPENSES')
         .reduce((sum, item) => sum + item.total, 0);
+      const sumSubcontractExpensesMonth = months.reduce((result, month, i) => {
+        result[month] = results
+          .filter((item) => item.financialIndicator === 'SUBCONTRACT EXPENSES')
+          .reduce((sum, item) => sum + (item[`value${i + 1}`] || 0), 0);
+        return result;
+      }, {});
+
+      //[CHILD] Rotable parts
       const sumRotablepartsSubcont = results
         .filter(
           (item) => item.subFinancialIndicator === 'Rotable parts-Subcont',
         )
         .reduce((sum, item) => sum + item.total, 0);
+      const sumRotablepartsSubcontMonth = months.reduce((result, month, i) => {
+        result[month] = results
+          .filter(
+            (item) =>
+              item.financialIndicator === 'SUBCONTRACT EXPENSES' &&
+              item.subFinancialIndicator === 'Rotable parts-Subcont',
+          )
+          .reduce((sum, item) => sum + (item[`value${i + 1}`] || 0), 0);
+        return result;
+      }, {});
 
-      // Other operating expenses
+      //[PARENT] Other operating expenses
       const sumOtherOperating = results
         .filter((item) => item.financialIndicator === 'OTHER EXPENSES')
         .reduce((sum, item) => sum + item.total, 0);
+      const sumOtherOperatingMonth = months.reduce((result, month, i) => {
+        result[month] = results
+          .filter((item) => item.financialIndicator === 'OTHER EXPENSES')
+          .reduce((sum, item) => sum + (item[`value${i + 1}`] || 0), 0);
+        return result;
+      }, {});
+
+      //[CHILD] Electricity Consumption
       const sumElectricityConsumption = results
         .filter(
           (item) => item.subFinancialIndicator === 'Electricity consumption',
         )
         .reduce((sum, item) => sum + item.total, 0);
+      const sumElectricityConsumptionMonth = months.reduce(
+        (result, month, i) => {
+          result[month] = results
+            .filter(
+              (item) =>
+                item.financialIndicator === 'OTHER EXPENSES' &&
+                item.subFinancialIndicator === 'Electricity consumption',
+            )
+            .reduce((sum, item) => sum + (item[`value${i + 1}`] || 0), 0);
+          return result;
+        },
+        {},
+      );
+
+      //[CHILD]
       const sumGas = results
         .filter((item) => item.subFinancialIndicator === 'Gas')
         .reduce((sum, item) => sum + item.total, 0);
+      const sumGasMonth = months.reduce((result, month, i) => {
+        result[month] = results
+          .filter(
+            (item) =>
+              item.financialIndicator === 'OTHER EXPENSES' &&
+              item.subFinancialIndicator === 'Gas',
+          )
+          .reduce((sum, item) => sum + (item[`value${i + 1}`] || 0), 0);
+        return result;
+      }, {});
+
+      //[CHILD]
       const sumCorporateEvent = results
         .filter((item) => item.subFinancialIndicator === 'Corporate Event')
         .reduce((sum, item) => sum + item.total, 0);
+      const sumCorporateEventMonth = months.reduce((result, month, i) => {
+        result[month] = results
+          .filter(
+            (item) =>
+              item.financialIndicator === 'OTHER EXPENSES' &&
+              item.subFinancialIndicator === 'Corporate Event',
+          )
+          .reduce((sum, item) => sum + (item[`value${i + 1}`] || 0), 0);
+        return result;
+      }, {});
 
-      // console.log(sumMaterialExpenses);
       return {
         //results,
         MaterialExpenses: {
           sumMaterialExpenses,
-          sumMaterialExpensesValue01,
+          sumMaterialExpensesMonth,
           ExpendableMaterial: {
-            JAN: sumExpendableMaterialValue01,
-            FEB: sumExpendableMaterialValue02,
-            MAR: sumExpendableMaterialValue03,
-            APR: sumExpendableMaterialValue04,
-            MEI: sumExpendableMaterialValue05,
-            JUN: sumExpendableMaterialValue06,
-            JUL: sumExpendableMaterialValue07,
-            AGS: sumExpendableMaterialValue08,
-            SEPT: sumExpendableMaterialValue09,
-            OKT: sumExpendableMaterialValue10,
-            NOV: sumExpendableMaterialValue11,
-            DES: sumExpendableMaterialValue12,
+            sumExpendableMaterialMonth,
             sumExpendableMaterial,
           },
           RepairableMaterial: {
-            JAN: sumRepairableMaterialValue01,
-            FEB: sumRepairableMaterialValue02,
-            MAR: sumRepairableMaterialValue03,
-            APR: sumRepairableMaterialValue04,
-            MEI: sumRepairableMaterialValue05,
-            JUN: sumRepairableMaterialValue06,
-            JUL: sumRepairableMaterialValue07,
-            AGS: sumRepairableMaterialValue08,
-            SEPT: sumRepairableMaterialValue09,
-            OKT: sumRepairableMaterialValue10,
-            NOV: sumRepairableMaterialValue11,
-            DES: sumRepairableMaterialValue12,
+            sumRepairableMaterialMonth,
             sumRepairableMaterial,
           },
         },
         SubcontractExpenses: {
           sumSubcontractExpenses,
-          sumRotablepartsSubcont,
+          sumSubcontractExpensesMonth,
+          RotablepartsSubcont: {
+            sumRotablepartsSubcont,
+            sumRotablepartsSubcontMonth,
+          },
         },
         OtherOperatingExpenses: {
           sumOtherOperating,
-          sumElectricityConsumption,
-          sumGas,
-          sumCorporateEvent,
+          sumOtherOperatingMonth,
+          ElectricityConsumption: {
+            sumElectricityConsumption,
+            sumElectricityConsumptionMonth,
+          },
+          Gas: { sumGas, sumGasMonth },
+          CorporateEvent: { sumCorporateEvent, sumCorporateEventMonth },
         },
       };
-      // const sumMaterialExpenses = results
-      //   .filter((item) => item.financialIndicator === 'MATERIAL EXPENSES')
-      //   .reduce((sum, item) => sum + item.total, 0);
-      // const sumSubcontractExpenses = results
-      //   .filter((item) => item.financialIndicator === 'SUBCONTRACT EXPENSES')
-      //   .reduce((sum, item) => sum + item.total, 0);
-      // console.log(sumMaterialExpenses);
-      // return { results, sumMaterialExpenses, sumSubcontractExpenses };
     } catch (error) {
       throw new BadRequestException(error?.response);
     }

@@ -72,15 +72,15 @@ export class BudgetService {
 
     // Calculate the total value from value01 to value16
     const total =
-      budget.value01 +
-      budget.value02 +
-      budget.value03 +
-      budget.value04 +
-      budget.value05 +
-      budget.value06 +
-      budget.value07 +
-      budget.value08 +
-      budget.value09 +
+      budget.value1 +
+      budget.value2 +
+      budget.value3 +
+      budget.value4 +
+      budget.value5 +
+      budget.value6 +
+      budget.value7 +
+      budget.value8 +
+      budget.value9 +
       budget.value10 +
       budget.value11 +
       budget.value12 +

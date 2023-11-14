@@ -32,39 +32,39 @@ export class ItemsBudgetUploadDto {
 
   @IsOptional()
   @IsNumber()
-  value01: number;
+  value1: number;
 
   @IsOptional()
   @IsNumber()
-  value02: number;
+  value2: number;
 
   @IsOptional()
   @IsNumber()
-  value03: number;
+  value3: number;
 
   @IsOptional()
   @IsNumber()
-  value04: number;
+  value4: number;
 
   @IsOptional()
   @IsNumber()
-  value05: number;
+  value5: number;
 
   @IsOptional()
   @IsNumber()
-  value06: number;
+  value6: number;
 
   @IsOptional()
   @IsNumber()
-  value07: number;
+  value7: number;
 
   @IsOptional()
   @IsNumber()
-  value08: number;
+  value8: number;
 
   @IsOptional()
   @IsNumber()
-  value09: number;
+  value9: number;
 
   @IsOptional()
   @IsNumber()
@@ -113,15 +113,15 @@ export class ItemsBudgetUploadDto {
     financialIndicator: { dataType: 'string', maxLength: 300 },
     subFinancialIndicator: { dataType: 'string', maxLength: 300 },
     glAccount: { dataType: 'number', maxLength: 300 },
-    value01: { dataType: 'decimal', maxLength: 300 },
-    value02: { dataType: 'decimal', maxLength: 300 },
-    value03: { dataType: 'decimal', maxLength: 300 },
-    value04: { dataType: 'decimal', maxLength: 300 },
-    value05: { dataType: 'decimal', maxLength: 300 },
-    value06: { dataType: 'decimal', maxLength: 300 },
-    value07: { dataType: 'decimal', maxLength: 300 },
-    value08: { dataType: 'decimal', maxLength: 300 },
-    value09: { dataType: 'decimal', maxLength: 300 },
+    value1: { dataType: 'decimal', maxLength: 300 },
+    value2: { dataType: 'decimal', maxLength: 300 },
+    value3: { dataType: 'decimal', maxLength: 300 },
+    value4: { dataType: 'decimal', maxLength: 300 },
+    value5: { dataType: 'decimal', maxLength: 300 },
+    value6: { dataType: 'decimal', maxLength: 300 },
+    value7: { dataType: 'decimal', maxLength: 300 },
+    value8: { dataType: 'decimal', maxLength: 300 },
+    value9: { dataType: 'decimal', maxLength: 300 },
     value10: { dataType: 'decimal', maxLength: 300 },
     value11: { dataType: 'decimal', maxLength: 300 },
     value12: { dataType: 'decimal', maxLength: 300 },
@@ -137,15 +137,15 @@ export class ItemsBudgetUploadDto {
     'financialIndicator',
     'subFinancialIndicator',
     'glAccount',
-    'value01',
-    'value02',
-    'value03',
-    'value04',
-    'value05',
-    'value06',
-    'value07',
-    'value08',
-    'value09',
+    'value1',
+    'value2',
+    'value3',
+    'value4',
+    'value5',
+    'value6',
+    'value7',
+    'value8',
+    'value9',
     'value10',
     'value11',
     'value12',
