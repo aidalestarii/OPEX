@@ -84,12 +84,10 @@ export class RealizationService {
         }),
       );
       return {
-        data: {
+        items: {
           ...createdRealization,
           realizationItems: createdItems,
         },
-        meta: null,
-        time: new Date(),
       };
     });
   }

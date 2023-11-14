@@ -249,6 +249,20 @@ model MKurs {
   @@map("m_kurs")
 }
 
+model MVar {
+  idKurs    Int      @id @default(autoincrement()) @map("id_kurs")
+  uniqueId  String   @unique @default(uuid()) @map("unique_id") @db.Uuid
+  value1    Float    @map("value1") @db.DoublePrecision
+  value2    Float    @map("value2") @db.DoublePrecision
+  value3    Float    @map("value3") @db.DoublePrecision
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamp(6)
+  createdBy String?  @map("created_by") @db.VarChar(50)
+  updatedAt DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamp(6)
+  updatedBy String?  @map("updated_by") @db.VarChar(50)
+
+  @@map("m_var")
+}
+
 model MStatus {
   idStatus   Int      @id @default(autoincrement()) @map("id_status")
   uniqueId   String   @unique @default(uuid()) @map("unique_id") @db.Uuid
@@ -292,7 +306,7 @@ model Realization {
   noteRequest      String              @map("note_request")
   status           StatusEnum          @default(PROGRESS) @map("status")
   statusId         Int                 @map("status_id") @db.Integer
-  department       String              @map("department") @db.VarChar(8)
+  department       String?             @map("department") @db.VarChar(8)
   personalNumber   String              @map("nopeg") @db.VarChar(8)
   statusToId       Int
   departmentTo     String?             @map("department_to") @db.VarChar(8)

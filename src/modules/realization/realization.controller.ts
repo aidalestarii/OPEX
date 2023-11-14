@@ -52,42 +52,41 @@ export class RealizationController {
     private readonly fileUploadService: FileUploadService,
   ) {}
 
-  @Post('/save')
-  @UseInterceptors(AnyFilesInterceptor(multerPdfOptions))
-  async createRealizationWithItems(
-    @UploadedFiles() files: Express.Multer.File[],
-    @Req() req: Request,
-    @Body(new ValidationPipe()) createRealization: CreateRealization,
-    @Body() createFileDto: CreateFileDto,
-  ): Promise<any> {
-    console.log(req.body, req.files);
-    const createFileDtos: CreateFileDto[] = files.map((file, index) => ({
-      tableName: 'Realization',
-      docName: createFileDto.docName[index],
-      docLink: file.path,
-      docSize: parseFloat((file.size / 1000000).toFixed(2)),
-      docType: extname(file.originalname),
-      createdBy: '',
-      docCategoryId: createFileDto.docCategoryId[index], // Access the corresponding docCategoryId
-    }));
+  // @Post('/save')
+  // @UseInterceptors(AnyFilesInterceptor(multerPdfOptions))
+  // async createRealizationWithItems(
+  //   @UploadedFiles() files: Express.Multer.File[],
+  //   @Req() req: Request,
+  //   @Body(new ValidationPipe()) createRealization: CreateRealization,
+  //   @Body() createFileDto: CreateFileDto,
+  // ): Promise<any> {
+  //   console.log(req.body, req.files);
+  //   const createFileDtos: CreateFileDto[] = files.map((file, index) => ({
+  //     tableName: 'Realization',
+  //     docName: createFileDto.docName[index],
+  //     docLink: file.path,
+  //     docSize: parseFloat((file.size / 1000000).toFixed(2)),
+  //     docType: extname(file.originalname),
+  //     createdBy: '',
+  //     docCategoryId: createFileDto.docCategoryId[index], // Access the corresponding docCategoryId
+  //   }));
 
-    const fromRequest2 = createFileDtos.map(CreateFileDto.fromRequest);
+  //   const fromRequest2 = createFileDtos.map(CreateFileDto.fromRequest);
 
-    const createFiles = await this.fileUploadService.createFiles(fromRequest2);
-    const fromRequest = CreateRealization.fromRequest(createRealization);
+  //   const createFiles = await this.fileUploadService.createFiles(fromRequest2);
+  //   const fromRequest = CreateRealization.fromRequest(createRealization);
 
-    const createRealizationanditem =
-      await this.realizationService.createRealizationItems(fromRequest);
+  //   const createRealizationanditem =
+  //     await this.realizationService.createRealizationItems(fromRequest);
 
-    return {
-      createRealizationanditem,
-      createFiles: [
-        {
-          createFiles,
-        },
-      ],
-    };
-  }
+  //   return {
+  //     createRealizationanditem,
+  //     createFiles: [
+  //       {
+  //         createFiles,
+  //       },
+  //     ],
+  //   };
 
   @Post('/submit')
   @UseInterceptors(AnyFilesInterceptor(multerPdfOptions))
@@ -97,28 +96,35 @@ export class RealizationController {
     @Body(new ValidationPipe()) createRealization: CreateRealization,
     @Body() createFileDto: CreateFileDto,
   ): Promise<any> {
-    console.log(req.body, req.files);
+    // console.log(req.body, req.files);
     const createFileDtos: CreateFileDto[] = files.map((file, index) => ({
       tableName: 'Realization',
       docName: file.filename,
       docLink: file.path,
       docSize: parseFloat((file.size / 1000000).toFixed(2)),
       docType: extname(file.originalname),
-      createdBy: 'createFileDto.createdBy',
+      createdBy: '',
       docCategoryId: createFileDto.docCategoryId[index], // Access the corresponding docCategoryId
     }));
 
     const fromRequest2 = createFileDtos.map(CreateFileDto.fromRequest);
-
-    const createFiles = await this.fileUploadService.createFiles(fromRequest2);
     const fromRequest = CreateRealization.fromRequest(createRealization);
 
-    const createRealizationanditem =
-      await this.realizationService.createRealizationItems(fromRequest);
+    const items = await this.realizationService.createRealizationItems(
+      fromRequest,
+    );
+    const rows: CreateFileDto[] = await this.fileUploadService.createFiles(
+      fromRequest2,
+    );
 
     return {
-      createRealizationanditem,
-      createFiles,
+      data: {
+        ...items,
+        rows,
+      },
+      message: 'File uploaded successfully',
+      status: HttpStatus.CREATED,
+      time: new Date(),
     };
   }
 
