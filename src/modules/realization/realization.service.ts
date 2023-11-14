@@ -66,7 +66,7 @@ export class RealizationService {
           },
           m_cost_center: {
             connect: {
-              idCostCenter: +realizationData.costCenterId,
+              costCenter: realizationData.costCenter.toString(),
             },
           },
         },
@@ -84,7 +84,7 @@ export class RealizationService {
         }),
       );
       return {
-        items: {
+        realization: {
           ...createdRealization,
           realizationItems: createdItems,
         },

@@ -296,7 +296,7 @@ model Realization {
   uniqueId         String              @unique @default(uuid()) @map("unique_id") @db.Uuid
   years            Int                 @map("years") @db.Integer
   month            Int                 @map("month") @db.Integer
-  costCenterId     Int                 @map("cost_center_id") @db.Integer
+  costCenter       String              @map("cost_center") @db.VarChar(20)
   draftNumber      Int                 @default(autoincrement()) @map("no_draft") @db.Integer
   requestNumber    Int?                @map("no_request") @db.Integer
   taReff           Int?                @map("ta_reff") @db.Integer
@@ -316,7 +316,7 @@ model Realization {
   updatedAt        DateTime            @default(now()) @updatedAt @map("updated_at") @db.Timestamp(6)
   updatedBy        String?             @map("updated_by") @db.VarChar(50)
 
-  m_cost_center                               MCostCenter       @relation(fields: [costCenterId], references: [idCostCenter], onDelete: NoAction, onUpdate: NoAction, map: "fk_m_cost_center_to_realization")
+  m_cost_center                               MCostCenter       @relation(fields: [costCenter], references: [costCenter], onDelete: NoAction, onUpdate: NoAction, map: "fk_m_cost_center_to_realization")
   m_status_realization_id_statusTom_status    MStatus           @relation("realization_id_statusTom_status", fields: [statusId], references: [idStatus], onDelete: NoAction, onUpdate: NoAction, map: "fk_m_status_to_realization")
   m_status_realization_id_status_toTom_status MStatus           @relation("realization_id_status_toTom_status", fields: [statusToId], references: [idStatus], onDelete: NoAction, onUpdate: NoAction, map: "fk_m_status_to_realization1")
   realization_item                            RealizationItem[]

@@ -10,8 +10,8 @@ export class CreateRealization {
   // @Type(() => Number)
   month: number;
 
-  @Type(() => Number)
-  costCenterId: number;
+  // @Type(() => Number)
+  costCenter: String;
 
   @Type(() => Number)
   requestNumber: number;
@@ -44,7 +44,7 @@ export class CreateRealization {
   static fromRequest(data: CreateRealization): CreateRealization {
     data.years = Number(data.years);
     data.month = Number(data.month);
-    data.costCenterId = Number(data.costCenterId);
+    data.costCenter = String(data.costCenter);
     data.requestNumber = Number(data.requestNumber);
     data.taReff = Number(data.taReff);
 

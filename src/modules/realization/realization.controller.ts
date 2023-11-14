@@ -39,8 +39,6 @@ import {
   CreateFileDto,
   CreateMDocCategoryDto,
 } from '../file_upload/dto/create-file-upload.dto';
-import { IndexName } from '@elastic/elasticsearch/lib/api/typesWithBodyKey';
-import { IndexAlias } from '@elastic/elasticsearch/lib/api/types';
 import { Request } from 'express';
 @Controller({
   version: '1',
@@ -88,7 +86,7 @@ export class RealizationController {
   //     ],
   //   };
 
-  @Post('/submit')
+  @Post('/save')
   @UseInterceptors(AnyFilesInterceptor(multerPdfOptions))
   async createdRealizationWithItems(
     @UploadedFiles() files: Express.Multer.File[],
@@ -110,19 +108,18 @@ export class RealizationController {
     const fromRequest2 = createFileDtos.map(CreateFileDto.fromRequest);
     const fromRequest = CreateRealization.fromRequest(createRealization);
 
-    const items = await this.realizationService.createRealizationItems(
+    const realization = await this.realizationService.createRealizationItems(
       fromRequest,
     );
-    const rows: CreateFileDto[] = await this.fileUploadService.createFiles(
-      fromRequest2,
-    );
+    const filesUpload: CreateFileDto[] =
+      await this.fileUploadService.createFiles(fromRequest2);
 
     return {
       data: {
-        ...items,
-        rows,
+        ...realization,
+        filesUpload,
       },
-      message: 'File uploaded successfully',
+      message: 'Create new request successfully created',
       status: HttpStatus.CREATED,
       time: new Date(),
     };
