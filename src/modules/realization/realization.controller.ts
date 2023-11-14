@@ -8,6 +8,7 @@ import {
   Param,
   Patch,
   Post,
+  Req,
   Res,
   UploadedFile,
   UploadedFiles,
@@ -40,7 +41,7 @@ import {
 } from '../file_upload/dto/create-file-upload.dto';
 import { IndexName } from '@elastic/elasticsearch/lib/api/typesWithBodyKey';
 import { IndexAlias } from '@elastic/elasticsearch/lib/api/types';
-
+import { Request } from 'express';
 @Controller({
   version: '1',
   path: 'api/realization',
@@ -65,31 +66,64 @@ export class RealizationController {
     // Process uploaded files here
   }
 
+  // @Post('/save')
+  // @UsePipes(new ValidationPipe())
+  // @UseInterceptors(AnyFilesInterceptor(multerPdfOptions))
+  // async createRealizationWithItems3(
+  //   @UploadedFiles() files: Express.Multer.File[],
+  //   @Body(new ValidationPipe()) createRealization: CreateRealization,
+  // ): Promise<any> {
+  //   const createFileDtos: CreateFileDto[] = [];
+  //   for (const file of files) {
+  //     const newCreateFileDto: CreateFileDto = {
+  //       //send response
+  //       tableName: 'Realization',
+  //       docName: file.filename,
+  //       docLink: file.path,
+  //       docSize: parseFloat((file.size / 1000000).toFixed(2)),
+  //       docType: extname(file.originalname),
+  //       createdBy: 'createFileDto.createdBy',
+  //       docCategoryId: 1,
+  //     };
+
+  //     createFileDtos.push(newCreateFileDto);
+  //   }
+  //   const createFiles = await this.fileUploadService.createFiles(
+  //     createFileDtos,
+  //   );
+  //   const fromRequest = CreateRealization.fromRequest(createRealization);
+
+  //   const createRealizationanditem =
+  //     await this.realizationService.createRealizationItems(fromRequest);
+  //   //console.log(createRealizationanditem);
+  //   return {
+  //     createRealizationanditem,
+  //     createFiles,
+  //   };
+  // }
+
   @Post('/save')
-  @UsePipes(new ValidationPipe())
   @UseInterceptors(AnyFilesInterceptor(multerPdfOptions))
-  async createRealizationWithItems3(
+  async createdRealizationWithItems(
     @UploadedFiles() files: Express.Multer.File[],
+    @Req() req: Request,
     @Body(new ValidationPipe()) createRealization: CreateRealization,
+    @Body() createFileDto: CreateFileDto,
   ): Promise<any> {
-    const createFileDtos: CreateFileDto[] = [];
+    console.log(req.body, req.files);
+    const createFileDtos: CreateFileDto[] = files.map((file, index) => ({
+      tableName: 'Realization',
+      docName: file.filename,
+      docLink: file.path,
+      docSize: parseFloat((file.size / 1000000).toFixed(2)),
+      docType: extname(file.originalname),
+      createdBy: 'createFileDto.createdBy',
+      docCategoryId: createFileDto.docCategoryId[index], // Access the corresponding docCategoryId
+    }));
 
-    files.forEach((file) => {
-      const newCreateFileDto: CreateFileDto = {
-        tableName: 'Realization',
-        docName: file.filename,
-        docLink: file.path,
-        docSize: parseFloat((file.size / 1000000).toFixed(2)),
-        docType: extname(file.originalname),
-        createdBy: 'createFileDto.createdBy',
-        docCategoryId: 1,
-      };
-      createFileDtos.push(newCreateFileDto);
-    });
+    const fromRequest2 = createFileDtos.map(CreateFileDto.fromRequest);
 
-    const createFiles = await this.fileUploadService.createFiles(
-      createFileDtos,
-    );
+    const createFiles = await this.fileUploadService.createFiles(fromRequest2);
     const fromRequest = CreateRealization.fromRequest(createRealization);
 
     const createRealizationanditem =

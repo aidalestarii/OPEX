@@ -56,7 +56,7 @@ export class FileUploadController {
   @UseInterceptors(FileInterceptor('files', multerPdfOptions))
   async createPostPdf(
     @UploadedFiles() files: Express.Multer.File[],
-    @UploadedFile() file: Express.Multer.File,
+    // @UploadedFile() file: Express.Multer.File,
     @Body(new ValidationPipe()) CreateFileDto: CreateFileDto,
     @Res() res: Response,
   ): Promise<Response> {
@@ -91,7 +91,7 @@ export class FileUploadController {
       const response = {
         data: uploads,
         meta: {
-          file,
+          files,
         },
         time: new Date(),
       };

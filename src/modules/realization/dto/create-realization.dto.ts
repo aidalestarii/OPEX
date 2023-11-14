@@ -102,3 +102,15 @@ export class MStatus {
   readonly function: string;
   readonly createdBy: string;
 }
+
+export class BudgetReallocation {
+  years;
+  glAccountId;
+  costCenterId;
+  plus;
+  minus;
+  createdAt;
+  createdBy;
+  updatedAt;
+  updatedBy;
+}
