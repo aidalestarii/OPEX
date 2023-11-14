@@ -20,7 +20,7 @@ import {
   CreateFileDto,
   CreateMDocCategoryDto,
 } from './dto/create-file-upload.dto';
-import { FileInterceptor } from '@nestjs/platform-express';
+import { FileInterceptor, FilesInterceptor } from '@nestjs/platform-express';
 import { Response, Express } from 'express';
 import { plainToInstance } from 'class-transformer';
 import { ApiResponseDto } from 'src/core/dto/api-response.dto';
@@ -53,18 +53,16 @@ export class FileUploadController {
 
   @Post('/pdf')
   @UsePipes(new ValidationPipe())
-  @UseInterceptors(FileInterceptor('files', multerPdfOptions))
+  @UseInterceptors(FilesInterceptor('files', 5, multerPdfOptions))
   async createPostPdf(
     @UploadedFiles() files: Express.Multer.File[],
-    // @UploadedFile() file: Express.Multer.File,
     @Body(new ValidationPipe()) CreateFileDto: CreateFileDto,
     @Res() res: Response,
   ): Promise<Response> {
     try {
       if (!files || files.length === 0) {
-        return res
-          .status(HttpStatus.BAD_REQUEST)
-          .send({ message: 'File not uploaded' });
+        const errorResponse = new Error('No files uploaded');
+        return res.status(HttpStatus.BAD_REQUEST).send(errorResponse);
       }
 
       const uploads = await Promise.all(
@@ -73,7 +71,7 @@ export class FileUploadController {
           CreateFileDto.docSize = file.size;
           CreateFileDto.docType = extname(file.originalname);
           CreateFileDto.docLink = file.path;
-          CreateFileDto.docName = file.filename;
+          CreateFileDto.docName = CreateFileDto.docName;
           CreateFileDto.docCategoryId = CreateFileDto.docCategoryId; // Set docCategoryId here or pass it in the request body
 
           const uploadedFileInfo = await this.fileUploadService.createFile(
@@ -82,8 +80,7 @@ export class FileUploadController {
           );
 
           return {
-            file,
-            fileInfo: uploadedFileInfo,
+            uploadedFileInfo,
           };
         }),
       );
@@ -96,13 +93,10 @@ export class FileUploadController {
         time: new Date(),
       };
 
-      console.log(files);
       return res.status(HttpStatus.OK).send(response);
     } catch (error) {
       console.error(error);
-      return res
-        .status(HttpStatus.INTERNAL_SERVER_ERROR)
-        .send({ message: 'Internal server error' });
+      return res.status(HttpStatus.INTERNAL_SERVER_ERROR).send(Error);
     }
   }
 
