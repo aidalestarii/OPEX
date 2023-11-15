@@ -21,43 +21,31 @@ import { UpdateKursDto } from './dto/update-kurs.dto';
 export class KursController {
   constructor(private readonly kursService: KursService) {}
 
-  // @Post()
-  // create(@Body() createKursDto: CreateKursDto) {
-  //   return this.kursService.create(createKursDto);
-  // }
-
   @Post()
   async createKurs(@Body() data: any) {
     try {
-      // Validasi bahwa 'years' tidak boleh kosong
-      if (!data.years) {
-        throw new HttpException(
-          'Field years is required',
-          HttpStatus.BAD_REQUEST,
-        );
+      const requiredFields = ['years', 'value', 'createdBy'];
+      for (const field of requiredFields) {
+        if (!data[field]) {
+          throw new HttpException(
+            `Field ${field} is required`,
+            HttpStatus.BAD_REQUEST,
+          );
+        }
       }
-
-      // Validasi tipe data untuk 'years'
-      if (typeof data.years !== 'number') {
-        throw new HttpException(
-          'Field "years" must be a number',
-          HttpStatus.BAD_REQUEST,
-        );
+      const typeValidations = {
+        years: 'number',
+        value: 'number',
+        createdBy: 'string',
+      };
+      for (const field in typeValidations) {
+        if (typeof data[field] !== typeValidations[field]) {
+          throw new HttpException(
+            `Field ${field} must be a ${typeValidations[field]}`,
+            HttpStatus.BAD_REQUEST,
+          );
+        }
       }
-
-      if (!data.value) {
-        throw new HttpException(
-          'Field value is required',
-          HttpStatus.BAD_REQUEST,
-        );
-      }
-      if (!data.createdBy) {
-        throw new HttpException(
-          'Field createdBy is required',
-          HttpStatus.BAD_REQUEST,
-        );
-      }
-
       const newKurs = await this.kursService.create(data);
       return newKurs;
     } catch (error) {
@@ -83,7 +71,6 @@ export class KursController {
   }
 
   @Get('/years/:years')
-  @Get(':years')
   findYears(@Param('years') years: number) {
     return this.kursService.findYears(+years);
   }
@@ -95,6 +82,7 @@ export class KursController {
 
   @Put(':id')
   update(@Param('id') id: number, @Body() updateKursDto: UpdateKursDto) {
+    
     return this.kursService.update(+id, updateKursDto);
   }
 

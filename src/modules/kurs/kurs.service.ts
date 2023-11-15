@@ -14,10 +14,10 @@ import { SortOrder } from '@elastic/elasticsearch/lib/api/types';
 export class KursService {
   constructor(private readonly prisma: PrismaService) {}
 
-  async create(createKursDto: CreateKursDto) {
+  async create(dto: CreateKursDto) {
     try {
       const kurs = await this.prisma.mKurs.create({
-        data: createKursDto,
+        data: dto,
       });
       return {
         data: kurs,
@@ -27,16 +27,28 @@ export class KursService {
         time: new Date(),
       };
     } catch (error) {
-      throw new HttpException(
-        {
-          data: null,
-          meta: null,
-          message: 'Failed to create kurs',
-          status: HttpStatus.INTERNAL_SERVER_ERROR,
-          time: new Date(),
-        },
-        HttpStatus.INTERNAL_SERVER_ERROR,
-      );
+      // Tangkap kesalahan yang dihasilkan oleh database
+      if (
+        error.code === 'P2002' &&
+        error.meta?.target?.[0]?.includes('years')
+      ) {
+        // Kolom years harus unik, dan kesalahan ini menunjukkan bahwa nilai years sudah ada
+        throw new HttpException(
+          `Kurs with years ${dto.years} already exists`,
+          HttpStatus.CONFLICT,
+        );
+      } else {
+        throw new HttpException(
+          {
+            data: null,
+            meta: null,
+            message: 'Failed to create kurs',
+            status: HttpStatus.INTERNAL_SERVER_ERROR,
+            time: new Date(),
+          },
+          HttpStatus.INTERNAL_SERVER_ERROR,
+        );
+      }
     }
   }
 
@@ -88,7 +100,7 @@ export class KursService {
         {
           data: null,
           meta: null,
-          message: 'Kurs not found',
+          message: 'Years not found',
           status: HttpStatus.NOT_FOUND,
           time: new Date(),
         },
@@ -98,7 +110,7 @@ export class KursService {
     return {
       data: kurs,
       meta: null,
-      message: 'Kurs found',
+      message: 'Years found',
       status: HttpStatus.OK,
       time: new Date(),
     };
