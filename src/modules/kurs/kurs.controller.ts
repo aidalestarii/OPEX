@@ -7,6 +7,8 @@ import {
   Delete,
   Put,
   Query,
+  HttpException,
+  HttpStatus,
 } from '@nestjs/common';
 import { KursService } from './kurs.service';
 import { CreateKursDto } from './dto/create-kurs.dto';
@@ -19,10 +21,54 @@ import { UpdateKursDto } from './dto/update-kurs.dto';
 export class KursController {
   constructor(private readonly kursService: KursService) {}
 
+  // @Post()
+  // create(@Body() createKursDto: CreateKursDto) {
+  //   return this.kursService.create(createKursDto);
+  // }
+
   @Post()
-  create(@Body() createKursDto: CreateKursDto) {
-    return this.kursService.create(createKursDto);
+  async createKurs(@Body() data: any) {
+    try {
+      // Validasi bahwa 'years' tidak boleh kosong
+      if (!data.years) {
+        throw new HttpException(
+          'Field years is required',
+          HttpStatus.BAD_REQUEST,
+        );
+      }
+
+      // Validasi tipe data untuk 'years'
+      if (typeof data.years !== 'number') {
+        throw new HttpException(
+          'Field "years" must be a number',
+          HttpStatus.BAD_REQUEST,
+        );
+      }
+
+      if (!data.value) {
+        throw new HttpException(
+          'Field value is required',
+          HttpStatus.BAD_REQUEST,
+        );
+      }
+      if (!data.createdBy) {
+        throw new HttpException(
+          'Field createdBy is required',
+          HttpStatus.BAD_REQUEST,
+        );
+      }
+
+      const newKurs = await this.kursService.create(data);
+      return newKurs;
+    } catch (error) {
+      // Tangkap kesalahan dan lemparkan HttpException
+      throw new HttpException(
+        error.message || 'Internal Server Error',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
   }
+
   @Get()
   findAll() {
     return this.kursService.findAll();

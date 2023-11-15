@@ -29,7 +29,7 @@ export class MCostCenterService {
         {
           data: null,
           meta: null,
-          message: error,
+          message: 'Failed to create cost center',
           status: HttpStatus.INTERNAL_SERVER_ERROR,
           time: new Date(),
         },
