@@ -97,7 +97,7 @@ export class RealizationController {
     // console.log(req.body, req.files);
     const createFileDtos: CreateFileDto[] = files.map((file, index) => ({
       tableName: 'Realization',
-      docName: file.filename,
+      docName: createFileDto.docName[index],
       docLink: file.path,
       docSize: parseFloat((file.size / 1000000).toFixed(2)),
       docType: extname(file.originalname),

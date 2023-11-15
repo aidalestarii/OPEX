@@ -29,7 +29,7 @@ export class MGlAccountService {
         {
           data: null,
           meta: null,
-          message: 'Failed to create Gl Account',
+          message: error,
           status: HttpStatus.INTERNAL_SERVER_ERROR,
           time: new Date(),
         },
