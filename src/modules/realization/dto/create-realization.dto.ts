@@ -51,11 +51,14 @@ export class CreateRealizationDto {
     data.requestNumber = Number(data.requestNumber);
     data.taReff = Number(data.taReff);
 
-    // Mendefinisikan nilai amount dari realizationItems
     if (Array.isArray(data.realizationItems)) {
       data.realizationItems = CreateRealizationItem.fromRequestArray(
         data.realizationItems,
       );
+    }
+
+    if (Array.isArray(data.uploadfile)) {
+      data.uploadfile = CreateFileDto.fromRequest(data.uploadfile);
     }
 
     return data;

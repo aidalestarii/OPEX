@@ -46,46 +46,43 @@ import { Request } from 'express';
   path: 'api/realization',
 })
 export class RealizationController {
-  constructor(
-    private readonly realizationService: RealizationService,
-    private readonly fileUploadService: FileUploadService,
-  ) {}
+  constructor(private readonly realizationService: RealizationService) {}
 
   @Post('/save')
   @UseInterceptors(AnyFilesInterceptor(multerPdfOptions))
   async createdRealizationWithItems(
     @UploadedFiles() files: Express.Multer.File[],
     @Req() req: Request,
-    @Body(new ValidationPipe()) createRealizationDto: CreateRealizationDto,
-    @Body() createFileDto: CreateFileDto,
+    @Body(new ValidationPipe()) dto: CreateRealizationDto,
+    @Body() dtoFile: CreateFileDto,
   ): Promise<any> {
-    //const { uploadfile,} = createRealizationDto;
+    // console.log('FILES = ', files);
+    // return null;
+    const createFileDtos: CreateFileDto[] = (files ?? []).map(
+      (file, index) => ({
+        tableName: 'Realization',
+        docName: dtoFile.docName[index],
+        docLink: file.path,
+        docSize: parseFloat((file.size / 1000000).toFixed(2)),
+        docType: extname(file.originalname),
+        createdBy: '',
+        docCategoryId: parseInt(dtoFile.docCategoryId[index]),
+      }),
+    );
 
-    const createFileDtos: CreateFileDto[] = (files ?? []).map((file, index) => ({
-      tableName: 'Realization',
-      docName: file.filename,
-      docLink: file.path,
-      docSize: parseFloat((file.size / 1000000).toFixed(2)),
-      docType: extname(file.originalname),
-      createdBy: '',
-      docCategoryId: createFileDto.docCategoryId[index], // Access the corresponding docCategoryId
-    }));
-    
-    
+    const fromRequest = CreateRealizationDto.fromRequest(dto);
 
-    const fromRequest = CreateRealizationDto.fromRequest(createRealizationDto);
-    const fromRequest2 = createFileDtos.map(CreateFileDto.fromRequest);
+    const realizationItems: CreateRealizationItem[] =
+      fromRequest.realizationItems;
 
     const realization = await this.realizationService.createRealizationItems(
       fromRequest,
+      realizationItems,
+      createFileDtos,
     );
-    const filesUpload: CreateFileDto[] =
-      await this.fileUploadService.createFiles(fromRequest2);
+
     return {
-      data: {
-        ...realization,
-        //filesUpload,
-      },
+      data: realization,
       message: 'Create new request successfully created',
       status: HttpStatus.CREATED,
       time: new Date(),

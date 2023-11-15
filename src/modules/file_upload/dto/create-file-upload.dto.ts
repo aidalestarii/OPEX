@@ -19,14 +19,17 @@ export class CreateFileDto {
 
   docType: string;
 
+  files?: any;
+
   //@IsNotEmpty()
   @IsString()
   createdBy: string;
 
-  static fromRequest(data: CreateFileDto): CreateFileDto {
-    data.docCategoryId = Number(data.docCategoryId);
-
-    return data;
+  static fromRequest(data: CreateFileDto[]): CreateFileDto[] {
+    return data.map((file) => {
+      file.docCategoryId = Number(file.docCategoryId);
+      return file;
+    });
   }
 }
 
