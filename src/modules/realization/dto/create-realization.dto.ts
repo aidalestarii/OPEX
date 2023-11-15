@@ -1,8 +1,9 @@
 import { RealizationTypeEnum, StatusEnum } from '@prisma/client';
 import { Type } from 'class-transformer';
 import { IsDecimal, IsEnum, IsNumber, IsOptional } from 'class-validator';
+import { CreateFileDto } from 'src/modules/file_upload/dto/create-file-upload.dto';
 
-export class CreateRealization {
+export class CreateRealizationDto {
   // @IsNumber()
   // @Type(() => Number)
   years: number;
@@ -39,9 +40,11 @@ export class CreateRealization {
   readonly personalNumberTo: string;
   readonly createdBy: string;
 
+  uploadfile: CreateFileDto[];
+
   realizationItems: CreateRealizationItem[];
 
-  static fromRequest(data: CreateRealization): CreateRealization {
+  static fromRequest(data: CreateRealizationDto): CreateRealizationDto {
     data.years = Number(data.years);
     data.month = Number(data.month);
     data.costCenter = String(data.costCenter);
