@@ -33,6 +33,11 @@ export class MCostCenterController {
     return this.mCostCenterService.findOne(+id);
   }
 
+  @Get('bidang/:bidang')
+  findByBidang(@Param('bidang') bidang: string) {
+    return this.mCostCenterService.findBidang(bidang);
+  }
+
   @Put(':id')
   update(
     @Param('id') id: number,

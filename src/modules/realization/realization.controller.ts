@@ -39,7 +39,7 @@ import { multerConfig } from 'src/config/multer-options.config';
 import {
   CreateFileDto,
   CreateMDocCategoryDto,
-} from '../file_upload/dto/create-file-upload.dto';
+} from './dto/create-file-upload.dto';
 import { Request } from 'express';
 @Controller({
   version: '1',
@@ -67,7 +67,7 @@ export class RealizationController {
   //     createdBy: '',
   //     docCategoryId: createFileDto.docCategoryId[index], // Access the corresponding docCategoryId
   //   }));
-    
+
   //   const fromRequest = CreateRealizationDto.fromRequest(createRealizationDto);
   //   const fromRequest2 = createFileDtos.map(CreateFileDto.fromRequest);
 

@@ -19,7 +19,7 @@ import { FileUploadService } from './file_upload.service';
 import {
   CreateFileDto,
   CreateMDocCategoryDto,
-} from './dto/create-file-upload.dto';
+} from '../realization/dto/create-file-upload.dto';
 import { FileInterceptor, FilesInterceptor } from '@nestjs/platform-express';
 import { Response, Express } from 'express';
 import { plainToInstance } from 'class-transformer';
@@ -27,7 +27,7 @@ import { ApiResponseDto } from 'src/core/dto/api-response.dto';
 import { multerPdfOptions } from 'src/config/multer.config';
 import { multerConfig } from 'src/config/multer-options.config';
 import { extname } from 'path';
-import { UpdateFileDto } from './dto/update-file-upload.dto';
+import { UpdateFileDto } from '../realization/dto/update-file-upload.dto';
 
 @Controller({
   version: '1',

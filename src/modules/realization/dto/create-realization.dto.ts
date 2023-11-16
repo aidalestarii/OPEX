@@ -1,7 +1,7 @@
 import { RealizationTypeEnum, StatusEnum } from '@prisma/client';
 import { Type } from 'class-transformer';
 import { IsDecimal, IsEnum, IsNumber, IsOptional } from 'class-validator';
-import { CreateFileDto } from 'src/modules/file_upload/dto/create-file-upload.dto';
+import { CreateFileDto } from 'src/modules/realization/dto/create-file-upload.dto';
 
 export class CreateRealizationDto {
   // @IsNumber()

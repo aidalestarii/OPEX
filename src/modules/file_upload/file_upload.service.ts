@@ -10,10 +10,10 @@ import {
 import {
   CreateFileDto,
   CreateMDocCategoryDto,
-} from './dto/create-file-upload.dto';
+} from '../realization/dto/create-file-upload.dto';
 import { PrismaService } from 'src/core/service/prisma.service';
 import { error } from 'console';
-import { UpdateFileDto } from './dto/update-file-upload.dto';
+import { UpdateFileDto } from '../realization/dto/update-file-upload.dto';
 
 @Injectable()
 export class FileUploadService {

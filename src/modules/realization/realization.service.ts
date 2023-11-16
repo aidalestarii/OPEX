@@ -6,7 +6,7 @@ import {
   CreateRealizationItem,
   MStatus,
 } from './dto/create-realization.dto';
-import { CreateFileDto } from '../file_upload/dto/create-file-upload.dto';
+import { CreateFileDto } from './dto/create-file-upload.dto';
 
 @Injectable()
 export class RealizationService {

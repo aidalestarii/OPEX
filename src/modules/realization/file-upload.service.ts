@@ -10,10 +10,10 @@ import {
 import {
   CreateFileDto,
   CreateMDocCategoryDto,
-} from '../file_upload/dto/create-file-upload.dto';
+} from './dto/create-file-upload.dto';
 import { PrismaService } from 'src/core/service/prisma.service';
 import { error } from 'console';
-import { UpdateFileDto } from '../file_upload/dto/update-file-upload.dto';
+import { UpdateFileDto } from './dto/update-file-upload.dto';
 
 @Injectable()
 export class FileUploadService {
@@ -89,35 +89,35 @@ export class FileUploadService {
   }
 
   //BISA JALAN
-  // async createFiles(fileDtos: CreateFileDto[]): Promise<any> {
-  //   // simpan database
-  //   try {
-  //     const fileUpload = await this.prisma.fileUpload.createMany({
-  //       data: fileDtos.map((fileDto) => ({
-  //         tableName: fileDto.tableName,
-  //         docCategoryId: fileDto.docCategoryId,
-  //         docName: fileDto.docName,
-  //         docSize: fileDto.docSize,
-  //         docLink: fileDto.docLink,
-  //         docType: fileDto.docType,
-  //         createdBy: fileDto.createdBy,
-  //       })),
-  //     });
+  async createFiles(fileDtos: CreateFileDto[]): Promise<any> {
+    // simpan database
+    try {
+      const fileUpload = await this.prisma.fileUpload.createMany({
+        data: fileDtos.map((fileDto) => ({
+          tableName: fileDto.tableName,
+          docCategoryId: fileDto.docCategoryId,
+          docName: fileDto.docName,
+          docSize: fileDto.docSize,
+          docLink: fileDto.docLink,
+          docType: fileDto.docType,
+          createdBy: fileDto.createdBy,
+        })),
+      });
 
-  //     return fileDtos;
-  //   } catch (error) {
-  //     throw new HttpException(
-  //       {
-  //         data: null,
-  //         meta: null,
-  //         message: 'Failed to upload file',
-  //         status: HttpStatus.INTERNAL_SERVER_ERROR,
-  //         time: new Date(),
-  //       },
-  //       HttpStatus.INTERNAL_SERVER_ERROR,
-  //     );
-  //   }
-  // }
+      return fileDtos;
+    } catch (error) {
+      throw new HttpException(
+        {
+          data: null,
+          meta: null,
+          message: 'Failed to upload file',
+          status: HttpStatus.INTERNAL_SERVER_ERROR,
+          time: new Date(),
+        },
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+  }
 
   async findFile(id: number) {
     const file = await this.prisma.fileUpload.findUnique({
