@@ -98,6 +98,8 @@ export class RealizationController {
     // return null;
     const createFileDtos: CreateFileDto[] = (files ?? []).map(
       (file, index) => ({
+        index: index,
+        files: file,
         tableName: 'Realization',
         docName: dtoFile.docName[index],
         docLink: file.path,
