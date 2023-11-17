@@ -301,8 +301,8 @@ model Realization {
   taReff           Int?                @map("ta_reff") @db.Integer
   type             RealizationTypeEnum @default(UANG_MUKA) @map("type")
   responsibleNopeg String              @map("responsible_nopeg") @db.VarChar(8)
-  titleRequest     String              @map("title_request")
-  noteRequest      String              @map("note_request")
+  titleRequest     String              @map("title_request") @db.VarChar()
+  noteRequest      String              @map("note_request") @db.Text()
   status           StatusEnum          @default(PROGRESS) @map("status")
   statusId         Int                 @map("status_id") @db.Integer
   department       String?             @map("department") @db.VarChar(8)
