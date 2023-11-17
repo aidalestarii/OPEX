@@ -6,7 +6,6 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { PrismaService } from 'src/core/service/prisma.service';
-
 import {
   CreateRealizationDto,
   CreateRealizationItemDto,
@@ -14,7 +13,6 @@ import {
 } from './dto/create-realization.dto';
 import { CreateFileDto } from './dto/create-file-upload.dto';
 import { StatusEnum } from '@prisma/client';
-import { UpdateFileDto } from './dto/update-file-upload.dto';
 
 @Injectable()
 export class RealizationService {

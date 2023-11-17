@@ -41,6 +41,7 @@ import {
   CreateMDocCategoryDto,
 } from './dto/create-file-upload.dto';
 import { Request } from 'express';
+
 @Controller({
   version: '1',
   path: 'api/realization',
@@ -101,8 +102,8 @@ export class RealizationController {
         docLink: file.path,
         docSize: parseFloat((file.size / 1000000).toFixed(2)),
         docType: extname(file.originalname),
-        docCategoryId: parseInt(dtoFile.docCategoryId[index]),
         createdBy: '',
+        docCategoryId: parseInt(dtoFile.docCategoryId[index]),
       }),
     );
 

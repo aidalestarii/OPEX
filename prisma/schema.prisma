@@ -318,7 +318,7 @@ model Realization {
   m_cost_center                               MCostCenter       @relation(fields: [costCenterId], references: [idCostCenter], onDelete: NoAction, onUpdate: NoAction, map: "fk_m_cost_center_to_realization")
   m_status_realization_id_statusTom_status    MStatus           @relation("realization_id_statusTom_status", fields: [statusId], references: [idStatus], onDelete: NoAction, onUpdate: NoAction, map: "fk_m_status_to_realization")
   m_status_realization_id_status_toTom_status MStatus           @relation("realization_id_status_toTom_status", fields: [statusToId], references: [idStatus], onDelete: NoAction, onUpdate: NoAction, map: "fk_m_status_to_realization1")
-  realization_item                            RealizationItem[]
+  realizationItem                             RealizationItem[]
   reallocation                                Reallocation[]
 
   //@@index([years, costCenterId], map: "realization_constraint")
@@ -515,6 +515,7 @@ model ReallocationCorporate {
   reallocation_corporate_item                            ReallocationCorporateItem[]
 
   @@index([years], map: "reallocation_budget_constraint")
+  @@map("reallocation_corporate")
 }
 
 model ReallocationCorporateItem {
@@ -536,6 +537,8 @@ model ReallocationCorporateItem {
   m_gl_account_reallocation_corporate_item_id_gl_accountTom_gl_account       MGlAccount            @relation("reallocation_corporate_item_id_gl_accountTom_gl_account", fields: [glAccountId], references: [idGlAccount], onDelete: NoAction, onUpdate: NoAction, map: "fk_m_gl_account_to_reallocation_corporate_item")
   m_gl_account_reallocation_corporate_item_id_gl_account_toTom_gl_account    MGlAccount            @relation("reallocation_corporate_item_id_gl_account_toTom_gl_account", fields: [glAccountToId], references: [idGlAccount], onDelete: NoAction, onUpdate: NoAction, map: "fk_m_gl_account_to_reallocation_corporate_item1")
   reallocation_corporate                                                     ReallocationCorporate @relation(fields: [reallocationBudgetId], references: [idReallocationCorporate], onDelete: NoAction, onUpdate: NoAction, map: "fk_reallocation_corporate_to_reallocation_corporate_item")
+
+  @@map("reallocation_corporate_item")
 }
 
 model ReallocationInvest {

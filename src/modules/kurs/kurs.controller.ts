@@ -22,7 +22,7 @@ export class KursController {
   constructor(private readonly kursService: KursService) {}
 
   @Post()
-  async createKurs(@Body() data: any) {
+  async createKurs(@Body() data: CreateKursDto) {
     try {
       const requiredFields = ['years', 'value', 'createdBy'];
       for (const field of requiredFields) {

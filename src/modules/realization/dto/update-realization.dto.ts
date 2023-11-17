@@ -1,4 +1,3 @@
-import { integer } from '@elastic/elasticsearch/lib/api/types';
 import { RealizationTypeEnum, StatusEnum } from '@prisma/client';
 import { IsDecimal, IsEnum, IsNumber, IsOptional } from 'class-validator';
 
