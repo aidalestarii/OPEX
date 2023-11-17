@@ -1,18 +1,22 @@
 import { RealizationTypeEnum, StatusEnum } from '@prisma/client';
 import { Type } from 'class-transformer';
-import { IsDecimal, IsEnum, IsNumber, IsOptional } from 'class-validator';
+import {
+  IsDecimal,
+  IsEnum,
+  IsNotEmpty,
+  IsNumber,
+  IsOptional,
+  IsString,
+} from 'class-validator';
 import { CreateFileDto } from 'src/modules/realization/dto/create-file-upload.dto';
 
 export class CreateRealizationDto {
-  // @IsNumber()
-  // @Type(() => Number)
   years: number;
 
-  // @Type(() => Number)
   month: number;
 
-  // @Type(() => Number)
-  costCenter: String;
+  @Type(() => Number)
+  costCenterId: number;
 
   @Type(() => Number)
   requestNumber: number;
@@ -24,35 +28,47 @@ export class CreateRealizationDto {
   @IsEnum(RealizationTypeEnum)
   type: RealizationTypeEnum;
 
-  readonly responsibleNopeg: string;
-  readonly titleRequest: string;
-  readonly noteRequest: string;
-  statusId;
-  statusToId;
+  @IsString()
+  @IsNotEmpty()
+  responsibleNopeg: string;
 
-  @IsOptional()
-  @IsEnum(StatusEnum)
-  status: StatusEnum;
+  @IsString()
+  @IsNotEmpty()
+  titleRequest: string;
+
+  @IsString()
+  @IsNotEmpty()
+  noteRequest: string;
+
+  statusId: number;
+
+  statusToId: number;
 
   readonly department: string;
+
   readonly personalNumber: string;
+
   readonly departmentTo: string;
+
   readonly personalNumberTo: string;
-  readonly createdBy: string;
+
+  @IsString()
+  @IsNotEmpty()
+  createdBy: string;
 
   uploadfile: CreateFileDto[];
 
-  realizationItems: CreateRealizationItem[];
+  realizationItems: CreateRealizationItemDto[];
 
   static fromRequest(data: CreateRealizationDto): CreateRealizationDto {
     data.years = Number(data.years);
     data.month = Number(data.month);
-    data.costCenter = String(data.costCenter);
+    data.costCenterId = Number(data.costCenterId);
     data.requestNumber = Number(data.requestNumber);
     data.taReff = Number(data.taReff);
 
     if (Array.isArray(data.realizationItems)) {
-      data.realizationItems = CreateRealizationItem.fromRequestArray(
+      data.realizationItems = CreateRealizationItemDto.fromRequestArray(
         data.realizationItems,
       );
     }
@@ -65,29 +81,48 @@ export class CreateRealizationDto {
   }
 }
 
-export class CreateRealizationItem {
+export class CreateRealizationItemDto {
   @Type(() => Number)
   realizationId: number;
+
   @Type(() => Number)
   glAccountId: number;
+
   @Type(() => Number)
   amount: number;
+
   @Type(() => Number)
   amountSubmission: number;
+
   @Type(() => Number)
   amountHps?: number;
+
   @Type(() => Number)
   amountCorrection: number;
-  readonly periodStart: Date;
-  readonly periodFinish: Date;
-  readonly remarkPby: string;
+
+  @IsNotEmpty()
+  periodStart: Date;
+
+  @IsNotEmpty()
+  periodFinish: Date;
+
+  @IsNotEmpty()
+  @IsString()
+  remarkPby: string;
+
   readonly memo?: string;
-  readonly descPby: string;
-  readonly createdBy: string;
+
+  @IsNotEmpty()
+  @IsString()
+  descPby: string;
+
+  @IsNotEmpty()
+  @IsString()
+  createdBy: string;
 
   static fromRequestArray(
-    data: CreateRealizationItem[],
-  ): CreateRealizationItem[] {
+    data: CreateRealizationItemDto[],
+  ): CreateRealizationItemDto[] {
     return data.map((item) => {
       item.amount = Number(item.amount);
       item.amountSubmission = Number(item.amountSubmission);
@@ -99,7 +134,7 @@ export class CreateRealizationItem {
   }
 }
 
-export class MStatus {
+export class MStatusDto {
   readonly type: string;
   readonly status: string;
   readonly step: number;
@@ -109,7 +144,7 @@ export class MStatus {
   readonly createdBy: string;
 }
 
-export class BudgetReallocation {
+export class BudgetReallocationDto {
   years;
   glAccountId;
   costCenterId;

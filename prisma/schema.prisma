@@ -158,7 +158,7 @@ model FileUpload {
   docSize       Float    @map("doc_size") @db.DoublePrecision
   docType       String   @map("doc_type") @db.VarChar(5)
   createdAt     DateTime @default(now()) @map("created_at") @db.Timestamp(6)
-  createdBy     String?  @map("created_by") @db.VarChar(50)
+  createdBy     String   @map("created_by") @db.VarChar(50)
   updatedAt     DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamp(6)
   updatedBy     String?  @map("updated_by") @db.VarChar(50)
 
@@ -282,7 +282,6 @@ model MStatus {
   realization_invest_realization_invest_id_statusTom_status            RealizationInvest[]     @relation("realization_invest_id_statusTom_status")
   realization_invest_realization_invest_id_status_toTom_status         RealizationInvest[]     @relation("realization_invest_id_status_toTom_status")
   reallocation_reallocation_id_statusTom_status                        Reallocation[]          @relation("reallocation_id_statusTom_status")
-  // reallocation_reallocation_id_status_toTom_status                     Reallocation[]          @relation("reallocation_id_status_toTom_status")
   reallocation_corporate_reallocation_corporate_id_statusTom_status    ReallocationCorporate[] @relation("reallocation_corporate_id_statusTom_status")
   reallocation_corporate_reallocation_corporate_id_status_toTom_status ReallocationCorporate[] @relation("reallocation_corporate_id_status_toTom_status")
   reallocation_invest_reallocation_invest_id_statusTom_status          ReallocationInvest[]    @relation("reallocation_invest_id_statusTom_status")
@@ -296,7 +295,7 @@ model Realization {
   uniqueId         String              @unique @default(uuid()) @map("unique_id") @db.Uuid
   years            Int                 @map("years") @db.Integer
   month            Int                 @map("month") @db.Integer
-  costCenter       String              @map("cost_center") @db.VarChar(20)
+  costCenterId     Int                 @map("cost_center_id") @db.Integer
   draftNumber      Int                 @default(autoincrement()) @map("no_draft") @db.Integer
   requestNumber    Int?                @map("no_request") @db.Integer
   taReff           Int?                @map("ta_reff") @db.Integer
@@ -308,7 +307,7 @@ model Realization {
   statusId         Int                 @map("status_id") @db.Integer
   department       String?             @map("department") @db.VarChar(8)
   personalNumber   String              @map("nopeg") @db.VarChar(8)
-  statusToId       Int
+  statusToId       Int                 @map("status_to_id") @db.Integer
   departmentTo     String?             @map("department_to") @db.VarChar(8)
   personalNumberTo String?             @map("nopeg_to") @db.VarChar(8)
   createdAt        DateTime            @default(now()) @map("created_at") @db.Timestamp(6)
@@ -316,7 +315,7 @@ model Realization {
   updatedAt        DateTime            @default(now()) @updatedAt @map("updated_at") @db.Timestamp(6)
   updatedBy        String?             @map("updated_by") @db.VarChar(50)
 
-  m_cost_center                               MCostCenter       @relation(fields: [costCenter], references: [costCenter], onDelete: NoAction, onUpdate: NoAction, map: "fk_m_cost_center_to_realization")
+  m_cost_center                               MCostCenter       @relation(fields: [costCenterId], references: [idCostCenter], onDelete: NoAction, onUpdate: NoAction, map: "fk_m_cost_center_to_realization")
   m_status_realization_id_statusTom_status    MStatus           @relation("realization_id_statusTom_status", fields: [statusId], references: [idStatus], onDelete: NoAction, onUpdate: NoAction, map: "fk_m_status_to_realization")
   m_status_realization_id_status_toTom_status MStatus           @relation("realization_id_status_toTom_status", fields: [statusToId], references: [idStatus], onDelete: NoAction, onUpdate: NoAction, map: "fk_m_status_to_realization1")
   realization_item                            RealizationItem[]
@@ -346,7 +345,7 @@ model RealizationInvest {
   personalNumberTo    String?    @map("nopeg_to") @db.VarChar(8)
   createdAt           DateTime   @default(now()) @map("created_at") @db.Timestamp(6)
   createdBy           String     @map("created_by") @db.VarChar(50)
-  updatedAt           DateTime?  @default(now()) @updatedAt @map("updated_at") @db.Timestamp(6)
+  updatedAt           DateTime   @default(now()) @updatedAt @map("updated_at") @db.Timestamp(6)
   updatedBy           String?    @map("updated_by") @db.VarChar(50)
 
   m_status_realization_invest_id_statusTom_status    MStatus                 @relation("realization_invest_id_statusTom_status", fields: [statusId], references: [idStatus], onDelete: NoAction, onUpdate: NoAction, map: "fk_m_status_to_realization_invest")
@@ -409,7 +408,7 @@ model RealizationItem {
   remarkPby         String   @map("remark_pby")
   memo              String?  @map("memo")
   createdAt         DateTime @default(now()) @map("created_at") @db.Timestamp(6)
-  createdBy         String?  @map("created_by") @db.VarChar(50)
+  createdBy         String   @map("created_by") @db.VarChar(50)
   updatedAt         DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamp(6)
   updatedBy         String?  @map("updated_by") @db.VarChar(50)
 
@@ -644,6 +643,7 @@ enum RealizationTypeEnum {
 }
 
 enum StatusEnum {
+  OPEN
   PROGRESS
   REVISE
   REJECT

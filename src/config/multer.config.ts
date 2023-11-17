@@ -40,31 +40,32 @@ export const multerPdfOptions = {
       cb(null, uploadPath);
     },
 
-    // // File modification details
+    //     // // File modification details
     filename: async (req: any, file: any, cb: any) => {
       const sanitizedOriginalName = file.originalname.replace(
         /[^a-zA-Z0-9.]/g,
         '_',
       );
-      const uploadPath = './uploads/pdf';
-      const fileName = await generateUniqueFileName(
-        uploadPath,
-        sanitizedOriginalName,
-      );
-      cb(null, fileName);
+      //ini ntar uncomment yg masuk ke cb null filename
+      //const uploadPath = './uploads/pdf';
+      // const fileName = await generateUniqueFileName(
+      //   uploadPath,
+      //   sanitizedOriginalName,
+      // );
+      cb(null, sanitizedOriginalName);
     },
   }),
 };
-async function generateUniqueFileName(uploadPath, fileName) {
-  let newFileName = fileName;
-  let counter = 1;
+// async function generateUniqueFileName(uploadPath, fileName) {
+//   let newFileName = fileName;
+//   let counter = 1;
 
-  while (existsSync(`${uploadPath}/${newFileName}`)) {
-    const nameWithoutExt = path.parse(fileName).name;
-    const ext = path.parse(fileName).ext;
-    newFileName = `${nameWithoutExt} (${counter})${ext}`;
-    counter++;
-  }
+//   while (existsSync(`${uploadPath}/${newFileName}`)) {
+//     const nameWithoutExt = path.parse(fileName).name;
+//     const ext = path.parse(fileName).ext;
+//     newFileName = `${nameWithoutExt} (${counter})${ext}`;
+//     counter++;
+//   }
 
-  return newFileName;
-}
+//   return newFileName;
+// }

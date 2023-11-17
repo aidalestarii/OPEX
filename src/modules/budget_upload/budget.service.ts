@@ -6,6 +6,7 @@ import { PrismaService } from 'src/core/service/prisma.service';
 @Injectable()
 export class BudgetService {
   constructor(private readonly prisma: PrismaService) {}
+
   async findAll() {
     const budget = this.prisma.budget.findMany({
       include: {

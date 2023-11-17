@@ -21,8 +21,8 @@ import { RealizationService } from './realization.service';
 import {
   // CreateRealization,
   CreateRealizationDto,
-  CreateRealizationItem,
-  MStatus,
+  CreateRealizationItemDto,
+  MStatusDto,
 } from './dto/create-realization.dto';
 import {
   UpdateRealization,
@@ -94,25 +94,21 @@ export class RealizationController {
     @Body(new ValidationPipe()) dto: CreateRealizationDto,
     @Body() dtoFile: CreateFileDto,
   ): Promise<any> {
-    // console.log('FILES = ', files);
-    // return null;
     const createFileDtos: CreateFileDto[] = (files ?? []).map(
       (file, index) => ({
-        index: index,
-        files: file,
         tableName: 'Realization',
         docName: dtoFile.docName[index],
         docLink: file.path,
         docSize: parseFloat((file.size / 1000000).toFixed(2)),
         docType: extname(file.originalname),
-        createdBy: '',
         docCategoryId: parseInt(dtoFile.docCategoryId[index]),
+        createdBy: '',
       }),
     );
 
     const fromRequest = CreateRealizationDto.fromRequest(dto);
 
-    const realizationItems: CreateRealizationItem[] =
+    const realizationItems: CreateRealizationItemDto[] =
       fromRequest.realizationItems;
 
     const realization = await this.realizationService.createRealizationItems(
@@ -129,53 +125,18 @@ export class RealizationController {
     };
   }
 
-  //INI BISA JALAN
-  // @Post('/save')
-  // @UseInterceptors(AnyFilesInterceptor(multerPdfOptions))
-  // async createdRealizationWithItems(
-  //   @UploadedFiles() files: Express.Multer.File[],
-  //   @Req() req: Request,
-  //   @Body(new ValidationPipe()) createRealization: CreateRealization,
-  //   @Body() createFileDto: CreateFileDto,
-  // ): Promise<any> {
-  //   // console.log(req.body, req.files);
-  //   const createFileDtos: CreateFileDto[] = files.map((file, index) => ({
-  //     tableName: 'Realization',
-  //     docName: file.filename,
-  //     docLink: file.path,
-  //     docSize: parseFloat((file.size / 1000000).toFixed(2)),
-  //     docType: extname(file.originalname),
-  //     createdBy: '',
-  //     docCategoryId: createFileDto.docCategoryId[index], // Access the corresponding docCategoryId
-  //   }));
-
-  //   const fromRequest2 = createFileDtos.map(CreateFileDto.fromRequest);
-  //   const fromRequest = CreateRealization.fromRequest(createRealization);
-
-  //   const realization = await this.realizationService.createRealizationItems(
-  //     fromRequest,
-  //   );
-  //   const filesUpload: CreateFileDto[] =
-  //     await this.fileUploadService.createFiles(fromRequest2);
-
-  //   return {
-  //     data: {
-  //       ...realization,
-  //       filesUpload,
-  //     },
-  //     message: 'Create new request successfully created',
-  //     status: HttpStatus.CREATED,
-  //     time: new Date(),
-  //   };
-  // }
-
   @Get()
   findRealization() {
-    return this.realizationService.findRealization();
+    return this.realizationService.findAllRealization();
   }
 
-  @Post('/mstatus')
-  createMStatus(@Body() mStatus: MStatus) {
+  @Get(':id')
+  findOne(@Param('id') id: number) {
+    return this.realizationService.findOneRealization(+id);
+  }
+
+  @Post('/status')
+  createMStatus(@Body() mStatus: MStatusDto) {
     return this.realizationService.createMStatus(mStatus);
   }
 }
