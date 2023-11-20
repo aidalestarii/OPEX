@@ -184,6 +184,8 @@ export class RealizationController {
     }
   }
 
+
+
   @Get()
   findRealization() {
     return this.realizationService.findAllRealization();
@@ -193,6 +195,8 @@ export class RealizationController {
   findOne(@Param('id') id: number) {
     return this.realizationService.findOneRealization(+id);
   }
+
+
 
   @Post('/status')
   createMStatus(@Body() mStatus: MStatusDto) {
