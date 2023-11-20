@@ -1,7 +1,8 @@
-import { HttpStatus, Injectable } from '@nestjs/common';
+import { BadRequestException, HttpStatus, Injectable } from '@nestjs/common';
 import { CreateDashboardDto } from './dto/create-dashboard.dto';
 import { UpdateDashboardDto } from './dto/update-dashboard.dto';
 import { PrismaService } from 'src/core/service/prisma.service';
+import { SortOrder } from '@elastic/elasticsearch/lib/api/types';
 
 @Injectable()
 export class DashboardService {
@@ -27,6 +28,7 @@ export class DashboardService {
       );
 
       return {
+        idRealization: realizationItem.idRealization,
         requestNumber: realizationItem.requestNumber,
         entryDate: realizationItem.createdAt,
         m_cost_center: realizationItem.m_cost_center,
@@ -48,16 +50,25 @@ export class DashboardService {
     };
   }
 
-  async findAllPaginated(page: number, perPage: number) {
+  async findAllPaginated(page: number, perPage, order: string = 'asc') {
+    if (!['asc', 'desc'].includes(order.toLowerCase())) {
+      throw new BadRequestException(
+        'Invalid order parameter. Use "asc" or "desc".',
+      );
+    }
+
     const skip = (page - 1) * perPage;
 
     const realization = await this.prisma.realization.findMany({
+      skip,
+      take: parseInt(perPage),
+      orderBy: {
+        updatedAt: order.toLowerCase() as SortOrder,
+      },
       include: {
         m_cost_center: true,
         realizationItem: true,
       },
-      skip,
-      take: Number(perPage),
     });
 
     const totalItems = await this.prisma.realization.count();
@@ -76,6 +87,7 @@ export class DashboardService {
       );
 
       return {
+        idRealization: realizationItem.idRealization,
         requestNumber: realizationItem.requestNumber,
         entryDate: realizationItem.createdAt,
         m_cost_center: realizationItem.m_cost_center,

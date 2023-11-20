@@ -24,7 +24,7 @@ export class DashboardController {
     return this.dashboardService.create(createDashboardDto);
   }
 
-  @Get()
+  @Get('/all')
   findAll() {
     return this.dashboardService.findAll();
   }
@@ -33,11 +33,12 @@ export class DashboardController {
   findAllPaginated(
     @Query('page') page: number,
     @Query('perPage') perPage: number,
+    @Query('orderBy') orderBy: string,
   ) {
-    return this.dashboardService.findAllPaginated(page, perPage);
+    return this.dashboardService.findAllPaginated(page, perPage, orderBy);
   }
 
-  @Get('type')
+  @Get('/type')
   async getRealizationTypeCounts() {
     const realizationTypeCounts =
       await this.dashboardService.getRealizationTypeCounts();
