@@ -135,13 +135,19 @@ export class KursService {
 
     const totalItems = await this.prisma.mKurs.count();
 
+    // Menghitung jumlah item yang tersisa pada halaman terakhir
+    const remainingItems = totalItems % perPage;
+
+    // Memeriksa apakah ini adalah halaman terakhir
+    const isLastPage = page * perPage >= totalItems;
+
     return {
       data: kurs,
       meta: {
         currentPage: Number(page),
         totalItems,
         lastpage: Math.ceil(totalItems / perPage),
-        totalItemsPerPage: Number(perPage),
+        totalItemsPerPage: Number(isLastPage ? remainingItems : perPage),
       },
       message: 'Paginated kurs retrieved',
       status: HttpStatus.OK,
