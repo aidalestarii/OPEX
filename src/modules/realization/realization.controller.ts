@@ -3,6 +3,7 @@ import {
   Body,
   Controller,
   Get,
+  HttpException,
   HttpStatus,
   NotFoundException,
   Param,
@@ -14,6 +15,7 @@ import {
   UploadedFiles,
   UseInterceptors,
   UsePipes,
+  ValidationError,
   ValidationPipe,
 } from '@nestjs/common';
 import { FileUploadService } from './file-upload.service';
@@ -41,6 +43,8 @@ import {
   CreateMDocCategoryDto,
 } from './dto/create-file-upload.dto';
 import { Request } from 'express';
+import { validate } from 'class-validator';
+import { RealizationTypeEnum } from '@prisma/client';
 
 @Controller({
   version: '1',
@@ -95,35 +99,89 @@ export class RealizationController {
     @Body(new ValidationPipe()) dto: CreateRealizationDto,
     @Body() dtoFile: CreateFileDto,
   ): Promise<any> {
-    const createFileDtos: CreateFileDto[] = (files ?? []).map(
-      (file, index) => ({
-        tableName: 'Realization',
-        docName: dtoFile.docName[index],
-        docLink: file.path,
-        docSize: parseFloat((file.size / 1000000).toFixed(2)),
-        docType: extname(file.originalname),
-        createdBy: '',
-        docCategoryId: parseInt(dtoFile.docCategoryId[index]),
-      }),
-    );
+    try {
+      const createFileDtos: CreateFileDto[] = (files ?? []).map(
+        (file, index) => ({
+          tableName: 'Realization',
+          docName: dtoFile.docName[index],
+          docLink: file.path,
+          docSize: parseFloat((file.size / 1000000).toFixed(2)),
+          docType: extname(file.originalname),
+          createdBy: '',
+          docCategoryId: parseInt(dtoFile.docCategoryId[index]),
+        }),
+      );
 
-    const fromRequest = CreateRealizationDto.fromRequest(dto);
+      const fromRequest = CreateRealizationDto.fromRequest(dto);
 
-    const realizationItems: CreateRealizationItemDto[] =
-      fromRequest.realizationItems;
+      const realizationItems: CreateRealizationItemDto[] =
+        fromRequest.realizationItems;
 
-    const realization = await this.realizationService.createRealizationItems(
-      fromRequest,
-      realizationItems,
-      createFileDtos,
-    );
+      const requiredFields = [
+        'type',
+        'responsibleNopeg',
+        'titleRequest',
+        'noteRequest',
+        'personalNumber',
+        'costCenterId',
+        'createdBy',
+      ];
+      for (const field of requiredFields) {
+        if (!dto[field]) {
+          throw new HttpException(
+            `Field ${field} is required`,
+            HttpStatus.BAD_REQUEST,
+          );
+        }
+      }
+      const typeValidations = {
+        titleRequest: 'string',
+        noteRequest: 'string',
+        costCenterId: 'number',
+        createdBy: 'string',
+      };
+      for (const field in typeValidations) {
+        if (typeof dto[field] !== typeValidations[field]) {
+          throw new HttpException(
+            `Field ${field} must be a ${typeValidations[field]}`,
+            HttpStatus.BAD_REQUEST,
+          );
+        }
+      }
 
-    return {
-      data: realization,
-      message: 'Create new request successfully created',
-      status: HttpStatus.CREATED,
-      time: new Date(),
-    };
+      const realization = await this.realizationService.createRealizationItems(
+        fromRequest,
+        realizationItems,
+        createFileDtos,
+      );
+
+      return {
+        data: realization,
+        message: 'Create new request successfully created',
+        status: HttpStatus.CREATED,
+        time: new Date(),
+      };
+    } catch (error) {
+      throw new HttpException(
+        error.message || 'Internal Server Error',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+  }
+
+  private async validateRealizationDto(
+    data: CreateRealizationDto,
+  ): Promise<void> {
+    const requiredFields = ['createdBy'];
+
+    for (const field of requiredFields) {
+      if (!data[field]) {
+        throw new HttpException(
+          `Field ${field} is required`,
+          HttpStatus.BAD_REQUEST,
+        );
+      }
+    }
   }
 
   @Get()

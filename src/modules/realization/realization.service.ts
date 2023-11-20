@@ -71,10 +71,25 @@ export class RealizationService {
       realizationItems.map((item: CreateRealizationItemDto) => {
         return this.prisma.realizationItem.create({
           data: {
-            ...item,
+            // ...item,
+
             realizationId: createdRealization.idRealization,
+            glAccountId: item.glAccountId,
             amount: item.amountSubmission,
+            amountSubmission: item.amountSubmission,
+            amountHps: item.amountHps,
+            amountCorrection: item.amountCorrection,
+            periodStart: item.periodStart,
+            periodFinish: item.periodFinish,
+            descPby: item.descPby,
+            remarkPby: item.remarkPby,
+            memo: item.memo,
             createdBy: createdRealization.createdBy,
+            m_gl_account: {
+              connect: {
+                idGlAccount: item.glAccountId,
+              },
+            },
           },
         });
       }),
@@ -249,7 +264,7 @@ export class RealizationService {
   async findAllRealization() {
     const realization = await this.prisma.realization.findMany({
       include: {
-        realization_item: true,
+        realizationItem: true,
       },
     });
     const fileUpload = await this.prisma.fileUpload.findMany();
@@ -282,7 +297,7 @@ export class RealizationService {
         idRealization: id,
       },
       include: {
-        realization_item: true,
+        realizationItem: true,
       },
     });
     const fileUpload = await this.prisma.fileUpload.findMany();
