@@ -125,6 +125,7 @@ export class RealizationService {
       }
     });
   }
+  
   async findAllRealization() {
     const realization = await this.prisma.realization.findMany({
       include: {

@@ -119,8 +119,9 @@ export class DashboardService {
     return realizationTypeCounts.map((countStatus) => ({
       type: countStatus.status,
       count: countStatus._count,
-      percentage:
-        ((countStatus._count / totalRealizations) * 100).toFixed(2) + ' %',
+      percentage: Number(
+        ((countStatus._count / totalRealizations) * 100).toFixed(2),
+      ),
     }));
   }
 
