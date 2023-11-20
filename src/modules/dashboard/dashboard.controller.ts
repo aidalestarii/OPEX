@@ -1,4 +1,13 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Query } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  Query,
+} from '@nestjs/common';
 import { DashboardService } from './dashboard.service';
 import { CreateDashboardDto } from './dto/create-dashboard.dto';
 import { UpdateDashboardDto } from './dto/update-dashboard.dto';
@@ -15,7 +24,7 @@ export class DashboardController {
     return this.dashboardService.create(createDashboardDto);
   }
 
-  @Get()
+  @Get('/all')
   findAll() {
     return this.dashboardService.findAll();
   }
@@ -24,15 +33,19 @@ export class DashboardController {
   findAllPaginated(
     @Query('page') page: number,
     @Query('perPage') perPage: number,
+    @Query('orderBy') orderBy: string,
   ) {
-    return this.dashboardService.findAllPaginated(page, perPage);
+    return this.dashboardService.findAllPaginated(page, perPage, orderBy);
   }
 
-
-  @Get('type')
+  @Get('/type')
   async getRealizationTypeCounts() {
-    const realizationTypeCounts = await this.dashboardService.getRealizationTypeCounts();
-    return { data: realizationTypeCounts, message: 'Realization type counts retrieved' };
+    const realizationTypeCounts =
+      await this.dashboardService.getRealizationTypeCounts();
+    return {
+      data: realizationTypeCounts,
+      message: 'Realization type counts retrieved',
+    };
   }
 
   @Get(':id')
@@ -41,7 +54,10 @@ export class DashboardController {
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateDashboardDto: UpdateDashboardDto) {
+  update(
+    @Param('id') id: string,
+    @Body() updateDashboardDto: UpdateDashboardDto,
+  ) {
     return this.dashboardService.update(+id, updateDashboardDto);
   }
 
