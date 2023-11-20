@@ -97,9 +97,8 @@ export class DashboardService {
   }
 
   async getRealizationTypeCounts() {
-
     const totalRealizations = await this.prisma.realization.count();
-    
+
     const realizationTypeCounts = await this.prisma.realization.groupBy({
       by: ['status'],
       _count: true,
@@ -109,7 +108,7 @@ export class DashboardService {
       type: countStatus.status,
       count: countStatus._count,
       percentage:
-      ((countStatus._count / totalRealizations) * 100).toFixed(2) + ' %',
+        ((countStatus._count / totalRealizations) * 100).toFixed(2) + ' %',
     }));
   }
 

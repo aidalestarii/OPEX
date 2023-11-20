@@ -73,27 +73,13 @@ export class RealizationService {
         // Create realization items within the transaction
         const createdItems = await Promise.all(
           realizationItems.map(async (item: CreateRealizationItemDto) => {
-            // const mGlAccount = await prisma.mGlAccount.create({
-            //   data: {
-            //     // ... other fields
-            //     idGlAccount: item.glAccountId,
-            //   },
-            // });
             return prisma.realizationItem.create({
               data: {
-                // ...item,
+                ...item,
                 realizationId: createdRealization.idRealization,
                 amount: item.amountSubmission,
                 createdBy: createdRealization.createdBy,
                 glAccountId: item.glAccountId,
-                amountSubmission: item.amountSubmission,
-                amountHps: item.amountHps,
-                amountCorrection: item.amountCorrection,
-                periodStart: item.periodStart,
-                periodFinish: item.periodFinish,
-                remarkPby: item.remarkPby,
-                memo: item.memo,
-                descPby: item.descPby,
               },
             });
           }),
@@ -116,7 +102,6 @@ export class RealizationService {
             });
           }),
         );
-
         return {
           realization: {
             ...createdRealization,
@@ -125,6 +110,7 @@ export class RealizationService {
           },
         };
       } catch (error) {
+        console.log(error.message);
         throw new HttpException(
           {
             data: null,
