@@ -62,6 +62,12 @@ export class DashboardService {
 
     const totalItems = await this.prisma.realization.count();
 
+    // Menghitung jumlah item yang tersisa pada halaman terakhir
+    const remainingItems = totalItems % perPage;
+
+    // Memeriksa apakah ini adalah halaman terakhir
+    const isLastPage = page * perPage >= totalItems;
+
     const realizationWithFileUpload = realization.map((realizationItem) => {
       // Calculate total amount for each realization using reduce
       const totalAmount = realizationItem.realizationItem.reduce(
@@ -88,7 +94,7 @@ export class DashboardService {
         currentPage: Number(page),
         totalItems,
         lastpage: Math.ceil(totalItems / perPage),
-        totalItemsPerPage: Number(perPage),
+        totalItemsPerPage: Number(isLastPage ? remainingItems : perPage),
       },
       message: 'Pagination dashboard retrieved',
       status: HttpStatus.OK,

@@ -61,6 +61,7 @@ export class KursController {
   findAll() {
     return this.kursService.findAll();
   }
+
   @Get()
   findAllPaginated(
     @Query('page') page: number,
@@ -82,7 +83,6 @@ export class KursController {
 
   @Put(':id')
   update(@Param('id') id: number, @Body() updateKursDto: UpdateKursDto) {
-    
     return this.kursService.update(+id, updateKursDto);
   }
 
