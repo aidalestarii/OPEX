@@ -5,6 +5,10 @@ export class CreateMGlAccountDto {
   //gl_account, description, group_detail,
   //groupgl, sap, active, created by
   @IsNotEmpty()
+  @IsNumber()
+  idGlAccount: number;
+
+  @IsNotEmpty()
   @IsString()
   uniqueId: string;
 
