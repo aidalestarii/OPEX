@@ -9,6 +9,7 @@ import { BudgetUploadModule } from './modules/budget_upload/budget_upload.module
 import { RealizationModule } from './modules/realization/realization.module';
 import { GetAllModule } from './modules/get-all/get-all.module';
 import { VariableModule } from './modules/variable/variable.module';
+import { DashboardModule } from './modules/dashboard/dashboard.module';
 
 @Module({
   imports: [
@@ -21,6 +22,7 @@ import { VariableModule } from './modules/variable/variable.module';
     RealizationModule,
     GetAllModule,
     VariableModule,
+    DashboardModule,
   ],
   controllers: [AppController],
   providers: [AppService],

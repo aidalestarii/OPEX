@@ -139,11 +139,10 @@ export class RealizationService {
       }
     });
   }
-
   async findAllRealization() {
     const realization = await this.prisma.realization.findMany({
       include: {
-        realization_item: true,
+        realizationItem: true,
       },
     });
     const fileUpload = await this.prisma.fileUpload.findMany();
@@ -176,7 +175,7 @@ export class RealizationService {
         idRealization: id,
       },
       include: {
-        realization_item: true,
+        realizationItem: true,
       },
     });
     const fileUpload = await this.prisma.fileUpload.findMany();
