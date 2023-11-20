@@ -30,142 +30,101 @@ export class RealizationService {
     realizationItems: CreateRealizationItemDto[],
     uploadfile: CreateFileDto[],
   ) {
-    // Extract Realization data from the DTO
-    const { ...realizationData } = createRealization;
+    return this.prisma.$transaction(async (prisma) => {
+      try {
+        // Extract Realization data from the DTO
+        const { ...realizationData } = createRealization;
 
-    const createdRealization = await this.prisma.realization.create({
-      data: {
-        years: new Date().getFullYear(),
-        month: new Date().getMonth() + 1,
-        requestNumber: realizationData.requestNumber,
-        taReff: realizationData.taReff,
-        responsibleNopeg: realizationData.responsibleNopeg,
-        titleRequest: realizationData.titleRequest,
-        noteRequest: realizationData.noteRequest,
-        department: realizationData.department,
-        personalNumber: realizationData.personalNumber,
-        departmentTo: realizationData.departmentTo,
-        personalNumberTo: realizationData.personalNumberTo,
-        createdBy: realizationData.createdBy,
-        status: StatusEnum.OPEN,
-        type: realizationData.type,
-        m_status_realization_id_statusTom_status: {
-          connect: {
-            idStatus: 1,
+        // Create realization within the transaction
+        const createdRealization = await prisma.realization.create({
+          data: {
+            years: new Date().getFullYear(),
+            month: new Date().getMonth() + 1,
+            requestNumber: realizationData.requestNumber,
+            taReff: realizationData.taReff,
+            responsibleNopeg: realizationData.responsibleNopeg,
+            titleRequest: realizationData.titleRequest,
+            noteRequest: realizationData.noteRequest,
+            department: realizationData.department,
+            personalNumber: realizationData.personalNumber,
+            departmentTo: realizationData.departmentTo,
+            personalNumberTo: realizationData.personalNumberTo,
+            createdBy: realizationData.createdBy,
+            status: StatusEnum.OPEN,
+            type: realizationData.type,
+            m_status_realization_id_statusTom_status: {
+              connect: {
+                idStatus: 1,
+              },
+            },
+            m_status_realization_id_status_toTom_status: {
+              connect: {
+                idStatus: 2,
+              },
+            },
+            m_cost_center: {
+              connect: {
+                idCostCenter: realizationData.costCenterId,
+              },
+            },
           },
-        },
-        m_status_realization_id_status_toTom_status: {
-          connect: {
-            idStatus: 2,
+        });
+
+        // Create realization items within the transaction
+        const createdItems = await Promise.all(
+          realizationItems.map(async (item: CreateRealizationItemDto) => {
+            return prisma.realizationItem.create({
+              data: {
+                ...item,
+                realizationId: createdRealization.idRealization,
+                amount: item.amountSubmission,
+                createdBy: createdRealization.createdBy,
+                glAccountId: item.glAccountId,
+              },
+            });
+          }),
+        );
+
+        // Create file uploads within the transaction
+        const uploadFiles = await Promise.all(
+          uploadfile.map(async (file: CreateFileDto) => {
+            return prisma.fileUpload.create({
+              data: {
+                tableName: 'Realization',
+                tableId: createdRealization.idRealization,
+                docCategoryId: file.docCategoryId,
+                docName: file.docName,
+                docSize: file.docSize,
+                docLink: file.docLink,
+                docType: file.docType,
+                createdBy: createdRealization.createdBy,
+              },
+            });
+          }),
+        );
+        return {
+          realization: {
+            ...createdRealization,
+            realizationItems: createdItems,
+            uploadFiles,
           },
-        },
-        m_cost_center: {
-          connect: {
-            idCostCenter: realizationData.costCenterId,
+        };
+      } catch (error) {
+        console.log(error.message);
+        throw new HttpException(
+          {
+            data: null,
+            meta: null,
+            message: 'Failed to create new request',
+            status: HttpStatus.INTERNAL_SERVER_ERROR,
+            time: new Date(),
+            error: error.message,
           },
-        },
-      },
+          HttpStatus.INTERNAL_SERVER_ERROR,
+        );
+      }
     });
-
-    const createdItems = await Promise.all(
-      realizationItems.map((item: CreateRealizationItemDto) => {
-        return this.prisma.realizationItem.create({
-          data: {
-            ...item,
-            realizationId: createdRealization.idRealization,
-            amount: item.amountSubmission,
-            amountSubmission: item.amountSubmission,
-            createdBy: createdRealization.createdBy,
-          },
-        });
-      }),
-    );
-
-    const uploadFiles = await Promise.all(
-      uploadfile.map((file: CreateFileDto) => {
-        return this.prisma.fileUpload.create({
-          data: {
-            tableName: 'Realization',
-            tableId: createdRealization.idRealization,
-            docCategoryId: file.docCategoryId,
-            docName: file.docName,
-            docSize: file.docSize,
-            docLink: file.docLink,
-            docType: file.docType,
-            createdBy: createdRealization.createdBy,
-          },
-        });
-      }),
-    );
-
-    return {
-      realization: {
-        ...createdRealization,
-        realizationItems: createdItems,
-        uploadFiles,
-      },
-    };
   }
-
-  // async updateRealizationItems(id: number, updateRealization: UpdateRealizationDto, updateItems: UpdateRealizationItemDto[], updateFiles: UpdateFileDto[]): Promise<Realization> {
-  //   const existingRealization = await this.prisma.realization.findUnique({ where: { idRealization: id } });
-
-  //   if (!existingRealization) {
-  //     throw new NotFoundException('Realization not found');
-  //   }
-
-  //   if (existingRealization.status === StatusEnum.PROGRESS) {
-  //     throw new BadRequestException('Cannot update a submitted realization');
-  //   }
-
-  //   const updatedRealization = await this.prisma.realization.update({
-  //     where: { idRealization: id },
-  //     data: {
-  //       ...updateRealization,
-  //       m_status_realization_id_statusTom_status: {
-  //         connect: {
-  //           idStatus: 2,
-  //         },
-  //       },
-  //       m_status_realization_id_status_toTom_status: {
-  //         connect: {
-  //           idStatus: 3,
-  //         },
-  //       },
-  //     },
-  //   });
-
-  //   const updatedItems = await Promise.all(
-  //     updateItems.map((item: CreateRealizationItemDto) => {
-  //       return this.prisma.realizationItem.update({
-  //         where: { realizationId: item.amount },
-  //         data: {
-  //           ...item,
-  //           realizationId: updatedRealization.idRealization,
-  //         },
-  //       });
-  //     }),
-  //   );
-
-  //   const updatedFiles = await Promise.all(
-  //     updateFiles.map((file: UpdateFileDto) => {
-  //       return this.prisma.fileUpload.update({
-  //         where: { idUpload: id },
-  //         data: {
-  //           ...file,
-  //           tableId: updatedRealization.idRealization,
-  //         },
-  //       });
-  //     }),
-  //   );
-
-  //   return {
-  //     ...updatedRealization,
-  //     realizationItems: updatedItems,
-  //     uploadFiles: updatedFiles,
-  //   };
-  // }
-
   async findAllRealization() {
     const realization = await this.prisma.realization.findMany({
       include: {

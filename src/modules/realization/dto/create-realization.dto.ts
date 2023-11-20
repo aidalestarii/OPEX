@@ -82,8 +82,8 @@ export class CreateRealizationDto {
 }
 
 export class CreateRealizationItemDto {
-  @Type(() => Number)
-  realizationId: number;
+  // @Type(() => Number)
+  // realizationId: number;
 
   @Type(() => Number)
   glAccountId: number;

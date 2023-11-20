@@ -397,7 +397,7 @@ model RealizationItem {
   idRealizationItem Int      @id @default(autoincrement()) @map("id_realization_item")
   uniqueId          String   @unique @default(uuid()) @map("unique_id") @db.Uuid
   realizationId     Int      @map("realization_id") @db.Integer
-  glAccount         Decimal  @map("gl_account") @db.Decimal
+  glAccountId       Int      @map("gl_account_id") @db.Integer
   amount            Float    @map("amount") @db.DoublePrecision
   amountSubmission  Float    @map("amount_submission") @db.DoublePrecision
   amountHps         Float?   @map("amount_hps") @db.DoublePrecision
@@ -412,7 +412,7 @@ model RealizationItem {
   updatedAt         DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamp(6)
   updatedBy         String?  @map("updated_by") @db.VarChar(50)
 
-  m_gl_account      MGlAccount         @relation(fields: [glAccount], references: [glAccount], onDelete: NoAction, onUpdate: NoAction, map: "fk_m_gl_account_to_realization_item")
+  m_gl_account      MGlAccount         @relation(fields: [glAccountId], references: [idGlAccount], onDelete: NoAction, onUpdate: NoAction, map: "fk_m_gl_account_to_realization_item")
   realization       Realization        @relation(fields: [realizationId], references: [idRealization], onDelete: NoAction, onUpdate: NoAction, map: "fk_realization_to_realization_item")
   reallocation_item ReallocationItem[]
 
