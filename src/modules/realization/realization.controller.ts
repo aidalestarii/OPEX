@@ -5,20 +5,13 @@ import {
   Get,
   HttpException,
   HttpStatus,
-  NotFoundException,
   Param,
-  Patch,
   Post,
   Req,
-  Res,
-  UploadedFile,
   UploadedFiles,
   UseInterceptors,
-  UsePipes,
-  ValidationError,
   ValidationPipe,
 } from '@nestjs/common';
-import { FileUploadService } from './file-upload.service';
 import { RealizationService } from './realization.service';
 import {
   // CreateRealization,
@@ -98,7 +91,7 @@ export class RealizationController {
     @Req() req: Request,
     @Body(new ValidationPipe()) dto: CreateRealizationDto,
     @Body() dtoFile: CreateFileDto,
-  ): Promise<any> {
+  ) {
     try {
       const createFileDtos: CreateFileDto[] = (files ?? []).map(
         (file, index) => ({
@@ -184,8 +177,6 @@ export class RealizationController {
     }
   }
 
-
-
   @Get()
   findRealization() {
     return this.realizationService.findAllRealization();
@@ -195,8 +186,6 @@ export class RealizationController {
   findOne(@Param('id') id: number) {
     return this.realizationService.findOneRealization(+id);
   }
-
-
 
   @Post('/status')
   createMStatus(@Body() mStatus: MStatusDto) {

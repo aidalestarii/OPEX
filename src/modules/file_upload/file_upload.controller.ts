@@ -34,7 +34,6 @@ import { UpdateFileDto } from '../realization/dto/update-file-upload.dto';
   path: 'api/upload',
 })
 export class FileUploadController {
-  prisma: any;
   constructor(private readonly fileUploadService: FileUploadService) {}
 
   @Post('/category')

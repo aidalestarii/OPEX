@@ -89,7 +89,7 @@ export class FileUploadService {
   }
 
   //BISA JALAN
-  async createFiles(fileDtos: CreateFileDto[]): Promise<any> {
+  async createFiles(fileDtos: CreateFileDto[]): Promise<CreateFileDto[]> {
     // simpan database
     try {
       const fileUpload = await this.prisma.fileUpload.createMany({
@@ -178,7 +178,7 @@ export class FileUploadService {
     }
   }
 
-  async deleteFile(id: number): Promise<any> {
+  async deleteFile(id: number) {
     const existingFile = await this.prisma.mDocCategory.findUnique({
       where: { idDocCategory: id },
     });

@@ -19,7 +19,7 @@ export class CreateFileDto {
 
   docType: string;
 
-  files?: any;
+  //files?: any;
 
   //@IsNotEmpty()
   // @IsString()

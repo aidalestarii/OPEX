@@ -13,7 +13,7 @@ export const multerPdfOptions = {
     fileSize: 1000000, // 1mb
   },
   // Check the mimetypes to allow for upload
-  fileFilter: (req: any, file: any, cb: any) => {
+  fileFilter: (req: Request, file: Express.Multer.File, cb: Function) => {
     if (file.mimetype.match(/\/(pdf)$/)) {
       // Allow storage of file
       cb(null, true);
@@ -31,7 +31,7 @@ export const multerPdfOptions = {
   // Storage properties
   storage: diskStorage({
     // Destination storage path details
-    destination: (req: any, file: any, cb: any) => {
+    destination: (req: any, file: Express.Multer.File, cb: Function) => {
       const uploadPath = './uploads/pdf';
       // Create folder if doesn't exist
       if (!existsSync(uploadPath)) {
@@ -41,7 +41,7 @@ export const multerPdfOptions = {
     },
 
     //     // // File modification details
-    filename: async (req: any, file: any, cb: any) => {
+    filename: (req: any, file: Express.Multer.File, cb: Function) => {
       const sanitizedOriginalName = file.originalname.replace(
         /[^a-zA-Z0-9.]/g,
         '_',
