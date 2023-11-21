@@ -135,19 +135,42 @@ export class KursService {
 
     const totalItems = await this.prisma.mKurs.count();
 
+    // Determine the last available page
+    const lastPage = Math.ceil(totalItems / perPage);
+
+    // Check if the requested page exceeds the last available page
+    if (page > lastPage) {
+      return {
+        data: [],
+        meta: {
+          currentPage: Number(page),
+          totalItems,
+          lastpage: lastPage,
+          totalItemsPerPage: 0, // Set to 0 when the requested page exceeds the last available page
+        },
+        message: 'Pagination dashboard retrieved',
+        status: HttpStatus.OK,
+        time: new Date(),
+      };
+    }
+
     // Menghitung jumlah item yang tersisa pada halaman terakhir
-    const remainingItems = totalItems % perPage;
+    // const remainingItems = totalItems % perPage;
+    const remainingItems = totalItems - skip;
 
     // Memeriksa apakah ini adalah halaman terakhir
     const isLastPage = page * perPage >= totalItems;
 
+    const totalItemsPerPage = isLastPage ? remainingItems : perPage;
+    // const totalItemsPerPage1 = min(perPage, remainingItems);
     return {
       data: kurs,
       meta: {
         currentPage: Number(page),
         totalItems,
         lastpage: Math.ceil(totalItems / perPage),
-        totalItemsPerPage: Number(isLastPage ? remainingItems : perPage),
+        totalItemsPerPage: Number(totalItemsPerPage),
+        // totalItemsPerPages: Number(totalItemsPerPage1),
       },
       message: 'Paginated kurs retrieved',
       status: HttpStatus.OK,

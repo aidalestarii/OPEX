@@ -57,7 +57,7 @@ export class KursController {
     }
   }
 
-  @Get()
+  @Get('/all')
   findAll() {
     return this.kursService.findAll();
   }

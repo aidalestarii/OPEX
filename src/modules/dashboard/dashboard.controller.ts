@@ -24,19 +24,39 @@ export class DashboardController {
     return this.dashboardService.create(createDashboardDto);
   }
 
-  @Get('/all')
-  findAll() {
-    return this.dashboardService.findAll();
-  }
+  // @Get('/all')
+  // findAll() {
+  //   return this.dashboardService.findAll();
+  // }
 
-  @Get()
-  findAllPaginated(
+  @Get('/all')
+  findAllWithPaginationAndFilter(
     @Query('page') page: number,
     @Query('perPage') perPage: number,
     @Query('orderBy') orderBy: string,
+    @Query() queryParams: any,
   ) {
-    return this.dashboardService.findAllPaginated(page, perPage, orderBy);
+    return this.dashboardService.findAllWithPaginationAndFilter(
+      page,
+      perPage,
+      orderBy,
+      queryParams,
+    );
   }
+
+  // @Get('/all')
+  // findAllRealization(@Query() queryParams: any) {
+  //   return this.dashboardService.findAllRealization(queryParams);
+  // }
+
+  // @Get()
+  // findAllPaginated(
+  //   @Query('page') page: number,
+  //   @Query('perPage') perPage: number,
+  //   @Query('orderBy') orderBy: string,
+  // ) {
+  //   return this.dashboardService.findAllPaginated(page, perPage, orderBy);
+  // }
 
   @Get('/type')
   async getRealizationTypeCounts() {
