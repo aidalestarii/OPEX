@@ -106,10 +106,10 @@ export class MCostCenterService {
         orderBy: { dinas: 'asc' },
       });
 
-      const dinasValues = costCenters.map((costCenter) => costCenter.dinas);
+      const costcenter = costCenters.map((costCenter) => costCenter.dinas);
 
       return {
-        data: dinasValues,
+        data: costcenter,
         meta: null,
         message: 'Cost Centers grouped by dinas',
         status: HttpStatus.OK,
