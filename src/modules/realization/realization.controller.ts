@@ -20,8 +20,8 @@ import {
   MStatusDto,
 } from './dto/create-realization.dto';
 import {
-  UpdateRealization,
-  UpdateRealizationItem,
+  UpdateRealizationDto,
+  UpdateRealizationItemDto,
 } from './dto/update-realization.dto';
 import {
   AnyFilesInterceptor,
@@ -36,7 +36,7 @@ import {
   CreateMDocCategoryDto,
 } from './dto/create-file-upload.dto';
 import { Request } from 'express';
-import { validate } from 'class-validator';
+import { validate, validateOrReject } from 'class-validator';
 import { RealizationTypeEnum } from '@prisma/client';
 
 @Controller({
@@ -93,18 +93,19 @@ export class RealizationController {
     @Body() dtoFile: CreateFileDto,
   ) {
     try {
-      const createFileDtos: CreateFileDto[] = (files ?? []).map(
-        (file, index) => ({
-          tableName: 'Realization',
-          docName: dtoFile.docName[index],
-          docLink: file.path,
-          docSize: parseFloat((file.size / 1000000).toFixed(2)),
-          docType: extname(file.originalname),
-          createdBy: '',
-          docCategoryId: parseInt(dtoFile.docCategoryId[index]),
-        }),
-      );
+      if (!dto.realizationItems || dto.realizationItems.length === 0) {
+        throw new HttpException(
+          'At least one realization item must be provided',
+          HttpStatus.BAD_REQUEST,
+        );
+      }
 
+      if (!files || files.length === 0) {
+        throw new HttpException(
+          'At least one file must be uploaded',
+          HttpStatus.BAD_REQUEST,
+        );
+      }
       const fromRequest = CreateRealizationDto.fromRequest(dto);
 
       const realizationItems: CreateRealizationItemDto[] =
@@ -118,29 +119,70 @@ export class RealizationController {
         'personalNumber',
         'costCenterId',
         'createdBy',
+        'amountSubmission',
+        'periodStart',
+        'periodFinish',
+        'descPby',
+        'remarkPby',
+        'glAccountId',
+        'docName',
+        'docCategoryId',
       ];
+
+      // const typeValidations = {
+      //   responsibleNopeg: 'string',
+      //   titleRequest: 'string',
+      //   noteRequest: 'string',
+      //   costCenterId: 'number',
+      //   createdBy: 'string',
+      //   descPby: 'string',
+      //   remarkPby: 'string',
+      //   docName: 'string',
+      // };
+
       for (const field of requiredFields) {
-        if (!dto[field]) {
+        if (
+          !dto[field] &&
+          !(
+            dto.realizationItems &&
+            dto.realizationItems.every((item) => item[field])
+          )
+        ) {
           throw new HttpException(
             `Field ${field} is required`,
             HttpStatus.BAD_REQUEST,
           );
         }
       }
-      const typeValidations = {
-        titleRequest: 'string',
-        noteRequest: 'string',
-        costCenterId: 'number',
-        createdBy: 'string',
-      };
-      for (const field in typeValidations) {
-        if (typeof dto[field] !== typeValidations[field]) {
-          throw new HttpException(
-            `Field ${field} must be a ${typeValidations[field]}`,
-            HttpStatus.BAD_REQUEST,
-          );
-        }
-      }
+
+      // for (const field in typeValidations) {
+      //   if (
+      //     !dto[field] &&
+      //     !(
+      //       dto.realizationItems &&
+      //       dto.realizationItems.every(
+      //         (item) => typeof item[field] === typeValidations[field],
+      //       )
+      //     )
+      //   ) {
+      //     throw new HttpException(
+      //       `Field ${field} in realizationItems must be a ${typeValidations[field]}`,
+      //       HttpStatus.BAD_REQUEST,
+      //     );
+      //   }
+      // }
+
+      const createFileDtos: CreateFileDto[] = (files ?? []).map(
+        (file, index) => ({
+          tableName: 'Realization',
+          docName: dtoFile.docName[index],
+          docLink: file.path,
+          docSize: parseFloat((file.size / 1000000).toFixed(2)),
+          docType: extname(file.originalname),
+          createdBy: '',
+          docCategoryId: parseInt(dtoFile.docCategoryId[index]),
+        }),
+      );
 
       const realization = await this.realizationService.createRealizationItems(
         fromRequest,
@@ -159,21 +201,6 @@ export class RealizationController {
         error.message || 'Internal Server Error',
         HttpStatus.INTERNAL_SERVER_ERROR,
       );
-    }
-  }
-
-  private async validateRealizationDto(
-    data: CreateRealizationDto,
-  ): Promise<void> {
-    const requiredFields = ['createdBy'];
-
-    for (const field of requiredFields) {
-      if (!data[field]) {
-        throw new HttpException(
-          `Field ${field} is required`,
-          HttpStatus.BAD_REQUEST,
-        );
-      }
     }
   }
 

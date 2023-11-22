@@ -1,7 +1,7 @@
 import { RealizationTypeEnum, StatusEnum } from '@prisma/client';
 import { IsDecimal, IsEnum, IsNumber, IsOptional } from 'class-validator';
 
-export class UpdateRealization {
+export class UpdateRealizationDto {
   readonly years: number;
   readonly month: number;
   readonly costCenterId: number;
@@ -28,10 +28,10 @@ export class UpdateRealization {
   readonly departmentTo: string;
   readonly personalNumberTo: string;
   readonly createdBy: string;
-  readonly realizationItems: UpdateRealizationItem[];
+  readonly realizationItems: UpdateRealizationItemDto[];
 }
 
-export class UpdateRealizationItem {
+export class UpdateRealizationItemDto {
   readonly realizationId: number;
   readonly glAccountId: number;
   readonly amount: number;

@@ -28,16 +28,16 @@ export class CreateRealizationDto {
   @IsEnum(RealizationTypeEnum)
   type: RealizationTypeEnum;
 
-  @IsString()
-  @IsNotEmpty()
+  // @IsString()
+  // @IsNotEmpty()
   responsibleNopeg: string;
 
-  @IsString()
-  @IsNotEmpty()
+  // @IsString()
+  // @IsNotEmpty()
   titleRequest: string;
 
-  @IsString()
-  @IsNotEmpty()
+  // @IsString()
+  // @IsNotEmpty()
   noteRequest: string;
 
   statusId: number;
@@ -52,8 +52,8 @@ export class CreateRealizationDto {
 
   readonly personalNumberTo: string;
 
-  @IsString()
-  @IsNotEmpty()
+  // @IsString()
+  // @IsNotEmpty()
   createdBy: string;
 
   uploadfile: CreateFileDto[];
@@ -85,12 +85,14 @@ export class CreateRealizationItemDto {
   // @Type(() => Number)
   // realizationId: number;
 
+  @IsNotEmpty()
   @Type(() => Number)
   glAccountId: number;
 
   @Type(() => Number)
   amount: number;
 
+  @IsNotEmpty()
   @Type(() => Number)
   amountSubmission: number;
 
