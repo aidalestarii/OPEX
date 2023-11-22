@@ -7,6 +7,7 @@ import {
   HttpStatus,
   Param,
   Post,
+  Put,
   Req,
   UploadedFiles,
   UseInterceptors,
@@ -217,5 +218,18 @@ export class RealizationController {
   @Post('/status')
   createMStatus(@Body() mStatus: MStatusDto) {
     return this.realizationService.createMStatus(mStatus);
+  }
+
+  @Put('/update/:id')
+  async updateRealization(
+    @Param('id') realizationId: number,
+    @Body() updateRealizationDto: UpdateRealizationDto,
+    @Body() updateItemsDto: UpdateRealizationItemDto[],
+  ): Promise<any> {
+    return this.realizationService.updateRealization(
+      +realizationId,
+      updateRealizationDto,
+      updateItemsDto,
+    );
   }
 }

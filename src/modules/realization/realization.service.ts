@@ -202,95 +202,154 @@ export class RealizationService {
     return realizationWithFileUpload;
   }
 
-  async updateRealizationItems(
-    id: number,
+  // async updateRealizationItems(
+  //   id: number,
+  //   updateRealizationDto: UpdateRealizationDto,
+  //   updateItemsDto: UpdateRealizationItemDto[],
+  //   updateFilesDto: UpdateFileDto[],
+  // ): Promise<Realization> {
+  //   const existingRealization = await this.prisma.realization.findUnique({
+  //     where: { idRealization: id },
+  //     include: {
+  //       realizationItem: true,
+  //     },
+  //   });
+
+  //   if (!existingRealization) {
+  //     throw new NotFoundException('Realization not found');
+  //   }
+
+  //   if (existingRealization.status !== StatusEnum.OPEN) {
+  //     throw new BadRequestException('Cannot update a submitted realization');
+  //   }
+
+  //   const updatedRealization = await this.prisma.realization.update({
+  //     where: { idRealization: id },
+  //     data: {
+  //       // ...updateRealizationDto,
+  //       years: new Date().getFullYear(),
+  //       month: new Date().getMonth() + 1,
+  //       requestNumber: updateRealizationDto.requestNumber,
+  //       taReff: updateRealizationDto.taReff,
+  //       responsibleNopeg: updateRealizationDto.responsibleNopeg,
+  //       titleRequest: updateRealizationDto.titleRequest,
+  //       noteRequest: updateRealizationDto.noteRequest,
+  //       department: updateRealizationDto.department,
+  //       personalNumber: updateRealizationDto.personalNumber,
+  //       departmentTo: updateRealizationDto.departmentTo,
+  //       personalNumberTo: updateRealizationDto.personalNumberTo,
+  //       createdBy: updateRealizationDto.createdBy,
+  //       status: StatusEnum.OPEN,
+  //       type: updateRealizationDto.type,
+  //       m_status_realization_id_statusTom_status: {
+  //         connect: {
+  //           idStatus: 2,
+  //         },
+  //       },
+  //       m_status_realization_id_status_toTom_status: {
+  //         connect: {
+  //           idStatus: 3,
+  //         },
+  //       },
+  //       m_cost_center: {
+  //         connect: {
+  //           idCostCenter: updateRealizationDto.costCenterId,
+  //         },
+  //       },
+  //     },
+  //   });
+
+  //   //const realizationItem = await this.prisma.realizationItem.findMany();
+
+  //   const updatedItems = await Promise.all(
+  //     updateItemsDto.map((item: UpdateRealizationItemDto) => {
+  //       return this.prisma.realizationItem.updateMany({
+  //         where: { realizationId: item.realizationId },
+  //         data: {
+  //           ...item,
+  //           realizationId: updatedRealization.idRealization,
+  //         },
+  //       });
+  //     }),
+  //   );
+
+  //   //const fileUpload = await this.prisma.fileUpload.findMany();
+
+  //   const updatedFiles = await Promise.all(
+  //     updateFilesDto.map((file: UpdateFileDto) => {
+  //       return this.prisma.fileUpload.updateMany({
+  //         where: { tableId: file.tableId },
+  //         data: {
+  //           ...file,
+  //           tableId: updatedRealization.idRealization,
+  //         },
+  //       });
+  //     }),
+  //   );
+
+  //   return {
+  //     ...updatedRealization,
+  //     //  realizationItems: updatedItems,
+  //     //uploadFiles: updatedFiles,
+  //   };
+  // }
+
+  // async updateRealization(
+  //   realizationId: number,
+  //   updateRealizationDto: UpdateRealizationDto,
+  //   updateItemsDto: UpdateRealizationItemDto[],
+  // ): Promise<Realization> {
+  //   return this.prisma.$transaction(async (prisma) => {
+  //     // Update the realization
+  //     const updatedRealization = await prisma.realization.update({
+  //       where: { idRealization: realizationId },
+  //       data: updateRealizationDto,
+  //     });
+
+  //     // Update the associated items
+  //     const updatedItems = await Promise.all(
+  //       updateItemsDto.map(async (itemDto) => {
+  //         const { realizationId, ...updateData } = itemDto;
+  //         return prisma.realizationItem.update({
+  //           where: { idRealizationItem: realizationId },
+  //           data: updateData,
+  //         });
+  //       }),
+  //     );
+
+  //     return updatedRealization;
+  //   });
+  // }
+
+  async updateRealization(
+    realizationId: number,
     updateRealizationDto: UpdateRealizationDto,
-    updateItemsDto: UpdateRealizationItemDto[],
-    updateFilesDto: UpdateFileDto[],
+    updateItemsDto: UpdateRealizationItemDto | UpdateRealizationItemDto[],
   ): Promise<Realization> {
-    const existingRealization = await this.prisma.realization.findUnique({
-      where: { idRealization: id },
-      include: {
-        realizationItem: true,
-      },
+    return this.prisma.$transaction(async (prisma) => {
+      // Update the realization
+      const updatedRealization = await prisma.realization.update({
+        where: { idRealization: realizationId },
+        data: updateRealizationDto,
+      });
+
+      // Ensure updateItemsDto is an array
+      const itemsToUpdate = Array.isArray(updateItemsDto)
+        ? updateItemsDto
+        : [updateItemsDto];
+
+      // Update the associated items
+      const updatedItems = await Promise.all(
+        itemsToUpdate.map(async (itemDto) => {
+          const { realizationId, ...updateData } = itemDto;
+          return prisma.realizationItem.update({
+            where: { idRealizationItem: realizationId },
+            data: updateData,
+          });
+        }),
+      );
+
+      return updatedRealization;
     });
-
-    if (!existingRealization) {
-      throw new NotFoundException('Realization not found');
-    }
-
-    if (existingRealization.status !== StatusEnum.OPEN) {
-      throw new BadRequestException('Cannot update a submitted realization');
-    }
-
-    const updatedRealization = await this.prisma.realization.update({
-      where: { idRealization: id },
-      data: {
-        // ...updateRealizationDto,
-        years: new Date().getFullYear(),
-        month: new Date().getMonth() + 1,
-        requestNumber: updateRealizationDto.requestNumber,
-        taReff: updateRealizationDto.taReff,
-        responsibleNopeg: updateRealizationDto.responsibleNopeg,
-        titleRequest: updateRealizationDto.titleRequest,
-        noteRequest: updateRealizationDto.noteRequest,
-        department: updateRealizationDto.department,
-        personalNumber: updateRealizationDto.personalNumber,
-        departmentTo: updateRealizationDto.departmentTo,
-        personalNumberTo: updateRealizationDto.personalNumberTo,
-        createdBy: updateRealizationDto.createdBy,
-        status: StatusEnum.OPEN,
-        type: updateRealizationDto.type,
-        m_status_realization_id_statusTom_status: {
-          connect: {
-            idStatus: 2,
-          },
-        },
-        m_status_realization_id_status_toTom_status: {
-          connect: {
-            idStatus: 3,
-          },
-        },
-        m_cost_center: {
-          connect: {
-            idCostCenter: updateRealizationDto.costCenterId,
-          },
-        },
-      },
-    });
-
-    //const realizationItem = await this.prisma.realizationItem.findMany();
-
-    const updatedItems = await Promise.all(
-      updateItemsDto.map((item: UpdateRealizationItemDto) => {
-        return this.prisma.realizationItem.updateMany({
-          where: { realizationId: item.realizationId },
-          data: {
-            ...item,
-            realizationId: updatedRealization.idRealization,
-          },
-        });
-      }),
-    );
-
-    //const fileUpload = await this.prisma.fileUpload.findMany();
-
-    const updatedFiles = await Promise.all(
-      updateFilesDto.map((file: UpdateFileDto) => {
-        return this.prisma.fileUpload.updateMany({
-          where: { tableId: file.tableId },
-          data: {
-            ...file,
-            tableId: updatedRealization.idRealization,
-          },
-        });
-      }),
-    );
-
-    return {
-      ...updatedRealization,
-      //  realizationItems: updatedItems,
-      //uploadFiles: updatedFiles,
-    };
   }
 }

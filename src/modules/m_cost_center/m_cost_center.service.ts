@@ -99,6 +99,36 @@ export class MCostCenterService {
     };
   }
 
+  async groupingByDinas() {
+    try {
+      const costCenters = await this.prisma.mCostCenter.findMany({
+        distinct: ['dinas'],
+        orderBy: { dinas: 'asc' },
+      });
+
+      const dinasValues = costCenters.map((costCenter) => costCenter.dinas);
+
+      return {
+        data: dinasValues,
+        meta: null,
+        message: 'Cost Centers grouped by dinas',
+        status: HttpStatus.OK,
+        time: new Date(),
+      };
+    } catch (error) {
+      throw new HttpException(
+        {
+          data: null,
+          meta: null,
+          message: 'Failed to group cost centers by dinas',
+          status: HttpStatus.INTERNAL_SERVER_ERROR,
+          time: new Date(),
+        },
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+  }
+
   async update(id: number, updateMCostCenterDto: UpdateMCostCenterDto) {
     //Validation ID
     const existingCostCenter = await this.prisma.mCostCenter.findUnique({

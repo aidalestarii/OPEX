@@ -33,6 +33,11 @@ export class MCostCenterController {
     return this.mCostCenterService.findOne(+id);
   }
 
+  @Get('all/group')
+  groupCostCentersByDinas() {
+    return this.mCostCenterService.groupingByDinas();
+  }
+
   @Get('bidang/:bidang')
   findByBidang(@Param('bidang') bidang: string) {
     return this.mCostCenterService.findBidang(bidang);
