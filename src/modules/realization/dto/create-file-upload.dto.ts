@@ -4,6 +4,8 @@ import { IsEnum, IsNotEmpty, IsOptional, IsString } from 'class-validator';
 
 export class CreateFileDto {
   tableName: string;
+  @Type(() => Number)
+  tableId: number;
 
   @IsNotEmpty()
   @IsString()
@@ -28,6 +30,7 @@ export class CreateFileDto {
   static fromRequest(data: CreateFileDto[]): CreateFileDto[] {
     return data.map((file) => {
       file.docCategoryId = Number(file.docCategoryId);
+      file.tableId = Number(file.tableId);
       return file;
     });
   }

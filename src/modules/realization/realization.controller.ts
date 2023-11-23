@@ -38,7 +38,8 @@ import {
 } from './dto/create-file-upload.dto';
 import { Request } from 'express';
 import { validate, validateOrReject } from 'class-validator';
-import { RealizationTypeEnum } from '@prisma/client';
+import { RealizationTypeEnum, StatusEnum } from '@prisma/client';
+import { UpdateFileDto } from './dto/update-file-upload.dto';
 
 @Controller({
   version: '1',
@@ -47,51 +48,14 @@ import { RealizationTypeEnum } from '@prisma/client';
 export class RealizationController {
   constructor(private readonly realizationService: RealizationService) {}
 
-  // @Post('/save')
-  // @UseInterceptors(AnyFilesInterceptor(multerPdfOptions))
-  // async createdRealizationWithItems(
-  //   @UploadedFiles() files: Express.Multer.File[],
-  //   @Req() req: Request,
-  //   @Body(new ValidationPipe()) createRealizationDto: CreateRealizationDto,
-  //   @Body() createFileDto: CreateFileDto,
-  // ): Promise<any> {
-  //   //const { uploadfile,} = createRealizationDto;
-
-  //   const createFileDtos: CreateFileDto[] = (files ?? []).map((file, index) => ({
-  //     tableName: 'Realization',
-  //     docName: file.filename,
-  //     docLink: file.path,
-  //     docSize: parseFloat((file.size / 1000000).toFixed(2)),
-  //     docType: extname(file.originalname),
-  //     createdBy: '',
-  //     docCategoryId: createFileDto.docCategoryId[index], // Access the corresponding docCategoryId
-  //   }));
-
-  //   const fromRequest = CreateRealizationDto.fromRequest(createRealizationDto);
-  //   const fromRequest2 = createFileDtos.map(CreateFileDto.fromRequest);
-
-  //   const realization = await this.realizationService.createRealizationItems(
-  //     fromRequest,
-  //   );
-  //   const filesUpload: CreateFileDto[] =
-  //     await this.fileUploadService.createFiles(fromRequest2);
-  //   return {
-  //     data: {
-  //       ...realization,
-  //       //filesUpload,
-  //     },
-  //     message: 'Create new request successfully created',
-  //     status: HttpStatus.CREATED,
-  //     time: new Date(),
-  //   };
-  // }
-  @Post('/save')
+  @Post('/save/:status?')
   @UseInterceptors(AnyFilesInterceptor(multerPdfOptions))
-  async createdRealizationWithItems(
+  async saveRealization(
     @UploadedFiles() files: Express.Multer.File[],
     @Req() req: Request,
     @Body(new ValidationPipe()) dto: CreateRealizationDto,
     @Body() dtoFile: CreateFileDto,
+    @Param('status') status?: StatusEnum,
   ) {
     try {
       if (!dto.realizationItems || dto.realizationItems.length === 0) {
@@ -101,12 +65,12 @@ export class RealizationController {
         );
       }
 
-      if (!files || files.length === 0) {
-        throw new HttpException(
-          'At least one file must be uploaded',
-          HttpStatus.BAD_REQUEST,
-        );
-      }
+      // if (!files || files.length === 0) {
+      //   throw new HttpException(
+      //     'At least one file must be uploaded',
+      //     HttpStatus.BAD_REQUEST,
+      //   );
+      // }
       const fromRequest = CreateRealizationDto.fromRequest(dto);
 
       const realizationItems: CreateRealizationItemDto[] =
@@ -181,14 +145,16 @@ export class RealizationController {
           docSize: parseFloat((file.size / 1000000).toFixed(2)),
           docType: extname(file.originalname),
           createdBy: '',
+          tableId: 1,
           docCategoryId: parseInt(dtoFile.docCategoryId[index]),
         }),
       );
 
-      const realization = await this.realizationService.createRealizationItems(
+      const realization = await this.realizationService.saveRealization(
         fromRequest,
         realizationItems,
-        createFileDtos,
+        status,
+        //createFileDtos,
       );
 
       return {
@@ -205,6 +171,128 @@ export class RealizationController {
     }
   }
 
+  // @Post('/create')
+  // @UseInterceptors(AnyFilesInterceptor(multerPdfOptions))
+  // async createRealization(
+  //   @UploadedFiles() files: Express.Multer.File[],
+  //   @Req() req: Request,
+  //   @Body(new ValidationPipe()) dto: CreateRealizationDto,
+  //   @Body() dtoFile: CreateFileDto,
+  // ) {
+  //   try {
+  //     if (!dto.realizationItems || dto.realizationItems.length === 0) {
+  //       throw new HttpException(
+  //         'At least one realization item must be provided',
+  //         HttpStatus.BAD_REQUEST,
+  //       );
+  //     }
+
+  //     if (!files || files.length === 0) {
+  //       throw new HttpException(
+  //         'At least one file must be uploaded',
+  //         HttpStatus.BAD_REQUEST,
+  //       );
+  //     }
+  //     const fromRequest = CreateRealizationDto.fromRequest(dto);
+
+  //     const realizationItems: CreateRealizationItemDto[] =
+  //       fromRequest.realizationItems;
+
+  //     const requiredFields = [
+  //       'type',
+  //       'responsibleNopeg',
+  //       'titleRequest',
+  //       'noteRequest',
+  //       'personalNumber',
+  //       'costCenterId',
+  //       'createdBy',
+  //       'amountSubmission',
+  //       'periodStart',
+  //       'periodFinish',
+  //       'descPby',
+  //       'remarkPby',
+  //       'glAccountId',
+  //       'docName',
+  //       'docCategoryId',
+  //     ];
+
+  //     // const typeValidations = {
+  //     //   responsibleNopeg: 'string',
+  //     //   titleRequest: 'string',
+  //     //   noteRequest: 'string',
+  //     //   costCenterId: 'number',
+  //     //   createdBy: 'string',
+  //     //   descPby: 'string',
+  //     //   remarkPby: 'string',
+  //     //   docName: 'string',
+  //     // };
+
+  //     for (const field of requiredFields) {
+  //       if (
+  //         !dto[field] &&
+  //         !(
+  //           dto.realizationItems &&
+  //           dto.realizationItems.every((item) => item[field])
+  //         )
+  //       ) {
+  //         throw new HttpException(
+  //           `Field ${field} is required`,
+  //           HttpStatus.BAD_REQUEST,
+  //         );
+  //       }
+  //     }
+
+  //     // for (const field in typeValidations) {
+  //     //   if (
+  //     //     !dto[field] &&
+  //     //     !(
+  //     //       dto.realizationItems &&
+  //     //       dto.realizationItems.every(
+  //     //         (item) => typeof item[field] === typeValidations[field],
+  //     //       )
+  //     //     )
+  //     //   ) {
+  //     //     throw new HttpException(
+  //     //       `Field ${field} in realizationItems must be a ${typeValidations[field]}`,
+  //     //       HttpStatus.BAD_REQUEST,
+  //     //     );
+  //     //   }
+  //     // }
+
+  //     const createFileDtos: CreateFileDto[] = (files ?? []).map(
+  //       (file, index) => ({
+  //         tableName: 'Realization',
+  //         docName: dtoFile.docName[index],
+  //         docLink: file.path,
+  //         docSize: parseFloat((file.size / 1000000).toFixed(2)),
+  //         docType: extname(file.originalname),
+  //         createdBy: '',
+  //         tableId: 1,
+  //         docCategoryId: parseInt(dtoFile.docCategoryId[index]),
+  //       }),
+  //     );
+
+  //     const realization = await this.realizationService.saveRealization(
+  //       fromRequest,
+  //       realizationItems,
+  //       createFileDtos,
+  //       StatusEnum.PROGRESS,
+  //     );
+
+  //     return {
+  //       data: realization,
+  //       message: 'Create new request successfully created',
+  //       status: HttpStatus.CREATED,
+  //       time: new Date(),
+  //     };
+  //   } catch (error) {
+  //     throw new HttpException(
+  //       error.message || 'Internal Server Error',
+  //       HttpStatus.INTERNAL_SERVER_ERROR,
+  //     );
+  //   }
+  // }
+
   @Get()
   findRealization() {
     return this.realizationService.findAllRealization();
@@ -218,18 +306,5 @@ export class RealizationController {
   @Post('/status')
   createMStatus(@Body() mStatus: MStatusDto) {
     return this.realizationService.createMStatus(mStatus);
-  }
-
-  @Put('/update/:id')
-  async updateRealization(
-    @Param('id') realizationId: number,
-    @Body() updateRealizationDto: UpdateRealizationDto,
-    @Body() updateItemsDto: UpdateRealizationItemDto[],
-  ): Promise<any> {
-    return this.realizationService.updateRealization(
-      +realizationId,
-      updateRealizationDto,
-      updateItemsDto,
-    );
   }
 }

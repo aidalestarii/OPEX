@@ -30,13 +30,22 @@ export class RealizationService {
     return status;
   }
 
-  async createRealizationItems(
+  async saveRealization(
     createRealization: CreateRealizationDto,
     realizationItems: CreateRealizationItemDto[],
-    uploadfile: CreateFileDto[],
+    //uploadfile: CreateFileDto[],
+    status?: StatusEnum,
   ) {
     return this.prisma.$transaction(async (prisma) => {
       try {
+        let statusTom: number = 1;
+        let statusToTom: number = 2;
+
+        if (status && status == StatusEnum.PROGRESS) {
+          statusTom = 2;
+          statusToTom = 3;
+        }
+
         // Extract Realization data from the DTO
         const { ...realizationData } = createRealization;
 
@@ -55,16 +64,16 @@ export class RealizationService {
             departmentTo: realizationData.departmentTo,
             personalNumberTo: realizationData.personalNumberTo,
             createdBy: realizationData.createdBy,
-            status: StatusEnum.OPEN,
+            status: status ? status : StatusEnum.OPEN,
             type: realizationData.type,
             m_status_realization_id_statusTom_status: {
               connect: {
-                idStatus: 1,
+                idStatus: statusTom,
               },
             },
             m_status_realization_id_status_toTom_status: {
               connect: {
-                idStatus: 2,
+                idStatus: statusToTom,
               },
             },
             m_cost_center: {
@@ -89,28 +98,28 @@ export class RealizationService {
           }),
         );
 
-        // Create file uploads within the transaction
-        const uploadFiles = await Promise.all(
-          uploadfile.map(async (file: CreateFileDto) => {
-            return prisma.fileUpload.create({
-              data: {
-                tableName: 'Realization',
-                tableId: createdRealization.idRealization,
-                docCategoryId: file.docCategoryId,
-                docName: file.docName,
-                docSize: file.docSize,
-                docLink: file.docLink,
-                docType: file.docType,
-                createdBy: createdRealization.createdBy,
-              },
-            });
-          }),
-        );
+        // // Create file uploads within the transaction
+        // const uploadFiles = await Promise.all(
+        //   uploadfile.map(async (file: CreateFileDto) => {
+        //     return prisma.fileUpload.create({
+        //       data: {
+        //         tableName: 'Realization',
+        //         tableId: createdRealization.idRealization,
+        //         docCategoryId: file.docCategoryId,
+        //         docName: file.docName,
+        //         docSize: file.docSize,
+        //         docLink: file.docLink,
+        //         docType: file.docType,
+        //         createdBy: createdRealization.createdBy,
+        //       },
+        //     });
+        //   }),
+        // );
         return {
           realization: {
             ...createdRealization,
             realizationItems: createdItems,
-            uploadFiles,
+            //uploadFiles,
           },
         };
       } catch (error) {
@@ -200,6 +209,254 @@ export class RealizationService {
     };
 
     return realizationWithFileUpload;
+  }
+
+  // async updateRealizationnn(
+  //   id: number,
+  //   updateRealization: UpdateRealizationDto,
+  //   updateRealizationItems: UpdateRealizationItemDto[],
+  //   updateUploadFiles: UpdateFileDto[],
+  // ) {
+  //   return this.prisma.$transaction(async (prisma) => {
+  //     try {
+  //       // Find existing realization
+  //       const existingRealization = await prisma.realization.findUnique({
+  //         where: {
+  //           idRealization: id,
+  //         },
+  //         include: {
+  //           realizationItem: true,
+  //         },
+  //       });
+
+  //       if (!existingRealization) {
+  //         throw new HttpException(
+  //           {
+  //             data: null,
+  //             meta: null,
+  //             message: 'Realization not found',
+  //             status: HttpStatus.NOT_FOUND,
+  //             time: new Date(),
+  //           },
+  //           HttpStatus.NOT_FOUND,
+  //         );
+  //       }
+
+  //       // Update realization data
+  //       const updatedRealization = await prisma.realization.update({
+  //         where: {
+  //           idRealization: id,
+  //         },
+  //         data: {
+  //           // Update the fields you need to change
+  //           requestNumber: updateRealization.requestNumber,
+  //           taReff: updateRealization.taReff,
+  //           responsibleNopeg: updateRealization.responsibleNopeg,
+  //           titleRequest: updateRealization.titleRequest,
+  //           noteRequest: updateRealization.noteRequest,
+  //           department: updateRealization.department,
+  //           personalNumber: updateRealization.personalNumber,
+  //           departmentTo: updateRealization.departmentTo,
+  //           personalNumberTo: updateRealization.personalNumberTo,
+  //           type: updateRealization.type,
+  //           m_cost_center: {
+  //             connect: {
+  //               idCostCenter: updateRealization.costCenterId,
+  //             },
+  //           },
+  //         },
+  //       });
+
+  //       // Update realization items
+  //       const updatedItems = await Promise.all(
+  //         updateRealizationItems.map(async (item: UpdateRealizationItemDto) => {
+  //           return prisma.realizationItem.upsert({
+  //             where: {
+  //               idRealizationItem: item.idRealizationItem,
+  //             },
+  //             update: {
+  //               // Update the fields you need to change
+  //               amount: item.amountSubmission,
+  //               glAccountId: item.glAccountId,
+  //             },
+  //             create: {
+  //               // If the item doesn't exist, create a new one
+  //               ...item,
+  //               realizationId: updatedRealization.idRealization,
+  //               createdBy: updatedRealization.createdBy,
+  //             },
+  //           });
+  //         }),
+  //       );
+
+  //       // Update file uploads
+  //       const updatedUploadFiles = await Promise.all(
+  //         updateUploadFiles.map(async (file: UpdateFileDto) => {
+  //           return prisma.fileUpload.upsert({
+  //             where: {
+  //               idFileUpload: file.idFileUpload,
+  //             },
+  //             update: {
+  //               // Update the fields you need to change
+  //               docCategoryId: file.docCategoryId,
+  //               docName: file.docName,
+  //               docSize: file.docSize,
+  //               docLink: file.docLink,
+  //               docType: file.docType,
+  //             },
+  //           });
+  //         }),
+  //       );
+
+  //       return {
+  //         realization: {
+  //           ...updatedRealization,
+  //           realizationItems: updatedItems,
+  //           uploadFiles: updatedUploadFiles,
+  //         },
+  //         meta: null,
+  //         message: 'Realization updated successfully',
+  //         status: HttpStatus.OK,
+  //         time: new Date(),
+  //       };
+  //     } catch (error) {
+  //       console.log(error.message);
+  //       throw new HttpException(
+  //         {
+  //           data: null,
+  //           meta: null,
+  //           message: 'Failed to update realization',
+  //           status: HttpStatus.INTERNAL_SERVER_ERROR,
+  //           time: new Date(),
+  //           error: error.message,
+  //         },
+  //         HttpStatus.INTERNAL_SERVER_ERROR,
+  //       );
+  //     }
+  //   });
+  // }
+
+  async uupdateRealization(
+    id: number,
+    updateRealization: UpdateRealizationDto,
+    updateRealizationItems: UpdateRealizationItemDto[],
+    //updateUploadFiles: UpdateFileDto[],
+  ) {
+    return this.prisma.$transaction(async (prisma) => {
+      try {
+        // Find existing realization
+        const existingRealization = await prisma.realization.findUnique({
+          where: {
+            idRealization: id,
+          },
+        });
+
+        if (!existingRealization) {
+          throw new HttpException(
+            {
+              data: null,
+              meta: null,
+              message: 'Realization not found',
+              status: HttpStatus.NOT_FOUND,
+              time: new Date(),
+            },
+            HttpStatus.NOT_FOUND,
+          );
+        }
+
+        // Update realization data
+        const updatedRealization = await prisma.realization.update({
+          where: {
+            idRealization: id,
+          },
+          // include:{
+
+          // },
+          data: {
+            status: StatusEnum.CLOSE,
+          },
+        });
+
+        // Update realization items
+        const updatedItems = await Promise.all(
+          updateRealizationItems.map(async (item: UpdateRealizationItemDto) => {
+            return prisma.realizationItem.upsert({
+              where: {
+                realizationId: id,
+              },
+              update: {
+                ...item,
+                amount: item.amountSubmission,
+              },
+              create: {
+                ...item,
+                realizationId: updatedRealization.idRealization,
+                createdBy: updatedRealization.createdBy,
+              },
+            });
+          }),
+        );
+
+        // Filter file uploads based on tableId
+        // const existingUploadFiles = await prisma.fileUpload.findMany({
+        //   where: {
+        //     tableId: updatedRealization.idRealization,
+        //   },
+        // });
+
+        // Update file uploads
+        // const updatedUploadFiles = await Promise.all(
+        //   updateUploadFiles.map(async (file: UpdateFileDto) => {
+        //     return prisma.fileUpload.upsert({
+        //       where: {
+        //         tableId: updatedRealization.idRealization,
+        //       },
+        //       update: {
+        //         // Update the fields you need to change
+        //         docCategoryId: file.docCategoryId,
+        //         // ... other fields
+        //       },
+        //       create: {
+        //         // If the file doesn't exist, create a new one
+        //         tableName: 'Realization',
+        //         tableId: updatedRealization.idRealization,
+        //         createdBy: updatedRealization.createdBy,
+        //         docCategoryId: file.docCategoryId,
+        //         docName: file.docName,
+        //         docSize: file.docSize,
+        //         docLink: file.docLink,
+        //         docType: file.docType,
+        //       },
+        //     });
+        //   }),
+        // );
+
+        return {
+          realization: {
+            ...updatedRealization,
+            realizationItems: updatedItems,
+            //uploadFiles: updatedUploadFiles,
+          },
+          meta: null,
+          message: 'Realization updated successfully',
+          status: HttpStatus.OK,
+          time: new Date(),
+        };
+      } catch (error) {
+        console.log(error.message);
+        throw new HttpException(
+          {
+            data: null,
+            meta: null,
+            message: 'Failed to update realization',
+            status: HttpStatus.INTERNAL_SERVER_ERROR,
+            time: new Date(),
+            error: error.message,
+          },
+          HttpStatus.INTERNAL_SERVER_ERROR,
+        );
+      }
+    });
   }
 
   // async updateRealizationItems(
