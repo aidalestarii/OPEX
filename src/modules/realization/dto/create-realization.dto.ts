@@ -136,16 +136,6 @@ export class CreateRealizationItemDto {
   }
 }
 
-export class MStatusDto {
-  readonly type: string;
-  readonly status: string;
-  readonly step: number;
-  readonly department: string;
-  readonly level: number;
-  readonly function: string;
-  readonly createdBy: string;
-}
-
 export class BudgetReallocationDto {
   years;
   glAccountId;
