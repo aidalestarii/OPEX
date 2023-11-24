@@ -22,7 +22,7 @@ import { UpdateFileDto } from './dto/update-file-upload.dto';
 export class RealizationService {
   constructor(private readonly prisma: PrismaService) {}
 
-  async saveRealization(
+  async createRealization(
     createRealization: CreateRealizationDto,
     realizationItems: CreateRealizationItemDto[],
     uploadfile: CreateFileDto[],
@@ -32,10 +32,12 @@ export class RealizationService {
       try {
         let statusTom: number = 1;
         let statusToTom: number = 2;
+        let requestNumber: string | null = null;
 
         if (status && status == StatusEnum.PROGRESS) {
           statusTom = 2;
           statusToTom = 3;
+          requestNumber = 'string';
         }
 
         // Extract Realization data from the DTO
@@ -46,7 +48,7 @@ export class RealizationService {
           data: {
             years: new Date().getFullYear(),
             month: new Date().getMonth() + 1,
-            requestNumber: realizationData.requestNumber,
+            requestNumber: requestNumber,
             taReff: realizationData.taReff,
             responsibleNopeg: realizationData.responsibleNopeg,
             titleRequest: realizationData.titleRequest,

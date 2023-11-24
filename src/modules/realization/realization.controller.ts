@@ -47,7 +47,7 @@ import { UpdateFileDto } from './dto/update-file-upload.dto';
 export class RealizationController {
   constructor(private readonly realizationService: RealizationService) {}
 
-  @Post('/save/:status?')
+  @Post(':status?')
   @UseInterceptors(AnyFilesInterceptor(multerPdfOptions))
   async saveRealization(
     @UploadedFiles() files: Express.Multer.File[],
@@ -149,7 +149,7 @@ export class RealizationController {
         }),
       );
 
-      const realization = await this.realizationService.saveRealization(
+      const realization = await this.realizationService.createRealization(
         fromRequest,
         realizationItems,
         createFileDtos,
