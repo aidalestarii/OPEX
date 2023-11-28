@@ -282,7 +282,7 @@ model Realization {
   month            Int                 @map("month") @db.Integer
   costCenterId     Int                 @map("cost_center_id") @db.Integer
   draftNumber      Int                 @default(autoincrement()) @map("no_draft") @db.Integer
-  requestNumber    Int?                @map("no_request") @db.Integer
+  requestNumber    String?             @map("no_request") @db.VarChar(15)
   taReff           Int?                @map("ta_reff") @db.Integer
   type             RealizationTypeEnum @default(UANG_MUKA) @map("type")
   responsibleNopeg String              @map("responsible_nopeg") @db.VarChar(8)

@@ -39,9 +39,9 @@ export class MCostCenterService {
   }
 
   async findAll() {
-    const costcenter = await this.prisma.mCostCenter.findMany();
+    const costCenter = await this.prisma.mCostCenter.findMany();
     return {
-      data: costcenter,
+      data: costCenter,
       meta: null,
       message: 'All cost center retrieved',
       status: HttpStatus.OK,
@@ -50,10 +50,10 @@ export class MCostCenterService {
   }
 
   async findOne(id: number) {
-    const costcenter = await this.prisma.mCostCenter.findUnique({
+    const costCenter = await this.prisma.mCostCenter.findUnique({
       where: { idCostCenter: id },
     });
-    if (!costcenter) {
+    if (!costCenter) {
       throw new HttpException(
         {
           data: null,
@@ -66,7 +66,7 @@ export class MCostCenterService {
       );
     }
     return {
-      data: costcenter,
+      data: costCenter,
       meta: null,
       message: 'Cost Center found',
       status: HttpStatus.OK,
@@ -75,10 +75,10 @@ export class MCostCenterService {
   }
 
   async findBidang(bidang: string) {
-    const costcenter = await this.prisma.mCostCenter.findMany({
+    const costCenter = await this.prisma.mCostCenter.findMany({
       where: { bidang: bidang },
     });
-    if (!costcenter || costcenter.length === 0) {
+    if (!costCenter || costCenter.length === 0) {
       throw new HttpException(
         {
           data: null,
@@ -91,7 +91,7 @@ export class MCostCenterService {
       );
     }
     return {
-      data: costcenter,
+      data: costCenter,
       meta: null,
       message: 'Cost Center found',
       status: HttpStatus.OK,
@@ -106,10 +106,10 @@ export class MCostCenterService {
         orderBy: { dinas: 'asc' },
       });
 
-      const costcenter = costCenters.map((costCenter) => costCenter.dinas);
+      const costCenter = costCenters.map((costCenter) => costCenter.dinas);
 
       return {
-        data: costcenter,
+        data: costCenter,
         meta: null,
         message: 'Cost Centers grouped by dinas',
         status: HttpStatus.OK,
@@ -138,12 +138,12 @@ export class MCostCenterService {
       throw new NotFoundException(`Cost center with ID ${id} not found`);
     }
     try {
-      const updatedKurs = await this.prisma.mCostCenter.update({
+      const updatedCostCenter = await this.prisma.mCostCenter.update({
         where: { idCostCenter: id },
         data: updateMCostCenterDto,
       });
       return {
-        data: updateMCostCenterDto,
+        data: updatedCostCenter,
         meta: null,
         message: 'Cost center updated successfully',
         status: HttpStatus.OK,

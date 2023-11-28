@@ -10,6 +10,7 @@ import { RealizationModule } from './modules/realization/realization.module';
 import { GetAllModule } from './modules/get-all/get-all.module';
 import { VariableModule } from './modules/variable/variable.module';
 import { DashboardModule } from './modules/dashboard/dashboard.module';
+import { MasterStatusModule } from './modules/master_status/master_status.module';
 
 @Module({
   imports: [
@@ -23,6 +24,7 @@ import { DashboardModule } from './modules/dashboard/dashboard.module';
     GetAllModule,
     VariableModule,
     DashboardModule,
+    MasterStatusModule,
   ],
   controllers: [AppController],
   providers: [AppService],

@@ -18,8 +18,7 @@ export class CreateRealizationDto {
   @Type(() => Number)
   costCenterId: number;
 
-  @Type(() => Number)
-  requestNumber: number;
+  requestNumber: String;
 
   @Type(() => Number)
   taReff: number;
@@ -64,7 +63,7 @@ export class CreateRealizationDto {
     data.years = Number(data.years);
     data.month = Number(data.month);
     data.costCenterId = Number(data.costCenterId);
-    data.requestNumber = Number(data.requestNumber);
+    data.requestNumber = String(data.requestNumber);
     data.taReff = Number(data.taReff);
 
     if (Array.isArray(data.realizationItems)) {
@@ -134,16 +133,6 @@ export class CreateRealizationItemDto {
       return item;
     });
   }
-}
-
-export class MStatusDto {
-  readonly type: string;
-  readonly status: string;
-  readonly step: number;
-  readonly department: string;
-  readonly level: number;
-  readonly function: string;
-  readonly createdBy: string;
 }
 
 export class BudgetReallocationDto {
