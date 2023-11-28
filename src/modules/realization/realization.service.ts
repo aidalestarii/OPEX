@@ -339,7 +339,7 @@ export class RealizationService {
   //   });
   // }
 
-  async calculateTotal(glAccountId: number, costCenterId: number) {
+  async available(glAccountId: number, costCenterId: number) {
     try {
       // amount from realization and realization items
       const realizationItems = await this.prisma.realizationItem.findMany({

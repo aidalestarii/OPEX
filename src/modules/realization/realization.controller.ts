@@ -183,9 +183,9 @@ export class RealizationController {
 
   @Get(':glAccountId/:costCenterId/calculate-total')
   async calculateTotal(
-    @Param('glAccountId') glAccountId: string,
-    @Param('costCenterId') costCenterId: string,
+    @Param('glAccountId') glAccountId: number,
+    @Param('costCenterId') costCenterId: number,
   ) {
-    return this.realizationService.calculateTotal(+glAccountId, +costCenterId);
+    return this.realizationService.available(+glAccountId, +costCenterId);
   }
 }
