@@ -338,4 +338,84 @@ export class RealizationService {
   //     }
   //   });
   // }
+
+  async calculateTotal(glAccountId: number, costCenterId: number) {
+    try {
+      // amount from realization and realization items
+      const realizationItems = await this.prisma.realizationItem.findMany({
+        where: {
+          realization: {
+            costCenterId: costCenterId,
+          },
+          m_gl_account: {
+            idGlAccount: glAccountId,
+          },
+        },
+        select: {
+          amount: true,
+        },
+      });
+
+      const amount = realizationItems.reduce(
+        (sum, item) => sum + item.amount,
+        0,
+      );
+
+      // plus minus from budget reallocation
+      const budgetReallocation = await this.prisma.budgetReallocation.findFirst(
+        {
+          where: {
+            costCenterId: costCenterId,
+            glAccountId: glAccountId,
+          },
+          include: {
+            mGlAccount: true,
+          },
+        },
+      );
+
+      // total from budget
+      const budget = await this.prisma.budget.findFirst({
+        where: {
+          glAccountId: glAccountId,
+          costCenterId: costCenterId,
+        },
+        include: {
+          mCostCenter: true,
+          mGlAccount: true,
+        },
+      });
+
+      if (!budgetReallocation && !budget) {
+        throw new NotFoundException(
+          `BudgetReallocation and Budget with GL Account ID ${glAccountId} and Cost Center ID ${costCenterId} not found`,
+        );
+      }
+
+      const totalBudget = budget ? budget.total : 0;
+
+      // Calculate the total amount
+      const totalAmount =
+        totalBudget -
+        amount +
+        budgetReallocation.plus -
+        budgetReallocation.minus;
+
+      return {
+        data: {
+          total: totalAmount,
+          mGlAccount: budget.mGlAccount,
+          mCostCenter: budget.mCostCenter,
+        },
+        meta: null,
+        message: 'Cost Centers grouped by dinas',
+        status: HttpStatus.OK,
+        time: new Date(),
+      };
+    } catch (error) {
+      // Handle the error
+      console.error(error);
+      throw new NotFoundException('Error calculating total amount');
+    }
+  }
 }

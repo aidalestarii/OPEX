@@ -5,6 +5,7 @@ import {
   Get,
   HttpException,
   HttpStatus,
+  NotFoundException,
   Param,
   Post,
   Put,
@@ -178,5 +179,13 @@ export class RealizationController {
   @Get(':id')
   findOne(@Param('id') id: number) {
     return this.realizationService.findOneRealization(+id);
+  }
+
+  @Get(':glAccountId/:costCenterId/calculate-total')
+  async calculateTotal(
+    @Param('glAccountId') glAccountId: string,
+    @Param('costCenterId') costCenterId: string,
+  ) {
+    return this.realizationService.calculateTotal(+glAccountId, +costCenterId);
   }
 }
