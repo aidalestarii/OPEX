@@ -53,8 +53,6 @@ model Budget {
   years                 Int      @map("years") @db.Integer
   glAccount             Decimal  @map("gl_account") @db.Decimal
   costCenter            String   @map("cost_center") @db.VarChar(20)
-  financialIndicator    String   @map("group_gl") @db.VarChar(20)
-  subFinancialIndicator String   @map("group_detail") @db.VarChar(50)
   total                 Float    @map("total") @db.DoublePrecision
   value1                Float    @map("value01") @db.DoublePrecision
   value2                Float    @map("value02") @db.DoublePrecision
@@ -77,7 +75,7 @@ model Budget {
   updatedAt             DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamp(6)
   updatedBy             String?  @map("updated_by") @db.VarChar(50)
 
-  mCostCenter MCostCenter @relation(fields: [costCenter], references: [costCenter], onDelete: NoAction, onUpdate: NoAction, map: "fk_m_cost_center_to_budget")
+  mCostCenter MCostCenter @relation(fields: [costCenter], references: [bidang], onDelete: NoAction, onUpdate: NoAction, map: "fk_m_cost_center_to_budget")
   mGlAccount  MGlAccount  @relation(fields: [glAccount], references: [glAccount], onDelete: NoAction, onUpdate: NoAction, map: "fk_m_gl_account_to_budget")
   // mfinancialIndicator FinancialIndicator @relation(fields: [financialIndicatorId], references: [financialName])
 
@@ -85,17 +83,55 @@ model Budget {
   @@map("budget")
 }
 
-// model FinancialIndicator {
-//   id            Int     @id @default(autoincrement()) @map("id_financial_indicator")
-//   uniqueId      String  @unique @default(uuid()) @map("unique_id") @db.Uuid
-//   financialCode String? @map("financial_code") @db.VarChar(50)
-//   financialName String  @unique @map("financial_name") @db.VarChar(50)
-//   glAccount     Decimal @unique(map: "gl_account_num") @db.Decimal
+model MCostCenter {
+  idCostCenter Int      @id @default(autoincrement()) @map("id_cost_center")
+  uniqueId     String   @unique @default(uuid()) @map("unique_id") @db.Uuid
+  costCenter   String   @unique(map: "cost_center_idx") @db.VarChar(20)
+  description  String   @map("description") @db.VarChar(50)
+  bidang       String   @unique @map("bidang") @db.VarChar(8)
+  dinas        String   @map("dinas") @db.VarChar(8)
+  directorat   String   @map("directorat") @db.VarChar(8)
+  groupDinas   String   @map("group_dinas") @db.VarChar(20)
+  profitCenter String   @map("profit_center") @db.VarChar(20)
+  active       Boolean  @map("active")
+  createdAt    DateTime @default(now()) @map("created_at") @db.Timestamp(6)
+  createdBy    String   @map("created_by") @db.VarChar(50)
+  updatedAt    DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamp(6)
+  updatedBy    String?  @map("updated_by") @db.VarChar(50)
 
-//   budget Budget[]
+  budget                                                                                   Budget[]
+  budget_investation                                                                       BudgetInvestation[]
+  budget_reallocation                                                                      BudgetReallocation[]
+  realization                                                                              Realization[]
+  reallocation_corporate_item_reallocation_corporate_item_id_cost_centerTom_cost_center    ReallocationCorporateItem[] @relation("reallocation_corporate_item_id_cost_centerTom_cost_center")
+  reallocation_corporate_item_reallocation_corporate_item_id_cost_center_toTom_cost_center ReallocationCorporateItem[] @relation("reallocation_corporate_item_id_cost_center_toTom_cost_center")
 
-//   @@map("financial_indicator")
-// }
+  @@map("m_cost_center")
+}
+
+model MGlAccount {
+  idGlAccount Int      @id @default(autoincrement()) @map("id_gl_account")
+  uniqueId    String   @unique @default(uuid()) @map("unique_id") @db.Uuid
+  glAccount   Decimal  @unique(map: "gl_account_idx") @db.Decimal
+  groupDetail String   @map("group_detail") @db.VarChar(50)
+  groupGl     String   @map("group_gl") @db.VarChar(50)
+  sap         Boolean  @map("sap") @db.Boolean
+  active      Boolean  @map("active") @db.Boolean
+  createdAt   DateTime @default(now()) @map("created_at") @db.Timestamp(6)
+  createdBy   String   @map("created_by") @db.VarChar(50)
+  updatedAt   DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamp(6)
+  updatedBy   String?  @map("updated_by") @db.VarChar(50)
+
+  budget                                                                                 Budget[]
+  budget_reallocation                                                                    BudgetReallocation[]
+  realization_item                                                                       RealizationItem[]
+  reallocation_corporate_item_reallocation_corporate_item_id_gl_accountTom_gl_account    ReallocationCorporateItem[] @relation("reallocation_corporate_item_id_gl_accountTom_gl_account")
+  reallocation_corporate_item_reallocation_corporate_item_id_gl_account_toTom_gl_account ReallocationCorporateItem[] @relation("reallocation_corporate_item_id_gl_account_toTom_gl_account")
+  reallocation_item                                                                      ReallocationItem[]
+  simulation                                                                             Simulation[]
+
+  @@map("m_gl_account")
+}
 
 model BudgetInvestation {
   idBudgetInvestation Int            @id @default(autoincrement()) @map("id_budget_investation")
@@ -183,57 +219,6 @@ model MDocCategory {
 
   @@unique([module, docCategory], map: "doc_category_constraint")
   @@map("m_doc_category")
-}
-
-model MCostCenter {
-  idCostCenter Int      @id @default(autoincrement()) @map("id_cost_center")
-  uniqueId     String   @unique @default(uuid()) @map("unique_id") @db.Uuid
-  costCenter   String   @unique(map: "cost_center_idx") @db.VarChar(20)
-  description  String   @map("description") @db.VarChar(50)
-  bidang       String   @map("bidang") @db.VarChar(8)
-  dinas        String   @map("dinas") @db.VarChar(8)
-  directorat   String   @map("directorat") @db.VarChar(8)
-  groupDinas   String   @map("group_dinas") @db.VarChar(20)
-  profitCenter String   @map("profit_center") @db.VarChar(20)
-  active       Boolean  @map("active")
-  createdAt    DateTime @default(now()) @map("created_at") @db.Timestamp(6)
-  createdBy    String   @map("created_by") @db.VarChar(50)
-  updatedAt    DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamp(6)
-  updatedBy    String?  @map("updated_by") @db.VarChar(50)
-
-  budget                                                                                   Budget[]
-  budget_investation                                                                       BudgetInvestation[]
-  budget_reallocation                                                                      BudgetReallocation[]
-  realization                                                                              Realization[]
-  reallocation_corporate_item_reallocation_corporate_item_id_cost_centerTom_cost_center    ReallocationCorporateItem[] @relation("reallocation_corporate_item_id_cost_centerTom_cost_center")
-  reallocation_corporate_item_reallocation_corporate_item_id_cost_center_toTom_cost_center ReallocationCorporateItem[] @relation("reallocation_corporate_item_id_cost_center_toTom_cost_center")
-
-  @@map("m_cost_center")
-}
-
-model MGlAccount {
-  idGlAccount Int      @id @default(autoincrement()) @map("id_gl_account")
-  uniqueId    String   @unique @default(uuid()) @map("unique_id") @db.Uuid
-  glAccount   Decimal  @unique(map: "gl_account_idx") @db.Decimal
-  description String   @map("description") @db.VarChar(50)
-  groupDetail String   @map("group_detail") @db.VarChar(50)
-  groupGl     String   @map("group_gl") @db.VarChar(50)
-  sap         Boolean  @map("sap") @db.Boolean
-  active      Boolean  @map("active") @db.Boolean
-  createdAt   DateTime @default(now()) @map("created_at") @db.Timestamp(6)
-  createdBy   String   @map("created_by") @db.VarChar(50)
-  updatedAt   DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamp(6)
-  updatedBy   String?  @map("updated_by") @db.VarChar(50)
-
-  budget                                                                                 Budget[]
-  budget_reallocation                                                                    BudgetReallocation[]
-  realization_item                                                                       RealizationItem[]
-  reallocation_corporate_item_reallocation_corporate_item_id_gl_accountTom_gl_account    ReallocationCorporateItem[] @relation("reallocation_corporate_item_id_gl_accountTom_gl_account")
-  reallocation_corporate_item_reallocation_corporate_item_id_gl_account_toTom_gl_account ReallocationCorporateItem[] @relation("reallocation_corporate_item_id_gl_account_toTom_gl_account")
-  reallocation_item                                                                      ReallocationItem[]
-  simulation                                                                             Simulation[]
-
-  @@map("m_gl_account")
 }
 
 model MKurs {

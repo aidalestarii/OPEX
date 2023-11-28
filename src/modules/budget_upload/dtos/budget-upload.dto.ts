@@ -18,14 +18,6 @@ export class ItemsBudgetUploadDto {
   @IsString()
   costCenter: string;
 
-  //@IsNotEmpty()
-  @IsString()
-  financialIndicator: string;
-
-  //@IsNotEmpty()
-  @IsString()
-  subFinancialIndicator: string;
-
   // @IsNotEmpty()
   @IsNumber()
   glAccount: number;
@@ -110,8 +102,6 @@ export class ItemsBudgetUploadDto {
   > = {
     years: { dataType: 'number', maxLength: 300 },
     costCenter: { dataType: 'string', maxLength: 300 },
-    financialIndicator: { dataType: 'string', maxLength: 300 },
-    subFinancialIndicator: { dataType: 'string', maxLength: 300 },
     glAccount: { dataType: 'number', maxLength: 300 },
     value1: { dataType: 'decimal', maxLength: 300 },
     value2: { dataType: 'decimal', maxLength: 300 },
@@ -134,8 +124,6 @@ export class ItemsBudgetUploadDto {
   static propertyNames: (keyof ItemsBudgetUploadDto)[] = [
     'years',
     'costCenter',
-    'financialIndicator',
-    'subFinancialIndicator',
     'glAccount',
     'value1',
     'value2',

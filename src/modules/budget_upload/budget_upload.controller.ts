@@ -6,6 +6,7 @@ import {
   Param,
   Post,
   Put,
+  Query,
   Req,
   Res,
   UploadedFile,
@@ -56,21 +57,51 @@ export class BudgetUploadController {
   }
 
   //CRUD
-  @Get()
-  async findAll() {
-    const getAll = await this.budgetService.findAll();
-    return getAll;
+  @Get('/all')
+  async getProcessedData(@Req() req: Request, @Res() res: Response) {
+    try {
+      const processedData = await this.budgetUploadService.getProcessedData(
+        req,
+      );
+      return res.status(200).json({
+        data: processedData,
+      });
+    } catch (error) {
+      return res.status(500).json({
+        success: false,
+        error: error.message || error.stack,
+      });
+    }
   }
+
+  @Get('/goat')
+  findAllRealization(@Query() queryParams: any) {
+    return this.budgetUploadService.findAllRealization(queryParams);
+  }
+
+  // @Get('/filter')
+  // async filterByYearAndDinas(
+  //   @Query('year') year: number,
+  //   @Query('dinas') dinas: string,
+  //   @Req() req: Request,
+  // ): Promise<any> {
+  //   try {
+  //     const filteredData = await this.budgetUploadService.filterByYearAndDinas(
+  //       year,
+  //       dinas,
+  //     );
+  //     return filteredData;
+  //   } catch (error) {
+  //     // Handle errors appropriately (e.g., return an error response)
+  //     console.error(error);
+  //     throw error;
+  //   }
+  // }
 
   @Get(':id')
   findOne(@Param('id') id: number) {
     return this.budgetService.findOne(+id);
   }
-
-  // @Put(':id')
-  // update(@Param('id') id: number, @Body() updateBudgetDto: UpdateBudgetDto) {
-  //   return this.budgetService.update(+id, updateBudgetDto);
-  // }
 
   @Delete(':id')
   remove(@Param('id') id: string) {

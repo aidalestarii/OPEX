@@ -9,51 +9,33 @@ import {
   Query,
   HttpException,
   HttpStatus,
+  Res,
 } from '@nestjs/common';
 import { KursService } from './kurs.service';
 import { CreateKursDto } from './dto/create-kurs.dto';
 import { UpdateKursDto } from './dto/update-kurs.dto';
+import { BaseController } from 'src/core/base.controller';
+import { Response } from 'express';
 
 @Controller({
   version: '1',
   path: 'api/kurs',
 })
-export class KursController {
-  constructor(private readonly kursService: KursService) {}
+export class KursController extends BaseController {
+  constructor(private readonly kursService: KursService) {
+    super();
+  }
 
   @Post()
-  async createKurs(@Body() data: CreateKursDto) {
+  async createKurs(
+    @Res() res: Response,
+    @Body() data: CreateKursDto,
+  ): Promise<Response<any, any>> {
     try {
-      const requiredFields = ['years', 'value', 'createdBy'];
-      for (const field of requiredFields) {
-        if (!data[field]) {
-          throw new HttpException(
-            `Field ${field} is required`,
-            HttpStatus.BAD_REQUEST,
-          );
-        }
-      }
-      const typeValidations = {
-        years: 'number',
-        value: 'number',
-        createdBy: 'string',
-      };
-      for (const field in typeValidations) {
-        if (typeof data[field] !== typeValidations[field]) {
-          throw new HttpException(
-            `Field ${field} must be a ${typeValidations[field]}`,
-            HttpStatus.BAD_REQUEST,
-          );
-        }
-      }
       const newKurs = await this.kursService.create(data);
-      return newKurs;
+      return this.created(res, newKurs, {});
     } catch (error) {
-      // Tangkap kesalahan dan lemparkan HttpException
-      throw new HttpException(
-        error.message || 'Internal Server Error',
-        HttpStatus.INTERNAL_SERVER_ERROR,
-      );
+      this.exceptionHandler(error);
     }
   }
 

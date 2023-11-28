@@ -2,16 +2,33 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { ItemsBudgetUploadDto } from './dtos/budget-upload.dto';
 // import { UpdateBudgetDto } from './dtos/update-budget.dto';
 import { PrismaService } from 'src/core/service/prisma.service';
+import { BudgetUploadService } from './budget_upload.service';
 
 @Injectable()
 export class BudgetService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly budgetUpload: BudgetUploadService,
+  ) {}
 
   async findAll() {
-    const budget = this.prisma.budget.findMany({
+    const budget = await this.prisma.budget.findMany({
       include: {
-        mGlAccount: true,
-        mCostCenter: true,
+        mGlAccount: {
+          select: {
+            idGlAccount: true,
+            glAccount: true,
+            groupGl: true,
+            groupDetail: true,
+          },
+        },
+        mCostCenter: {
+          select: {
+            idCostCenter: true,
+            costCenter: true,
+            dinas: true,
+          },
+        },
       },
     });
     return budget;

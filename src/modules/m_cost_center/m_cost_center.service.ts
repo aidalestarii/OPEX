@@ -14,11 +14,11 @@ export class MCostCenterService {
 
   async create(createMCostCenterDto: CreateMCostCenterDto) {
     try {
-      const costcenter = await this.prisma.mCostCenter.create({
+      const costCenter = await this.prisma.mCostCenter.create({
         data: createMCostCenterDto,
       });
       return {
-        data: costcenter,
+        data: costCenter,
         meta: null,
         message: 'Cost center created successfully',
         status: HttpStatus.CREATED,

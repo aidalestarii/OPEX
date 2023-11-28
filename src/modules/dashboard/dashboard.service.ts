@@ -70,7 +70,8 @@ export class DashboardService {
       }
 
       // Filter logic
-      const { status, years, type, requestNumber } = queryParams;
+      const { status, years, type, requestNumber, entryDate, entryDateTo } =
+        queryParams;
       let filter: any = {};
       if (years) {
         filter.years = +years; // konversi ke number jika diperlukan
@@ -83,6 +84,14 @@ export class DashboardService {
       }
       if (type) {
         filter.type = type; // konversi ke number jika diperlukan
+      }
+      if (entryDate && entryDateTo) {
+        filter.updatedAt = {
+          in: {
+            gte: new Date(entryDate), // gte: greater than or equal
+            lte: new Date(entryDateTo), // lte: less than or equal
+          },
+        };
       }
 
       // Count total items with applied filters

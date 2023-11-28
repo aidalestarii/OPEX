@@ -226,8 +226,8 @@ export class RealizationController {
   //     //   remarkPby: 'string',
   //     //   docName: 'string',
   //     // };
-
-  //     for (const field of requiredFields) {
+  
+//     for (const field of requiredFields) {
   //       if (
   //         !dto[field] &&
   //         !(

@@ -378,24 +378,24 @@ export class RealizationService {
         });
 
         // Update realization items
-        const updatedItems = await Promise.all(
-          updateRealizationItems.map(async (item: UpdateRealizationItemDto) => {
-            return prisma.realizationItem.upsert({
-              where: {
-                realizationId: id,
-              },
-              update: {
-                ...item,
-                amount: item.amountSubmission,
-              },
-              create: {
-                ...item,
-                realizationId: updatedRealization.idRealization,
-                createdBy: updatedRealization.createdBy,
-              },
-            });
-          }),
-        );
+        // const updatedItems = await Promise.all(
+        //   updateRealizationItems.map(async (item: UpdateRealizationItemDto) => {
+        //     return prisma.realizationItem.upsert({
+        //       where: {
+        //         realizationId: id,
+        //       },
+        //       update: {
+        //         ...item,
+        //         amount: item.amountSubmission,
+        //       },
+        //       create: {
+        //         ...item,
+        //         realizationId: updatedRealization.idRealization,
+        //         createdBy: updatedRealization.createdBy,
+        //       },
+        //     });
+        //   }),
+        // );
 
         // Filter file uploads based on tableId
         // const existingUploadFiles = await prisma.fileUpload.findMany({
@@ -434,7 +434,7 @@ export class RealizationService {
         return {
           realization: {
             ...updatedRealization,
-            realizationItems: updatedItems,
+            // realizationItems: updatedItems,
             //uploadFiles: updatedUploadFiles,
           },
           meta: null,

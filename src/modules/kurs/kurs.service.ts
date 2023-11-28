@@ -10,6 +10,8 @@ import { UpdateKursDto } from './dto/update-kurs.dto';
 import { PrismaService } from 'src/core/service/prisma.service';
 import { SortOrder } from '@elastic/elasticsearch/lib/api/types';
 
+
+
 @Injectable()
 export class KursService {
   constructor(private readonly prisma: PrismaService) {}
