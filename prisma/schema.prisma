@@ -48,38 +48,38 @@ model NoteMemo {
 }
 
 model Budget {
-  idBudget   Int      @id @default(autoincrement()) @map("id_budget")
-  uniqueId   String   @unique @default(uuid()) @map("unique_id") @db.Uuid
-  years      Int      @map("years") @db.Integer
-  glAccount  Int      @map("gl_account") @db.Integer
-  costCenter Int      @map("cost_center") @db.Integer
-  total      Float    @map("total") @db.DoublePrecision
-  value1     Float    @map("value01") @db.DoublePrecision
-  value2     Float    @map("value02") @db.DoublePrecision
-  value3     Float    @map("value03") @db.DoublePrecision
-  value4     Float    @map("value04") @db.DoublePrecision
-  value5     Float    @map("value05") @db.DoublePrecision
-  value6     Float    @map("value06") @db.DoublePrecision
-  value7     Float    @map("value07") @db.DoublePrecision
-  value8     Float    @map("value08") @db.DoublePrecision
-  value9     Float    @map("value09") @db.DoublePrecision
-  value10    Float    @map("value10") @db.DoublePrecision
-  value11    Float    @map("value11") @db.DoublePrecision
-  value12    Float    @map("value12") @db.DoublePrecision
-  value13    Float?   @map("value13") @db.DoublePrecision
-  value14    Float?   @map("value14") @db.DoublePrecision
-  value15    Float?   @map("value15") @db.DoublePrecision
-  value16    Float?   @map("value16") @db.DoublePrecision
-  createdAt  DateTime @default(now()) @map("created_at") @db.Timestamp(6)
-  createdBy  String?  @map("created_by") @db.VarChar(50)
-  updatedAt  DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamp(6)
-  updatedBy  String?  @map("updated_by") @db.VarChar(50)
+  idBudget     Int      @id @default(autoincrement()) @map("id_budget")
+  uniqueId     String   @unique @default(uuid()) @map("unique_id") @db.Uuid
+  years        Int      @map("years") @db.Integer
+  glAccountId  Int      @map("gl_account_id") @db.Integer
+  costCenterId Int      @map("cost_center_id") @db.Integer
+  total        Float    @map("total") @db.DoublePrecision
+  value1       Float    @map("value01") @db.DoublePrecision
+  value2       Float    @map("value02") @db.DoublePrecision
+  value3       Float    @map("value03") @db.DoublePrecision
+  value4       Float    @map("value04") @db.DoublePrecision
+  value5       Float    @map("value05") @db.DoublePrecision
+  value6       Float    @map("value06") @db.DoublePrecision
+  value7       Float    @map("value07") @db.DoublePrecision
+  value8       Float    @map("value08") @db.DoublePrecision
+  value9       Float    @map("value09") @db.DoublePrecision
+  value10      Float    @map("value10") @db.DoublePrecision
+  value11      Float    @map("value11") @db.DoublePrecision
+  value12      Float    @map("value12") @db.DoublePrecision
+  value13      Float?   @map("value13") @db.DoublePrecision
+  value14      Float?   @map("value14") @db.DoublePrecision
+  value15      Float?   @map("value15") @db.DoublePrecision
+  value16      Float?   @map("value16") @db.DoublePrecision
+  createdAt    DateTime @default(now()) @map("created_at") @db.Timestamp(6)
+  createdBy    String?  @map("created_by") @db.VarChar(50)
+  updatedAt    DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamp(6)
+  updatedBy    String?  @map("updated_by") @db.VarChar(50)
 
-  mCostCenter MCostCenter @relation(fields: [costCenter], references: [idCostCenter], onDelete: NoAction, onUpdate: NoAction, map: "fk_m_cost_center_to_budget")
-  mGlAccount  MGlAccount  @relation(fields: [glAccount], references: [idGlAccount], onDelete: NoAction, onUpdate: NoAction, map: "fk_m_gl_account_to_budget")
+  mCostCenter MCostCenter @relation(fields: [costCenterId], references: [idCostCenter], onDelete: NoAction, onUpdate: NoAction, map: "fk_m_cost_center_to_budget")
+  mGlAccount  MGlAccount  @relation(fields: [glAccountId], references: [idGlAccount], onDelete: NoAction, onUpdate: NoAction, map: "fk_m_gl_account_to_budget")
   // mfinancialIndicator FinancialIndicator @relation(fields: [financialIndicatorId], references: [financialName])
 
-  @@unique([years, glAccount, costCenter], map: "budget_constraint")
+  @@unique([years, glAccountId, costCenterId], map: "budget_constraint")
   @@map("budget")
 }
 
@@ -282,7 +282,7 @@ model Realization {
   month            Int                 @map("month") @db.Integer
   costCenterId     Int                 @map("cost_center_id") @db.Integer
   draftNumber      Int                 @default(autoincrement()) @map("no_draft") @db.Integer
-  requestNumber    String?             @map("no_request") @db.VarChar(15)
+  requestNumber    String?             @map("no_request")
   taReff           Int?                @map("ta_reff") @db.Integer
   type             RealizationTypeEnum @default(UANG_MUKA) @map("type")
   responsibleNopeg String              @map("responsible_nopeg") @db.VarChar(8)
@@ -391,7 +391,7 @@ model RealizationItem {
   periodFinish      DateTime @map("period_finish") @db.Date
   descPby           String   @map("desc_pby")
   remarkPby         String   @map("remark_pby")
-  memo              String?  @map("memo")
+  memo              String?  @map("memo") //utk vp user
   createdAt         DateTime @default(now()) @map("created_at") @db.Timestamp(6)
   createdBy         String   @map("created_by") @db.VarChar(50)
   updatedAt         DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamp(6)
@@ -551,15 +551,19 @@ model Simulation {
   idSimulation     Int      @id @default(autoincrement()) @map("id_simulation")
   uniqueId         String   @unique @default(uuid()) @map("unique_id") @db.Uuid
   years            Int      @map("years") @db.Integer
-  glAccountId      Int      @map("id_gl_account") @db.Integer
-  glAccount        Decimal  @db.Decimal
+  costCenterId     Int      @map("cost_center_id") @db.Integer
+  //gl account ganti mcostcenter utk dinas
   simulationBudget Float    @map("simulation_budget") @db.Real
   createdAt        DateTime @default(now()) @map("created_at") @db.Timestamp(6)
   createdBy        String   @map("created_by") @db.VarChar(50)
   updatedAt        DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamp(6)
   updatedBy        String?  @map("updated_by") @db.VarChar(50)
 
-  m_gl_account MGlAccount @relation(fields: [glAccountId], references: [idGlAccount], onDelete: NoAction, onUpdate: NoAction, map: "fk_m_gl_account_to_simulation")
+  //m_gl_account MGlAccount @relation(fields: [glAccountId], references: [idGlAccount], onDelete: NoAction, onUpdate: NoAction, map: "fk_m_gl_account_to_simulation")
+
+  //simulate kayak history nambah terus
+  MGlAccount            MGlAccount? @relation(fields: [mGlAccountIdGlAccount], references: [idGlAccount])
+  mGlAccountIdGlAccount Int?
 
   @@map("simulation")
 }
