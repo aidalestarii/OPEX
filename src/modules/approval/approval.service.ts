@@ -19,6 +19,7 @@ export class ApprovalService {
   async findAllWithPaginationAndFilter(
     page: number,
     order: string = 'asc',
+    nopeg: string,
     queryParams: any,
   ) {
     try {
@@ -106,7 +107,10 @@ export class ApprovalService {
         orderBy: {
           createdAt: order.toLowerCase() as SortOrder,
         },
-        where: filter,
+        where: {
+          ...filter,
+          personalNumberTo: nopeg,
+        },
         include: {
           realizationItem: true,
         },
