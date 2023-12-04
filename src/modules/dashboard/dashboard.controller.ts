@@ -19,11 +19,6 @@ import { UpdateDashboardDto } from './dto/update-dashboard.dto';
 export class DashboardController {
   constructor(private readonly dashboardService: DashboardService) {}
 
-  @Post()
-  create(@Body() createDashboardDto: CreateDashboardDto) {
-    return this.dashboardService.create(createDashboardDto);
-  }
-
   // @Get('/all')
   // findAll() {
   //   return this.dashboardService.findAll();

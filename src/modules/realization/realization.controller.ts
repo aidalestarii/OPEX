@@ -48,14 +48,14 @@ import { UpdateFileDto } from './dto/update-file-upload.dto';
 export class RealizationController {
   constructor(private readonly realizationService: RealizationService) {}
 
-  @Post(':status?')
+  @Post(':status')
   @UseInterceptors(AnyFilesInterceptor(multerPdfOptions))
   async saveRealization(
     @UploadedFiles() files: Express.Multer.File[],
     @Req() req: Request,
     @Body(new ValidationPipe()) dto: CreateRealizationDto,
     @Body() dtoFile: CreateFileDto,
-    @Param('status') status?: StatusEnum,
+    @Param('status') status: 'save' | 'submit',
   ) {
     try {
       if (!dto.realizationItems || dto.realizationItems.length === 0) {

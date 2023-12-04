@@ -103,19 +103,6 @@ export class ApprovalService {
         },
         where: filter,
         include: {
-          m_cost_center: {
-            select: {
-              idCostCenter: true,
-              costCenter: true,
-              description: true,
-              bidang: true,
-              dinas: true,
-              directorat: true,
-              groupDinas: true,
-              profitCenter: true,
-              active: true,
-            },
-          },
           realizationItem: true,
         },
       });
@@ -136,7 +123,7 @@ export class ApprovalService {
           requestNumber: realizationItem.requestNumber,
           typeOfLetter: 'Realokasi Anggaran',
           entryDate: realizationItem.createdAt,
-          m_cost_center: realizationItem.m_cost_center,
+          //m_cost_center: realizationItem.m_cost_center,
           status: realizationItem.status,
           statusTo: realizationItem.personalNumberTo,
           departmentTo: realizationItem.departmentTo,
