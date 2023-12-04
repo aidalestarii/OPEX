@@ -2,6 +2,7 @@ import {
   BadRequestException,
   Injectable,
   NotFoundException,
+  Query,
 } from '@nestjs/common';
 import { Request } from 'express';
 //import { format } from 'date-fns';
@@ -9,6 +10,7 @@ import { ItemsBudgetUploadDto } from './dtos/budget-upload.dto';
 import { ExcelBudgetUploadService } from './excel_budget_upload.service';
 import { ReadBudgetUploadSheetDto } from './dtos/read-budget-upload.dto';
 import { PrismaService } from 'src/core/service/prisma.service';
+import { glAccount } from 'prisma/dummy-data';
 
 @Injectable()
 export class BudgetUploadService {
@@ -36,10 +38,27 @@ export class BudgetUploadService {
 
       const results = await Promise.all(
         items?.map(async (item) => {
+          const dataCostCenters = await this.prisma.mCostCenter.findMany({
+            select: {
+              idCostCenter: true,
+            },
+            where: {
+              bidang: String(item.costCenter),
+            },
+          });
+
+          const dataGlAccount = await this.prisma.mGlAccount.findMany({
+            select: {
+              idGlAccount: true,
+            },
+            where: {
+              glAccount: Number(item.glAccount),
+            },
+          });
           const data = {
             years: Number(item.years),
-            costCenter: String(item.costCenter),
-            glAccount: Number(item.glAccount),
+            costCenter: Number(dataCostCenters?.[0]?.idCostCenter),
+            glAccount: Number(dataGlAccount?.[0]?.idGlAccount),
             total: parseFloat(
               String(
                 item.value1 +
@@ -71,9 +90,6 @@ export class BudgetUploadService {
             createdAt: new Date(),
             updatedAt: new Date(),
           };
-
-          // results.push(data);
-          // return data;
 
           const prismaResult = await this.prisma.budget.create({
             data,
@@ -109,6 +125,9 @@ export class BudgetUploadService {
       const uniqueGroupDetailValues = GroupDetail.map(
         (GroupDetail) => GroupDetail.groupDetail,
       );
+
+      console.log(uniqueGroupGlValues);
+      console.log(uniqueGroupDetailValues);
 
       const months = [
         'JAN',
@@ -164,80 +183,250 @@ export class BudgetUploadService {
           ),
           sumExpendableMaterialMonth: sumByGroupAndMonth(
             results,
-            'Material expenses',
-            'Expendable-Material',
+            uniqueGroupGlValues[0],
+            uniqueGroupDetailValues[0],
           ),
         },
         RepairableMaterial: {
           sumRepairableMaterial: sumByGroup(
             results,
-            'Material expenses',
-            'Repairable-Material',
+            uniqueGroupGlValues[0],
+            uniqueGroupDetailValues[1],
           ),
           sumRepairableMaterialMonth: sumByGroupAndMonth(
             results,
-            'Material expenses',
-            'Repairable-Material',
+            uniqueGroupGlValues[0],
+            uniqueGroupDetailValues[1],
           ),
         },
       };
 
       const SubcontractExpenses = {
-        sumSubcontractExpenses: sumByGroup(results, 'Subcontract Expenses'),
+        sumSubcontractExpenses: sumByGroup(results, uniqueGroupGlValues[1]),
         sumSubcontractExpensesMonth: sumByGroupAndMonth(
           results,
-          'Subcontract Expenses',
+          uniqueGroupGlValues[1],
         ),
         RotablepartsSubcont: {
           sumRotablepartsSubcont: sumByGroup(
             results,
-            'Subcontract Expenses',
-            'Rotable parts-Subcont',
+            uniqueGroupGlValues[1],
+            uniqueGroupDetailValues[2],
           ),
           sumRotablepartsSubcontMonth: sumByGroupAndMonth(
             results,
-            'Subcontract Expenses',
-            'Rotable parts-Subcont',
+            uniqueGroupGlValues[1],
+            uniqueGroupDetailValues[2],
+          ),
+        },
+        RepairablepartsSubcont: {
+          sumRepairablepartsSubcont: sumByGroup(
+            results,
+            uniqueGroupGlValues[1],
+            uniqueGroupDetailValues[3],
+          ),
+          sumRepairablepartsSubcontMonth: sumByGroupAndMonth(
+            results,
+            uniqueGroupGlValues[1],
+            uniqueGroupDetailValues[3],
+          ),
+        },
+      };
+
+      const StaffExpenses = {
+        sumStaffExpenses: sumByGroup(results, uniqueGroupGlValues[2]),
+        sumStaffExpensesMonth: sumByGroupAndMonth(
+          results,
+          uniqueGroupGlValues[2],
+        ),
+        BaseSalary: {
+          sumBaseSalary: sumByGroup(
+            results,
+            uniqueGroupGlValues[2],
+            uniqueGroupDetailValues[4],
+          ),
+          sumBaseSalaryMonth: sumByGroupAndMonth(
+            results,
+            uniqueGroupGlValues[2],
+            uniqueGroupDetailValues[4],
+          ),
+        },
+        Honorarium: {
+          sumHonorarium: sumByGroup(
+            results,
+            uniqueGroupGlValues[2],
+            uniqueGroupDetailValues[5],
+          ),
+          sumHonorariumMonth: sumByGroupAndMonth(
+            results,
+            uniqueGroupGlValues[2],
+            uniqueGroupDetailValues[5],
+          ),
+        },
+      };
+
+      const CompanyAccommodation = {
+        sumCompanyAccommodation: sumByGroup(results, uniqueGroupGlValues[3]),
+        sumCompanyAccommodationMonth: sumByGroupAndMonth(
+          results,
+          uniqueGroupGlValues[3],
+        ),
+        Travel: {
+          sumTravel: sumByGroup(
+            results,
+            uniqueGroupGlValues[3],
+            uniqueGroupDetailValues[6],
+          ),
+          sumTravelMonth: sumByGroupAndMonth(
+            results,
+            uniqueGroupGlValues[3],
+            uniqueGroupDetailValues[6],
+          ),
+        },
+        Transport: {
+          sumTransport: sumByGroup(
+            results,
+            uniqueGroupGlValues[3],
+            uniqueGroupDetailValues[7],
+          ),
+          sumTransportMonth: sumByGroupAndMonth(
+            results,
+            uniqueGroupGlValues[3],
+            uniqueGroupDetailValues[7],
+          ),
+        },
+      };
+
+      const DepreciationAndAmortisation = {
+        sumDepreciationAndAmortisation: sumByGroup(
+          results,
+          uniqueGroupGlValues[4],
+        ),
+        sumDepreciationAndAmortisationMonth: sumByGroupAndMonth(
+          results,
+          uniqueGroupGlValues[4],
+        ),
+        RotablePart: {
+          sumRotablePart: sumByGroup(
+            results,
+            uniqueGroupGlValues[4],
+            uniqueGroupDetailValues[8],
+          ),
+          sumRotablePartMonth: sumByGroupAndMonth(
+            results,
+            uniqueGroupGlValues[4],
+            uniqueGroupDetailValues[8],
+          ),
+        },
+        Amortization: {
+          sumAmortization: sumByGroup(
+            results,
+            uniqueGroupGlValues[4],
+            uniqueGroupDetailValues[9],
+          ),
+          sumAmortizationMonth: sumByGroupAndMonth(
+            results,
+            uniqueGroupGlValues[4],
+            uniqueGroupDetailValues[9],
+          ),
+        },
+      };
+
+      const FacilityMaintenanceExpenses = {
+        sumDepreciationAndAmortisation: sumByGroup(
+          results,
+          uniqueGroupGlValues[5],
+        ),
+        sumDepreciationAndAmortisationMonth: sumByGroupAndMonth(
+          results,
+          uniqueGroupGlValues[5],
+        ),
+        MaintenanceandRepairHangar: {
+          sumMaintenanceandRepairHangar: sumByGroup(
+            results,
+            uniqueGroupGlValues[5],
+            uniqueGroupDetailValues[10],
+          ),
+          sumMaintenanceandRepairHangarMonth: sumByGroupAndMonth(
+            results,
+            uniqueGroupGlValues[5],
+            uniqueGroupDetailValues[10],
+          ),
+        },
+        MaintenanceandRepairHardware: {
+          sumMaintenanceandRepairHardware: sumByGroup(
+            results,
+            uniqueGroupGlValues[5],
+            uniqueGroupDetailValues[11],
+          ),
+          sumMaintenanceandRepairHardwareMonth: sumByGroupAndMonth(
+            results,
+            uniqueGroupGlValues[5],
+            uniqueGroupDetailValues[11],
+          ),
+        },
+      };
+
+      const RentalExpenses = {
+        sumRentalExpenses: sumByGroup(results, uniqueGroupGlValues[6]),
+        sumRentalExpensesMonth: sumByGroupAndMonth(
+          results,
+          uniqueGroupGlValues[6],
+        ),
+        BuildingRental: {
+          sumBuildingRental: sumByGroup(
+            results,
+            uniqueGroupGlValues[6],
+            uniqueGroupDetailValues[12],
+          ),
+          sumBuildingRentalMonth: sumByGroupAndMonth(
+            results,
+            uniqueGroupGlValues[6],
+            uniqueGroupDetailValues[12],
+          ),
+        },
+        ComponentRental: {
+          sumComponentRental: sumByGroup(
+            results,
+            uniqueGroupGlValues[6],
+            uniqueGroupDetailValues[13],
+          ),
+          sumComponentRentalMonth: sumByGroupAndMonth(
+            results,
+            uniqueGroupGlValues[6],
+            uniqueGroupDetailValues[13],
           ),
         },
       };
 
       const OtherOperatingExpenses = {
-        sumOtherOperating: sumByGroup(results, 'Other operating expenses'),
+        sumOtherOperating: sumByGroup(results, uniqueGroupGlValues[7]),
         sumOtherOperatingMonth: sumByGroupAndMonth(
           results,
-          'Other operating expenses',
+          uniqueGroupGlValues[7],
         ),
         ElectricityConsumption: {
           sumElectricityConsumption: sumByGroup(
             results,
-            'Other operating expenses',
-            'Electricity consumption',
+            uniqueGroupGlValues[7],
+            uniqueGroupDetailValues[14],
           ),
           sumElectricityConsumptionMonth: sumByGroupAndMonth(
             results,
-            'Other operating expenses',
-            'Electricity consumption',
+            uniqueGroupGlValues[7],
+            uniqueGroupDetailValues[14],
           ),
         },
         Gas: {
-          sumGas: sumByGroup(results, 'Other operating expenses', 'Gas'),
+          sumGas: sumByGroup(
+            results,
+            uniqueGroupGlValues[7],
+            uniqueGroupDetailValues[15],
+          ),
           sumGasMonth: sumByGroupAndMonth(
             results,
-            'Other operating expenses',
-            'Gas',
-          ),
-        },
-        CorporateEvent: {
-          sumCorporateEvent: sumByGroup(
-            results,
-            'Other operating expenses',
-            'Corporate Event',
-          ),
-          sumCorporateEventMonth: sumByGroupAndMonth(
-            results,
-            'Other operating expenses',
-            'Corporate Event',
+            uniqueGroupGlValues[7],
+            uniqueGroupDetailValues[15],
           ),
         },
       };
@@ -246,13 +435,19 @@ export class BudgetUploadService {
         MaterialExpenses,
         SubcontractExpenses,
         OtherOperatingExpenses,
+        StaffExpenses,
+        CompanyAccommodation,
+        DepreciationAndAmortisation,
+        FacilityMaintenanceExpenses,
+        RentalExpenses,
+        // results,
       };
     } catch (error) {
       throw new BadRequestException(error.message || error.stack);
     }
   }
 
-  async getProcessedData(req: Request): Promise<any> {
+  async getAllBudget(req: Request): Promise<any> {
     try {
       const results1 = await this.prisma.budget.findMany({
         include: {
@@ -328,7 +523,7 @@ export class BudgetUploadService {
       }
 
       const MaterialExpenses = {
-        sumMaterialExpenses: sumByGroup(results1, 'Material expenses'),
+        sumMaterialExpenses: sumByGroup(results1, uniqueGroupGlValues[0]),
         sumMaterialExpensesMonth: sumByGroupAndMonth(
           results1,
           uniqueGroupGlValues[0],
@@ -341,40 +536,40 @@ export class BudgetUploadService {
           ),
           sumExpendableMaterialMonth: sumByGroupAndMonth(
             results1,
-            'Material expenses',
-            'Expendable-Material',
+            uniqueGroupGlValues[0],
+            uniqueGroupDetailValues[0],
           ),
         },
         RepairableMaterial: {
           sumRepairableMaterial: sumByGroup(
             results1,
-            'Material expenses',
-            'Repairable-Material',
+            uniqueGroupGlValues[0],
+            uniqueGroupDetailValues[1],
           ),
           sumRepairableMaterialMonth: sumByGroupAndMonth(
             results1,
-            'Material expenses',
-            'Repairable-Material',
+            uniqueGroupGlValues[0],
+            uniqueGroupDetailValues[1],
           ),
         },
       };
 
       const SubcontractExpenses = {
-        sumSubcontractExpenses: sumByGroup(results1, 'Subcontract Expenses'),
+        sumSubcontractExpenses: sumByGroup(results1, uniqueGroupGlValues[1]),
         sumSubcontractExpensesMonth: sumByGroupAndMonth(
           results1,
-          'Subcontract Expenses',
+          uniqueGroupGlValues[1],
         ),
         RotablepartsSubcont: {
           sumRotablepartsSubcont: sumByGroup(
             results1,
-            'Subcontract Expenses',
-            'Rotable parts-Subcont',
+            uniqueGroupGlValues[1],
+            uniqueGroupDetailValues[2],
           ),
           sumRotablepartsSubcontMonth: sumByGroupAndMonth(
             results1,
-            'Subcontract Expenses',
-            'Rotable parts-Subcont',
+            uniqueGroupGlValues[1],
+            uniqueGroupDetailValues[2],
           ),
         },
       };
@@ -418,8 +613,24 @@ export class BudgetUploadService {
           ),
         },
       };
+      // Mengalikan setiap nilai dalam results1 dengan 85%
+      const results1Modified = results1.map((item) => {
+        // Clone item to avoid modifying the original object
+        const modifiedItem = { ...item };
 
-      console.log(results1);
+        // Mengalikan nilai total dengan 85%
+        modifiedItem.total *= 0.85;
+
+        // Mengalikan nilai-nilai value1 hingga value12 dengan 85%
+        for (let i = 1; i <= 12; i++) {
+          modifiedItem[`value${i}`] *= 0.85;
+        }
+
+        return modifiedItem;
+      });
+
+      // console.log(results1);
+      // console.log(results1Modified);
       return {
         MaterialExpenses,
         SubcontractExpenses,
@@ -427,58 +638,6 @@ export class BudgetUploadService {
       };
     } catch (error) {
       throw new BadRequestException(error.message || error.stack);
-    }
-  }
-
-  async findAllRealization(queryParams: any) {
-    try {
-      // Dapatkan nilai filter dari queryParams
-      const { years, dinas } = queryParams;
-
-      // Logika filter sesuai dengan kebutuhan
-      let filter: any = {};
-      if (years) {
-        filter.years = +years; // konversi ke number jika diperlukan
-      }
-      if (dinas) {
-        filter.mCostCenter.dinas = +dinas; // konversi ke number jika diperlukan
-      }
-
-      // Panggil metode prisma atau logika lainnya dengan filter
-      const results1 = await this.prisma.budget.findMany({
-        include: {
-          mGlAccount: {
-            select: {
-              idGlAccount: true,
-              glAccount: true,
-              groupGl: true,
-              groupDetail: true,
-            },
-          },
-          mCostCenter: {
-            select: {
-              idCostCenter: true,
-              costCenter: true,
-              dinas: true,
-            },
-          },
-        },
-      });
-
-      if (!results1 || results1.length === 0) {
-        throw new NotFoundException(
-          'No realizations found with the specified filter.',
-        );
-      }
-
-      return results1;
-    } catch (error) {
-      if (error instanceof NotFoundException) {
-        throw error; // NestJS will handle NotFoundException and send a 404 response
-      } else {
-        // Log the error or handle other types of errors
-        throw new BadRequestException('Invalid request.'); // NestJS will handle BadRequestException and send a 400 response
-      }
     }
   }
 }

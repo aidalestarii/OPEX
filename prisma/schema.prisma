@@ -48,35 +48,35 @@ model NoteMemo {
 }
 
 model Budget {
-  idBudget              Int      @id @default(autoincrement()) @map("id_budget")
-  uniqueId              String   @unique @default(uuid()) @map("unique_id") @db.Uuid
-  years                 Int      @map("years") @db.Integer
-  glAccount             Decimal  @map("gl_account") @db.Decimal
-  costCenter            String   @map("cost_center") @db.VarChar(20)
-  total                 Float    @map("total") @db.DoublePrecision
-  value1                Float    @map("value01") @db.DoublePrecision
-  value2                Float    @map("value02") @db.DoublePrecision
-  value3                Float    @map("value03") @db.DoublePrecision
-  value4                Float    @map("value04") @db.DoublePrecision
-  value5                Float    @map("value05") @db.DoublePrecision
-  value6                Float    @map("value06") @db.DoublePrecision
-  value7                Float    @map("value07") @db.DoublePrecision
-  value8                Float    @map("value08") @db.DoublePrecision
-  value9                Float    @map("value09") @db.DoublePrecision
-  value10               Float    @map("value10") @db.DoublePrecision
-  value11               Float    @map("value11") @db.DoublePrecision
-  value12               Float    @map("value12") @db.DoublePrecision
-  value13               Float?   @map("value13") @db.DoublePrecision
-  value14               Float?   @map("value14") @db.DoublePrecision
-  value15               Float?   @map("value15") @db.DoublePrecision
-  value16               Float?   @map("value16") @db.DoublePrecision
-  createdAt             DateTime @default(now()) @map("created_at") @db.Timestamp(6)
-  createdBy             String?  @map("created_by") @db.VarChar(50)
-  updatedAt             DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamp(6)
-  updatedBy             String?  @map("updated_by") @db.VarChar(50)
+  idBudget   Int      @id @default(autoincrement()) @map("id_budget")
+  uniqueId   String   @unique @default(uuid()) @map("unique_id") @db.Uuid
+  years      Int      @map("years") @db.Integer
+  glAccount  Int      @map("gl_account") @db.Integer
+  costCenter Int      @map("cost_center") @db.Integer
+  total      Float    @map("total") @db.DoublePrecision
+  value1     Float    @map("value01") @db.DoublePrecision
+  value2     Float    @map("value02") @db.DoublePrecision
+  value3     Float    @map("value03") @db.DoublePrecision
+  value4     Float    @map("value04") @db.DoublePrecision
+  value5     Float    @map("value05") @db.DoublePrecision
+  value6     Float    @map("value06") @db.DoublePrecision
+  value7     Float    @map("value07") @db.DoublePrecision
+  value8     Float    @map("value08") @db.DoublePrecision
+  value9     Float    @map("value09") @db.DoublePrecision
+  value10    Float    @map("value10") @db.DoublePrecision
+  value11    Float    @map("value11") @db.DoublePrecision
+  value12    Float    @map("value12") @db.DoublePrecision
+  value13    Float?   @map("value13") @db.DoublePrecision
+  value14    Float?   @map("value14") @db.DoublePrecision
+  value15    Float?   @map("value15") @db.DoublePrecision
+  value16    Float?   @map("value16") @db.DoublePrecision
+  createdAt  DateTime @default(now()) @map("created_at") @db.Timestamp(6)
+  createdBy  String?  @map("created_by") @db.VarChar(50)
+  updatedAt  DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamp(6)
+  updatedBy  String?  @map("updated_by") @db.VarChar(50)
 
-  mCostCenter MCostCenter @relation(fields: [costCenter], references: [bidang], onDelete: NoAction, onUpdate: NoAction, map: "fk_m_cost_center_to_budget")
-  mGlAccount  MGlAccount  @relation(fields: [glAccount], references: [glAccount], onDelete: NoAction, onUpdate: NoAction, map: "fk_m_gl_account_to_budget")
+  mCostCenter MCostCenter @relation(fields: [costCenter], references: [idCostCenter], onDelete: NoAction, onUpdate: NoAction, map: "fk_m_cost_center_to_budget")
+  mGlAccount  MGlAccount  @relation(fields: [glAccount], references: [idGlAccount], onDelete: NoAction, onUpdate: NoAction, map: "fk_m_gl_account_to_budget")
   // mfinancialIndicator FinancialIndicator @relation(fields: [financialIndicatorId], references: [financialName])
 
   @@unique([years, glAccount, costCenter], map: "budget_constraint")
@@ -431,52 +431,6 @@ model Reallocation {
 
   @@map("reallocation")
 }
-
-// model ReallocationBudget {
-//   idReallocationBudget Int        @id @default(autoincrement()) @map("id_reallocation_budget")
-//   uniqueId             String     @unique @default(uuid()) @map("unique_id") @db.Uuid
-//   years                Int        @map("years") @db.Integer
-//   taReff               Int        @map("ta_reff") @db.Integer
-//   status               StatusEnum @default(PROGRESS) @map("status")
-//   statusId             Int        @map("status_id") @db.Integer
-//   department           String     @map("department") @db.VarChar(8)
-//   personalNumber       String     @map("nopeg") @db.VarChar(8)
-//   departmentTo         String     @map("department_to") @db.VarChar(8)
-//   personalNumberTo     String     @map("nopeg_to") @db.VarChar(8)
-//   createdAt            DateTime   @default(now()) @map("created_at") @db.Timestamp(6)
-//   createdBy            String     @map("created_by") @db.VarChar(50)
-//   updatedAt            DateTime   @default(now()) @updatedAt @map("updated_at") @db.Timestamp(6)
-//   updatedBy            String?    @map("updated_by") @db.VarChar(50)
-
-//   mStatus                MStatus                  @relation(fields: [statusId], references: [idStatus], onDelete: NoAction, onUpdate: NoAction, map: "fk_m_status_to_reallocation_budget")
-//   reallocationBudgetItem ReallocationBudgetItem[]
-
-//   @@index([years], map: "reallocation_budget_constraint")
-//   @@map("reallocation_budget")
-// }
-
-// model ReallocationBudgetItem {
-//   idReallocationBudgetItem Int      @id @default(autoincrement()) @map("id_reallocation_budget_item")
-//   uniqueId                 String   @unique @default(uuid()) @map("unique_id") @db.Uuid
-//   reallocationBudgetId     Int      @map("reallocation_budget)id") @db.Integer
-//   glAccountId              Int      @map("gl_account_id") @db.Integer
-//   costCenterId             Int      @map("cost_center_id") @db.Integer
-//   costCenterToId           Int      @map("cost_center_to_id") @db.Integer
-//   glAccountToId            Int      @map("gl_account_to_id") @db.Integer
-//   amount                   Float?   @map("amount") @db.DoublePrecision
-//   createdAt                DateTime @default(now()) @map("created_at") @db.Timestamp(6)
-//   createdBy                String   @map("created_by") @db.VarChar(50)
-//   updatedAt                DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamp(6)
-//   updatedBy                String?  @map("updated_by") @db.VarChar(50)
-
-//   m_cost_center_reallocation_budget_item_id_cost_centerTom_cost_center    MCostCenter        @relation("reallocation_budget_item_id_cost_centerTom_cost_center", fields: [costCenterId], references: [idCostCenter], onDelete: NoAction, onUpdate: NoAction, map: "fk_m_cost_center_to_reallocation_budget_item")
-//   m_cost_center_reallocation_budget_item_id_cost_center_toTom_cost_center MCostCenter        @relation("reallocation_budget_item_id_cost_center_toTom_cost_center", fields: [costCenterToId], references: [idCostCenter], onDelete: NoAction, onUpdate: NoAction, map: "fk_m_cost_center_to_reallocation_budget_item1")
-//   m_gl_account_reallocation_budget_item_id_gl_accountTom_gl_account       MGlAccount         @relation("reallocation_budget_item_id_gl_accountTom_gl_account", fields: [glAccountId], references: [idGlAccount], onDelete: NoAction, onUpdate: NoAction, map: "fk_m_gl_account_to_reallocation_budget_item")
-//   m_gl_account_reallocation_budget_item_id_gl_account_toTom_gl_account    MGlAccount         @relation("reallocation_budget_item_id_gl_account_toTom_gl_account", fields: [glAccountToId], references: [idGlAccount], onDelete: NoAction, onUpdate: NoAction, map: "fk_m_gl_account_to_reallocation_budget_item1")
-//   reallocation_budget                                                     ReallocationBudget @relation(fields: [reallocationBudgetId], references: [idReallocationBudget], onDelete: NoAction, onUpdate: NoAction, map: "fk_reallocation_budget_to_reallocation_budget_item")
-
-//   @@map("reallocation_budget_item")
-// }
 
 model ReallocationCorporate {
   idReallocationCorporate Int        @id @default(autoincrement()) @map("id_reallocation_corporate")

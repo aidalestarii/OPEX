@@ -15,8 +15,8 @@ export class ItemsBudgetUploadDto {
   years: number;
 
   // @IsNotEmpty()
-  @IsString()
-  costCenter: string;
+  @IsNumber()
+  costCenter: number;
 
   // @IsNotEmpty()
   @IsNumber()

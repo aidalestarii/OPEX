@@ -1,6 +1,9 @@
 {
   "name": "opex",
   "version": "1.0.0",
+  "prisma": {
+    "seed": "ts-node --compiler-options {\"module\":\"CommonJS\"} prisma/seed.ts"
+  },
   "description": "<p align=\"center\">\r   <a href=\"http://nestjs.com/\" target=\"blank\"><img src=\"https://nestjs.com/img/logo-small.svg\" width=\"200\" alt=\"Nest Logo\" /></a>\r </p>",
   "main": ".eslintrc.js",
   "directories": {
@@ -53,6 +56,9 @@
     "@types/express": "^4.17.20",
     "@types/jest": "^29.5.6",
     "@types/multer": "^1.4.9",
-    "@types/passport-jwt": "^3.0.12"
+    "@types/node": "^20.10.1",
+    "@types/passport-jwt": "^3.0.12",
+    "ts-node": "^10.9.1",
+    "typescript": "^5.3.2"
   }
 }

@@ -58,45 +58,30 @@ export class BudgetUploadController {
 
   //CRUD
   @Get('/all')
-  async getProcessedData(@Req() req: Request, @Res() res: Response) {
+  async findAllBudget(@Req() req: Request, @Res() res: Response) {
     try {
-      const processedData = await this.budgetUploadService.getProcessedData(
-        req,
-      );
+      const processedData = await this.budgetUploadService.getAllBudget(req);
       return res.status(200).json({
         data: processedData,
       });
     } catch (error) {
       return res.status(500).json({
-        success: false,
         error: error.message || error.stack,
       });
     }
   }
 
-  @Get('/goat')
-  findAllRealization(@Query() queryParams: any) {
-    return this.budgetUploadService.findAllRealization(queryParams);
+  @Get('/filter')
+  async findFilterBudget(@Query() queryParams: any) {
+    const findFilterBudget = await this.budgetService.getFilterBudget(
+      queryParams,
+    );
+    return findFilterBudget;
   }
-
-  // @Get('/filter')
-  // async filterByYearAndDinas(
-  //   @Query('year') year: number,
-  //   @Query('dinas') dinas: string,
-  //   @Req() req: Request,
-  // ): Promise<any> {
-  //   try {
-  //     const filteredData = await this.budgetUploadService.filterByYearAndDinas(
-  //       year,
-  //       dinas,
-  //     );
-  //     return filteredData;
-  //   } catch (error) {
-  //     // Handle errors appropriately (e.g., return an error response)
-  //     console.error(error);
-  //     throw error;
-  //   }
-  // }
+  @Get('/filter2')
+  findAllRealization1(@Query() queryParams: any) {
+    return this.budgetService.findAllRealization(queryParams);
+  }
 
   @Get(':id')
   findOne(@Param('id') id: number) {

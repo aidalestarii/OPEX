@@ -10,12 +10,10 @@ import {
 
 export class UpdateKursDto {
   @IsOptional()
-  @IsNotEmpty()
   @IsNumber()
   value?: number; // Nilai kurs yang ingin diperbarui
 
   @IsOptional()
-  @IsNotEmpty()
   @IsNumber()
   years?: number; // Tahun kurs yang ingin diperbarui
 

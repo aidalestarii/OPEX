@@ -9,13 +9,15 @@ import {
   Query,
   HttpException,
   HttpStatus,
+  NotFoundException,
   Res,
+  Req,
 } from '@nestjs/common';
 import { KursService } from './kurs.service';
 import { CreateKursDto } from './dto/create-kurs.dto';
 import { UpdateKursDto } from './dto/update-kurs.dto';
 import { BaseController } from 'src/core/base.controller';
-import { Response } from 'express';
+import { Response, Request } from 'express';
 
 @Controller({
   version: '1',
@@ -40,8 +42,13 @@ export class KursController extends BaseController {
   }
 
   @Get('/all')
-  findAll() {
-    return this.kursService.findAll();
+  async findAllKurs(@Res() res: Response): Promise<Response<any, any>> {
+    try {
+      const getAll = await this.kursService.findAll();
+      return this.ok(res, getAll, {});
+    } catch (error) {
+      return res.status(400).json(error.response);
+    }
   }
 
   @Get()
@@ -58,9 +65,14 @@ export class KursController extends BaseController {
     return this.kursService.findYears(+years);
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: number) {
-    return this.kursService.findOne(+id);
+  @Get('/:id')
+  async findOne(@Res() res: Response, @Param('id') id: number) {
+    try {
+      const findOneKurs = await this.kursService.findOne(+id);
+      return this.ok(res, findOneKurs, {});
+    } catch (error) {
+      return this.exceptionHandler(error.response);
+    }
   }
 
   @Put(':id')

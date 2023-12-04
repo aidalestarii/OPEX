@@ -10,23 +10,19 @@ import { UpdateKursDto } from './dto/update-kurs.dto';
 import { PrismaService } from 'src/core/service/prisma.service';
 import { SortOrder } from '@elastic/elasticsearch/lib/api/types';
 
-
-
 @Injectable()
 export class KursService {
   constructor(private readonly prisma: PrismaService) {}
 
-  async create(dto: CreateKursDto) {
+  async create(dtoKurs: CreateKursDto) {
     try {
       const kurs = await this.prisma.mKurs.create({
-        data: dto,
+        data: dtoKurs,
       });
       return {
         data: kurs,
-        meta: null,
         message: 'Kurs created successfully',
         status: HttpStatus.CREATED,
-        time: new Date(),
       };
     } catch (error) {
       // Tangkap kesalahan yang dihasilkan oleh database
@@ -36,19 +32,8 @@ export class KursService {
       ) {
         // Kolom years harus unik, dan kesalahan ini menunjukkan bahwa nilai years sudah ada
         throw new HttpException(
-          `Kurs with years ${dto.years} already exists`,
+          `Kurs with years ${dtoKurs.years} already exists`,
           HttpStatus.CONFLICT,
-        );
-      } else {
-        throw new HttpException(
-          {
-            data: null,
-            meta: null,
-            message: 'Failed to create kurs',
-            status: HttpStatus.INTERNAL_SERVER_ERROR,
-            time: new Date(),
-          },
-          HttpStatus.INTERNAL_SERVER_ERROR,
         );
       }
     }
@@ -57,16 +42,12 @@ export class KursService {
   async findAll() {
     const kurs = await this.prisma.mKurs.findMany({
       orderBy: {
-        // Specify the field you want to sort by (e.g., 'createdAt') in descending order.
         years: 'desc', // Replace 'createdAt' with the actual field name you want to use.
       },
     });
     return {
       data: kurs,
-      meta: null,
       message: 'All kurs retrieved',
-      status: HttpStatus.OK,
-      time: new Date(),
     };
   }
 
@@ -86,10 +67,9 @@ export class KursService {
     }
     return {
       data: kurs,
-      meta: null,
-      message: 'Kurs found',
-      status: HttpStatus.OK,
-      time: new Date(),
+      // meta: null,
+      // status: HttpStatus.OK,
+      // time: new Date(),
     };
   }
 

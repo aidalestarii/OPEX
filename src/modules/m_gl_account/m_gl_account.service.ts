@@ -127,6 +127,7 @@ export class MGlAccountService {
         time: new Date(),
       };
     } catch (error) {
+      console.log(error);
       throw new HttpException(
         {
           data: null,

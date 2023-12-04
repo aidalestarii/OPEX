@@ -1,25 +1,14 @@
 import {
   IsBoolean,
-  IsDateString,
   IsNotEmpty,
   IsOptional,
   IsString,
 } from 'class-validator';
 
 export class CreateMCostCenterDto {
-  //cost_center, description, bidang, dinas, directorat,
-  //group_dinas, profit center, active
-  @IsNotEmpty()
-  @IsString()
-  uniqueId: string;
-
   @IsNotEmpty()
   @IsString()
   costCenter: string;
-
-  @IsOptional()
-  @IsString()
-  description: string;
 
   @IsNotEmpty()
   @IsString()
@@ -28,6 +17,10 @@ export class CreateMCostCenterDto {
   @IsNotEmpty()
   @IsString()
   dinas: string;
+
+  @IsOptional()
+  @IsString()
+  description: string;
 
   @IsNotEmpty()
   @IsString()
@@ -46,6 +39,6 @@ export class CreateMCostCenterDto {
   active: boolean;
 
   @IsNotEmpty()
-  @IsDateString()
+  @IsString()
   createdBy: string;
 }
