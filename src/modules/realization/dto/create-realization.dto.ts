@@ -18,7 +18,8 @@ export class CreateRealizationDto {
   @Type(() => Number)
   costCenterId: number;
 
-  requestNumber: String;
+  requestNumber: number;
+  draftNumber: number;
 
   @Type(() => Number)
   taReff: number;
@@ -63,7 +64,6 @@ export class CreateRealizationDto {
     data.years = Number(data.years);
     data.month = Number(data.month);
     data.costCenterId = Number(data.costCenterId);
-    data.requestNumber = String(data.requestNumber);
     data.taReff = Number(data.taReff);
 
     if (Array.isArray(data.realizationItems)) {
@@ -81,9 +81,6 @@ export class CreateRealizationDto {
 }
 
 export class CreateRealizationItemDto {
-  // @Type(() => Number)
-  // realizationId: number;
-
   @IsNotEmpty()
   @Type(() => Number)
   glAccountId: number;
@@ -133,16 +130,4 @@ export class CreateRealizationItemDto {
       return item;
     });
   }
-}
-
-export class BudgetReallocationDto {
-  years;
-  glAccountId;
-  costCenterId;
-  plus;
-  minus;
-  createdAt;
-  createdBy;
-  updatedAt;
-  updatedBy;
 }

@@ -14,6 +14,7 @@ export class CreateFileDto {
   @IsNotEmpty()
   @Type(() => Number)
   docCategoryId: number;
+  //draftNumber: number;
 
   docLink: string;
 

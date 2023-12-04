@@ -1,47 +1,128 @@
 import { RealizationTypeEnum, StatusEnum } from '@prisma/client';
-import { IsDecimal, IsEnum, IsNumber, IsOptional } from 'class-validator';
+import { Type } from 'class-transformer';
+import {
+  IsDecimal,
+  IsEnum,
+  IsNotEmpty,
+  IsNumber,
+  IsOptional,
+  IsString,
+} from 'class-validator';
+import { UpdateFileDto } from './update-file-upload.dto';
 
 export class UpdateRealizationDto {
-  readonly years: number;
-  readonly month: number;
-  readonly costCenterId: number;
-  readonly draftNumber: number;
-  readonly requestNumber: number;
-  readonly taReff: number;
+  years: number;
+
+  month: number;
+
+  @Type(() => Number)
+  costCenterId: number;
+
+  requestNumber: String;
+
+  @Type(() => Number)
+  taReff: number;
 
   @IsOptional()
   @IsEnum(RealizationTypeEnum)
   type: RealizationTypeEnum;
 
-  readonly responsibleNopeg: string;
-  readonly titleRequest: string;
-  readonly noteRequest: string;
-  // readonly statusId: number;
-  // readonly StatusToId: number;
+  // @IsString()
+  // @IsNotEmpty()
+  responsibleNopeg: string;
 
-  @IsOptional()
-  @IsEnum(StatusEnum)
-  status: StatusEnum;
+  // @IsString()
+  // @IsNotEmpty()
+  titleRequest: string;
+
+  // @IsString()
+  // @IsNotEmpty()
+  noteRequest: string;
+
+  statusId: number;
+
+  statusToId: number;
 
   readonly department: string;
+
   readonly personalNumber: string;
+
   readonly departmentTo: string;
+
   readonly personalNumberTo: string;
-  readonly createdBy: string;
-  readonly realizationItems: UpdateRealizationItemDto[];
+
+  // @IsString()
+  // @IsNotEmpty()
+  createdBy: string;
+
+  uploadfile: UpdateFileDto[];
+
+  realizationItems: UpdateRealizationItemDto[];
+
+  static fromRequest(data: UpdateRealizationDto): UpdateRealizationDto {
+    data.years = Number(data.years);
+    data.month = Number(data.month);
+    data.costCenterId = Number(data.costCenterId);
+    data.requestNumber = String(data.requestNumber);
+    data.taReff = Number(data.taReff);
+
+    if (Array.isArray(data.realizationItems)) {
+      data.realizationItems = UpdateRealizationItemDto.fromRequestArray(
+        data.realizationItems,
+      );
+    }
+
+    if (Array.isArray(data.uploadfile)) {
+      data.uploadfile = UpdateFileDto.fromRequest(data.uploadfile);
+    }
+
+    return data;
+  }
 }
 
 export class UpdateRealizationItemDto {
-  readonly realizationId: number;
-  readonly glAccountId: number;
-  readonly amount: number;
-  readonly amountSubmission: number;
-  readonly amountHps?: number;
-  readonly amountCorrection: number;
-  readonly periodStart: Date;
-  readonly periodFinish: Date;
-  readonly remarkPby: string;
+  @Type(() => Number)
+  realizationId: number;
+
+  @Type(() => Number)
+  glAccountId: number;
+
+  @Type(() => Number)
+  amount: number;
+
+  @Type(() => Number)
+  amountSubmission: number;
+
+  @Type(() => Number)
+  amountHps?: number;
+
+  @Type(() => Number)
+  amountCorrection: number;
+
+  periodStart: Date;
+
+  periodFinish: Date;
+
+  remarkPby: string;
+
   readonly memo?: string;
-  readonly descPby: string;
-  readonly createdBy: string;
+
+  @IsString()
+  descPby: string;
+
+  @IsString()
+  createdBy: string;
+
+  static fromRequestArray(
+    data: UpdateRealizationItemDto[],
+  ): UpdateRealizationItemDto[] {
+    return data.map((item) => {
+      item.amount = Number(item.amount);
+      item.amountSubmission = Number(item.amountSubmission);
+      item.amountHps = Number(item.amountHps);
+      item.amountCorrection = Number(item.amountCorrection);
+      item.glAccountId = Number(item.glAccountId);
+      return item;
+    });
+  }
 }

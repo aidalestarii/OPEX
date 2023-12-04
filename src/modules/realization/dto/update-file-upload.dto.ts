@@ -5,12 +5,12 @@ import { Type } from 'class-transformer';
 
 export class UpdateFileDto extends PartialType(CreateFileDto) {
   tableName: string;
+  @Type(() => Number)
+  tableId: number;
 
-  // @IsNotEmpty()
   @IsString()
   docName: string;
 
-  @IsNotEmpty()
   @Type(() => Number)
   docCategoryId: number;
 
@@ -19,10 +19,8 @@ export class UpdateFileDto extends PartialType(CreateFileDto) {
   docSize: number;
 
   docType: string;
-  @Type(() => Number)
-  tableId: number;
-
-  //files?: any;
+  @IsOptional()
+  // isUpdated: boolean;
 
   //@IsNotEmpty()
   // @IsString()

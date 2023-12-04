@@ -2,10 +2,9 @@ import { Decimal } from '@prisma/client/runtime/library';
 import { IsBoolean, IsNumber, IsNotEmpty, IsString } from 'class-validator';
 
 export class CreateMGlAccountDto {
-
   @IsNotEmpty()
   @IsNumber()
-  glAccount: Decimal;
+  glAccount: number;
 
   @IsNotEmpty()
   @IsString()

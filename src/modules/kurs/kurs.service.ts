@@ -165,6 +165,7 @@ export class KursService {
     const existingKurs = await this.prisma.mKurs.findUnique({
       where: { idKurs: id },
     });
+
     if (!existingKurs) {
       throw new NotFoundException(`Kurs with ID ${id} not found`);
     }

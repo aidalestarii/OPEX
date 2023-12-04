@@ -6,7 +6,7 @@ import { Decimal } from '@prisma/client/runtime/library';
 export class UpdateMGlAccountDto extends PartialType(CreateMGlAccountDto) {
   @IsOptional()
   @IsNumber()
-  glAccount: Decimal;
+  glAccount: number;
 
   @IsOptional()
   @IsString()
