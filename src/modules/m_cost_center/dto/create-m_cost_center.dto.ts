@@ -9,8 +9,8 @@ import {
 export class CreateMCostCenterDto {
   //cost_center, description, bidang, dinas, directorat,
   //group_dinas, profit center, active
-  @IsNotEmpty()
-  @IsString()
+  // @IsNotEmpty()
+  // @IsString()
   uniqueId: string;
 
   @IsNotEmpty()
@@ -46,6 +46,6 @@ export class CreateMCostCenterDto {
   active: boolean;
 
   @IsNotEmpty()
-  @IsDateString()
+  @IsString()
   createdBy: string;
 }

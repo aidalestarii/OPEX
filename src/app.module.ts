@@ -11,6 +11,8 @@ import { GetAllModule } from './modules/get-all/get-all.module';
 import { VariableModule } from './modules/variable/variable.module';
 import { DashboardModule } from './modules/dashboard/dashboard.module';
 import { MasterStatusModule } from './modules/master_status/master_status.module';
+import { UserDataModule } from './modules/user_data/user_data.module';
+import { ApprovalModule } from './modules/approval/approval.module';
 
 @Module({
   imports: [
@@ -25,6 +27,8 @@ import { MasterStatusModule } from './modules/master_status/master_status.module
     VariableModule,
     DashboardModule,
     MasterStatusModule,
+    UserDataModule,
+    ApprovalModule,
   ],
   controllers: [AppController],
   providers: [AppService],

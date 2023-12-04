@@ -75,27 +75,27 @@ export class BudgetUploadService {
           // results.push(data);
           // return data;
 
-          const prismaResult = await this.prisma.budget.create({
-            data,
-            include: {
-              mGlAccount: {
-                select: {
-                  idGlAccount: true,
-                  glAccount: true,
-                  groupGl: true,
-                  groupDetail: true,
-                },
-              },
-              mCostCenter: {
-                select: {
-                  idCostCenter: true,
-                  costCenter: true,
-                  dinas: true,
-                },
-              },
-            },
-          });
-          return prismaResult;
+          // const prismaResult = await this.prisma.budget.create({
+          //   data,
+          //   include: {
+          //     mGlAccount: {
+          //       select: {
+          //         idGlAccount: true,
+          //         glAccount: true,
+          //         groupGl: true,
+          //         groupDetail: true,
+          //       },
+          //     },
+          //     mCostCenter: {
+          //       select: {
+          //         idCostCenter: true,
+          //         costCenter: true,
+          //         dinas: true,
+          //       },
+          //     },
+          //   },
+          // });
+          // return prismaResult;
         }),
       );
 

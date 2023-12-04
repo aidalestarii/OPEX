@@ -10,8 +10,6 @@ import { UpdateKursDto } from './dto/update-kurs.dto';
 import { PrismaService } from 'src/core/service/prisma.service';
 import { SortOrder } from '@elastic/elasticsearch/lib/api/types';
 
-
-
 @Injectable()
 export class KursService {
   constructor(private readonly prisma: PrismaService) {}
@@ -185,6 +183,7 @@ export class KursService {
     const existingKurs = await this.prisma.mKurs.findUnique({
       where: { idKurs: id },
     });
+
     if (!existingKurs) {
       throw new NotFoundException(`Kurs with ID ${id} not found`);
     }
