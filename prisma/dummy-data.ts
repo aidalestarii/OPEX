@@ -303,6 +303,17 @@ export const costCenters = [
     active: true,
     createdBy: '582127',
   },
+  {
+    costCenter: 'ZGMFTX',
+    bidang: 'TX',
+    description: 'Post 14',
+    dinas: 'TX',
+    directorat: 'DF',
+    groupDinas: 'Supporting',
+    profitCenter: 'ZGMFTX',
+    active: true,
+    createdBy: '582127',
+  },
 ];
 
 export const docCategory = [

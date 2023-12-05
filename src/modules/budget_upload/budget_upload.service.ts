@@ -43,7 +43,7 @@ export class BudgetUploadService {
               idCostCenter: true,
             },
             where: {
-              bidang: String(item.costCenter),
+              bidang: String(item.costCenterId),
             },
           });
 
@@ -52,13 +52,13 @@ export class BudgetUploadService {
               idGlAccount: true,
             },
             where: {
-              glAccount: Number(item.glAccount),
+              glAccount: Number(item.glAccountId),
             },
           });
           const data = {
             years: Number(item.years),
-            costCenter: Number(dataCostCenters?.[0]?.idCostCenter),
-            glAccount: Number(dataGlAccount?.[0]?.idGlAccount),
+            costCenterId: Number(dataCostCenters?.[0]?.idCostCenter),
+            glAccountId: Number(dataGlAccount?.[0]?.idGlAccount),
             total: parseFloat(
               String(
                 item.value1 +
@@ -119,6 +119,7 @@ export class BudgetUploadService {
         distinct: ['groupGl'],
       });
       const uniqueGroupGlValues = GroupGl.map((GroupGl) => GroupGl.groupGl);
+
       const GroupDetail = await this.prisma.mGlAccount.findMany({
         distinct: ['groupDetail'],
       });
@@ -126,22 +127,19 @@ export class BudgetUploadService {
         (GroupDetail) => GroupDetail.groupDetail,
       );
 
-      console.log(uniqueGroupGlValues);
-      console.log(uniqueGroupDetailValues);
-
       const months = [
-        'JAN',
-        'FEB',
-        'MAR',
-        'APR',
+        'JANUARI',
+        'FEBRUARI',
+        'MARET',
+        'APRIL',
         'MEI',
-        'JUN',
-        'JUL',
-        'AGS',
-        'SEP',
-        'OKT',
-        'NOV',
-        'DES',
+        'JUNI',
+        'JULI',
+        'AGUSTUS',
+        'SEPTEMBER',
+        'OKTOBER',
+        'NOVEMBER',
+        'DESEMBER',
       ];
 
       function sumByGroup(results, group, detail = null) {
@@ -154,7 +152,6 @@ export class BudgetUploadService {
           )
           .reduce((sum, item) => sum + item.total, 0);
       }
-
       function sumByGroupAndMonth(results, group, detail = null) {
         return months.reduce((result, month, i) => {
           result[month] = results
@@ -168,32 +165,68 @@ export class BudgetUploadService {
           return result;
         }, {});
       }
+      function getGlAccount(results, group, detail) {
+        return results
+          .filter(
+            (item) =>
+              item.mGlAccount.groupGl === group &&
+              item.mGlAccount.groupDetail === detail,
+          )
+          .reduce((acc, item) => {
+            // Anda dapat menyesuaikan nilai sesuai kebutuhan
+            return parseInt(item.mGlAccount.glAccount);
+          }, {});
+      }
+      function getTotalSum(results) {
+        return uniqueGroupGlValues.reduce((total, group) => {
+          const groupTotal = sumByGroup(results, group);
+          return total + groupTotal;
+        }, 0);
+      }
+      function getTotalSumByMonth(results) {
+        return months.reduce((totalByMonth, month, i) => {
+          totalByMonth[month] = uniqueGroupGlValues.reduce((sum, group) => {
+            return sum + sumByGroupAndMonth(results, group)[month];
+          }, 0);
+          return totalByMonth;
+        }, {});
+      }
 
       const MaterialExpenses = {
-        sumMaterialExpenses: sumByGroup(results, uniqueGroupGlValues[0]),
-        sumMaterialExpensesMonth: sumByGroupAndMonth(
+        totalMaterialExpenses: sumByGroup(results, uniqueGroupGlValues[0]),
+        monthMaterialExpenses: sumByGroupAndMonth(
           results,
           uniqueGroupGlValues[0],
         ),
         ExpendableMaterial: {
-          sumExpendableMaterial: sumByGroup(
+          glAccount: getGlAccount(
             results,
             uniqueGroupGlValues[0],
             uniqueGroupDetailValues[0],
           ),
-          sumExpendableMaterialMonth: sumByGroupAndMonth(
+          totalExpendableMaterial: sumByGroup(
+            results,
+            uniqueGroupGlValues[0],
+            uniqueGroupDetailValues[0],
+          ),
+          monthExpendableMaterial: sumByGroupAndMonth(
             results,
             uniqueGroupGlValues[0],
             uniqueGroupDetailValues[0],
           ),
         },
         RepairableMaterial: {
-          sumRepairableMaterial: sumByGroup(
+          glAccount: getGlAccount(
             results,
             uniqueGroupGlValues[0],
             uniqueGroupDetailValues[1],
           ),
-          sumRepairableMaterialMonth: sumByGroupAndMonth(
+          totalRepairableMaterial: sumByGroup(
+            results,
+            uniqueGroupGlValues[0],
+            uniqueGroupDetailValues[1],
+          ),
+          monthRepairableMaterial: sumByGroupAndMonth(
             results,
             uniqueGroupGlValues[0],
             uniqueGroupDetailValues[1],
@@ -202,30 +235,40 @@ export class BudgetUploadService {
       };
 
       const SubcontractExpenses = {
-        sumSubcontractExpenses: sumByGroup(results, uniqueGroupGlValues[1]),
-        sumSubcontractExpensesMonth: sumByGroupAndMonth(
+        totalSubcontractExpenses: sumByGroup(results, uniqueGroupGlValues[1]),
+        monthSubcontractExpenses: sumByGroupAndMonth(
           results,
           uniqueGroupGlValues[1],
         ),
         RotablepartsSubcont: {
-          sumRotablepartsSubcont: sumByGroup(
+          glAccount: getGlAccount(
             results,
             uniqueGroupGlValues[1],
             uniqueGroupDetailValues[2],
           ),
-          sumRotablepartsSubcontMonth: sumByGroupAndMonth(
+          totalRotablepartsSubcont: sumByGroup(
+            results,
+            uniqueGroupGlValues[1],
+            uniqueGroupDetailValues[2],
+          ),
+          monthRotablepartsSubcont: sumByGroupAndMonth(
             results,
             uniqueGroupGlValues[1],
             uniqueGroupDetailValues[2],
           ),
         },
         RepairablepartsSubcont: {
-          sumRepairablepartsSubcont: sumByGroup(
+          glAccount: getGlAccount(
             results,
             uniqueGroupGlValues[1],
             uniqueGroupDetailValues[3],
           ),
-          sumRepairablepartsSubcontMonth: sumByGroupAndMonth(
+          totalRepairablepartsSubcont: sumByGroup(
+            results,
+            uniqueGroupGlValues[1],
+            uniqueGroupDetailValues[3],
+          ),
+          monthRepairablepartsSubcont: sumByGroupAndMonth(
             results,
             uniqueGroupGlValues[1],
             uniqueGroupDetailValues[3],
@@ -234,30 +277,37 @@ export class BudgetUploadService {
       };
 
       const StaffExpenses = {
-        sumStaffExpenses: sumByGroup(results, uniqueGroupGlValues[2]),
-        sumStaffExpensesMonth: sumByGroupAndMonth(
-          results,
-          uniqueGroupGlValues[2],
-        ),
+        totalStaffExpenses: sumByGroup(results, uniqueGroupGlValues[2]),
+        monthStaffExpenses: sumByGroupAndMonth(results, uniqueGroupGlValues[2]),
         BaseSalary: {
-          sumBaseSalary: sumByGroup(
+          glAccount: getGlAccount(
             results,
             uniqueGroupGlValues[2],
             uniqueGroupDetailValues[4],
           ),
-          sumBaseSalaryMonth: sumByGroupAndMonth(
+          totalBaseSalary: sumByGroup(
+            results,
+            uniqueGroupGlValues[2],
+            uniqueGroupDetailValues[4],
+          ),
+          monthBaseSalary: sumByGroupAndMonth(
             results,
             uniqueGroupGlValues[2],
             uniqueGroupDetailValues[4],
           ),
         },
         Honorarium: {
-          sumHonorarium: sumByGroup(
+          glAccount: getGlAccount(
             results,
             uniqueGroupGlValues[2],
             uniqueGroupDetailValues[5],
           ),
-          sumHonorariumMonth: sumByGroupAndMonth(
+          totalHonorarium: sumByGroup(
+            results,
+            uniqueGroupGlValues[2],
+            uniqueGroupDetailValues[5],
+          ),
+          monthHonorarium: sumByGroupAndMonth(
             results,
             uniqueGroupGlValues[2],
             uniqueGroupDetailValues[5],
@@ -266,30 +316,40 @@ export class BudgetUploadService {
       };
 
       const CompanyAccommodation = {
-        sumCompanyAccommodation: sumByGroup(results, uniqueGroupGlValues[3]),
-        sumCompanyAccommodationMonth: sumByGroupAndMonth(
+        totalCompanyAccommodation: sumByGroup(results, uniqueGroupGlValues[3]),
+        monthCompanyAccommodation: sumByGroupAndMonth(
           results,
           uniqueGroupGlValues[3],
         ),
         Travel: {
-          sumTravel: sumByGroup(
+          glAccount: getGlAccount(
             results,
             uniqueGroupGlValues[3],
             uniqueGroupDetailValues[6],
           ),
-          sumTravelMonth: sumByGroupAndMonth(
+          totalTravel: sumByGroup(
+            results,
+            uniqueGroupGlValues[3],
+            uniqueGroupDetailValues[6],
+          ),
+          monthTravel: sumByGroupAndMonth(
             results,
             uniqueGroupGlValues[3],
             uniqueGroupDetailValues[6],
           ),
         },
         Transport: {
-          sumTransport: sumByGroup(
+          glAccount: getGlAccount(
             results,
             uniqueGroupGlValues[3],
             uniqueGroupDetailValues[7],
           ),
-          sumTransportMonth: sumByGroupAndMonth(
+          totalTransport: sumByGroup(
+            results,
+            uniqueGroupGlValues[3],
+            uniqueGroupDetailValues[7],
+          ),
+          monthTransport: sumByGroupAndMonth(
             results,
             uniqueGroupGlValues[3],
             uniqueGroupDetailValues[7],
@@ -298,33 +358,43 @@ export class BudgetUploadService {
       };
 
       const DepreciationAndAmortisation = {
-        sumDepreciationAndAmortisation: sumByGroup(
+        totalDepreciationAndAmortisation: sumByGroup(
           results,
           uniqueGroupGlValues[4],
         ),
-        sumDepreciationAndAmortisationMonth: sumByGroupAndMonth(
+        monthDepreciationAndAmortisation: sumByGroupAndMonth(
           results,
           uniqueGroupGlValues[4],
         ),
         RotablePart: {
-          sumRotablePart: sumByGroup(
+          glAccount: getGlAccount(
             results,
             uniqueGroupGlValues[4],
             uniqueGroupDetailValues[8],
           ),
-          sumRotablePartMonth: sumByGroupAndMonth(
+          totalRotablePart: sumByGroup(
+            results,
+            uniqueGroupGlValues[4],
+            uniqueGroupDetailValues[8],
+          ),
+          monthRotablePart: sumByGroupAndMonth(
             results,
             uniqueGroupGlValues[4],
             uniqueGroupDetailValues[8],
           ),
         },
         Amortization: {
-          sumAmortization: sumByGroup(
+          glAccount: getGlAccount(
             results,
             uniqueGroupGlValues[4],
             uniqueGroupDetailValues[9],
           ),
-          sumAmortizationMonth: sumByGroupAndMonth(
+          totalAmortization: sumByGroup(
+            results,
+            uniqueGroupGlValues[4],
+            uniqueGroupDetailValues[9],
+          ),
+          monthAmortization: sumByGroupAndMonth(
             results,
             uniqueGroupGlValues[4],
             uniqueGroupDetailValues[9],
@@ -333,33 +403,43 @@ export class BudgetUploadService {
       };
 
       const FacilityMaintenanceExpenses = {
-        sumDepreciationAndAmortisation: sumByGroup(
+        totalDepreciationAndAmortisation: sumByGroup(
           results,
           uniqueGroupGlValues[5],
         ),
-        sumDepreciationAndAmortisationMonth: sumByGroupAndMonth(
+        monthDepreciationAndAmortisation: sumByGroupAndMonth(
           results,
           uniqueGroupGlValues[5],
         ),
         MaintenanceandRepairHangar: {
-          sumMaintenanceandRepairHangar: sumByGroup(
+          glAccount: getGlAccount(
             results,
             uniqueGroupGlValues[5],
             uniqueGroupDetailValues[10],
           ),
-          sumMaintenanceandRepairHangarMonth: sumByGroupAndMonth(
+          totalMaintenanceandRepairHangar: sumByGroup(
+            results,
+            uniqueGroupGlValues[5],
+            uniqueGroupDetailValues[10],
+          ),
+          monthMaintenanceandRepairHangar: sumByGroupAndMonth(
             results,
             uniqueGroupGlValues[5],
             uniqueGroupDetailValues[10],
           ),
         },
         MaintenanceandRepairHardware: {
-          sumMaintenanceandRepairHardware: sumByGroup(
+          glAccount: getGlAccount(
             results,
             uniqueGroupGlValues[5],
             uniqueGroupDetailValues[11],
           ),
-          sumMaintenanceandRepairHardwareMonth: sumByGroupAndMonth(
+          totalMaintenanceandRepairHardware: sumByGroup(
+            results,
+            uniqueGroupGlValues[5],
+            uniqueGroupDetailValues[11],
+          ),
+          monthMaintenanceandRepairHardware: sumByGroupAndMonth(
             results,
             uniqueGroupGlValues[5],
             uniqueGroupDetailValues[11],
@@ -368,30 +448,40 @@ export class BudgetUploadService {
       };
 
       const RentalExpenses = {
-        sumRentalExpenses: sumByGroup(results, uniqueGroupGlValues[6]),
-        sumRentalExpensesMonth: sumByGroupAndMonth(
+        totalRentalExpenses: sumByGroup(results, uniqueGroupGlValues[6]),
+        monthRentalExpenses: sumByGroupAndMonth(
           results,
           uniqueGroupGlValues[6],
         ),
         BuildingRental: {
-          sumBuildingRental: sumByGroup(
+          glAccount: getGlAccount(
             results,
             uniqueGroupGlValues[6],
             uniqueGroupDetailValues[12],
           ),
-          sumBuildingRentalMonth: sumByGroupAndMonth(
+          totalBuildingRental: sumByGroup(
+            results,
+            uniqueGroupGlValues[6],
+            uniqueGroupDetailValues[12],
+          ),
+          monthBuildingRental: sumByGroupAndMonth(
             results,
             uniqueGroupGlValues[6],
             uniqueGroupDetailValues[12],
           ),
         },
         ComponentRental: {
-          sumComponentRental: sumByGroup(
+          glAccount: getGlAccount(
             results,
             uniqueGroupGlValues[6],
             uniqueGroupDetailValues[13],
           ),
-          sumComponentRentalMonth: sumByGroupAndMonth(
+          totalComponentRental: sumByGroup(
+            results,
+            uniqueGroupGlValues[6],
+            uniqueGroupDetailValues[13],
+          ),
+          monthComponentRental: sumByGroupAndMonth(
             results,
             uniqueGroupGlValues[6],
             uniqueGroupDetailValues[13],
@@ -400,30 +490,40 @@ export class BudgetUploadService {
       };
 
       const OtherOperatingExpenses = {
-        sumOtherOperating: sumByGroup(results, uniqueGroupGlValues[7]),
-        sumOtherOperatingMonth: sumByGroupAndMonth(
+        totalOtherOperating: sumByGroup(results, uniqueGroupGlValues[7]),
+        monthOtherOperating: sumByGroupAndMonth(
           results,
           uniqueGroupGlValues[7],
         ),
         ElectricityConsumption: {
-          sumElectricityConsumption: sumByGroup(
+          glAccount: getGlAccount(
             results,
             uniqueGroupGlValues[7],
             uniqueGroupDetailValues[14],
           ),
-          sumElectricityConsumptionMonth: sumByGroupAndMonth(
+          totalElectricityConsumption: sumByGroup(
+            results,
+            uniqueGroupGlValues[7],
+            uniqueGroupDetailValues[14],
+          ),
+          monthElectricityConsumption: sumByGroupAndMonth(
             results,
             uniqueGroupGlValues[7],
             uniqueGroupDetailValues[14],
           ),
         },
         Gas: {
-          sumGas: sumByGroup(
+          glAccount: getGlAccount(
             results,
             uniqueGroupGlValues[7],
             uniqueGroupDetailValues[15],
           ),
-          sumGasMonth: sumByGroupAndMonth(
+          totalGas: sumByGroup(
+            results,
+            uniqueGroupGlValues[7],
+            uniqueGroupDetailValues[15],
+          ),
+          monthGas: sumByGroupAndMonth(
             results,
             uniqueGroupGlValues[7],
             uniqueGroupDetailValues[15],
@@ -431,7 +531,13 @@ export class BudgetUploadService {
         },
       };
 
+      const DirectExpenses = {
+        totalDirectExpenses: getTotalSum(results),
+        monthDirectExpenses: getTotalSumByMonth(results),
+      };
+
       return {
+        DirectExpenses,
         MaterialExpenses,
         SubcontractExpenses,
         OtherOperatingExpenses,
@@ -443,200 +549,7 @@ export class BudgetUploadService {
         // results,
       };
     } catch (error) {
-      throw new BadRequestException(error.message || error.stack);
-    }
-  }
-
-  async getAllBudget(req: Request): Promise<any> {
-    try {
-      const results1 = await this.prisma.budget.findMany({
-        include: {
-          mGlAccount: {
-            select: {
-              idGlAccount: true,
-              glAccount: true,
-              groupGl: true,
-              groupDetail: true,
-            },
-          },
-          mCostCenter: {
-            select: {
-              idCostCenter: true,
-              costCenter: true,
-              dinas: true,
-            },
-          },
-        },
-      });
-
-      const GroupGl = await this.prisma.mGlAccount.findMany({
-        distinct: ['groupGl'],
-      });
-      const uniqueGroupGlValues = GroupGl.map((GroupGl) => GroupGl.groupGl);
-      const GroupDetail = await this.prisma.mGlAccount.findMany({
-        distinct: ['groupDetail'],
-      });
-      const uniqueGroupDetailValues = GroupDetail.map(
-        (GroupDetail) => GroupDetail.groupDetail,
-      );
-
-      const months = [
-        'JAN',
-        'FEB',
-        'MAR',
-        'APR',
-        'MEI',
-        'JUN',
-        'JUL',
-        'AGS',
-        'SEP',
-        'OKT',
-        'NOV',
-        'DES',
-      ];
-
-      function sumByGroup(results, group, detail = null) {
-        return results
-          .filter((item) =>
-            detail
-              ? item.mGlAccount &&
-                item.mGlAccount.groupGl === group &&
-                item.mGlAccount.groupDetail === detail
-              : item.mGlAccount && item.mGlAccount.groupGl === group,
-          )
-          .reduce((sum, item) => sum + item.total, 0);
-      }
-
-      function sumByGroupAndMonth(results, group, detail = null) {
-        return months.reduce((result, month, i) => {
-          result[month] = results
-            .filter((item) =>
-              detail
-                ? item.mGlAccount &&
-                  item.mGlAccount.groupGl === group &&
-                  item.mGlAccount.groupDetail === detail
-                : item.mGlAccount && item.mGlAccount.groupGl === group,
-            )
-            .reduce((sum, item) => sum + (item[`value${i + 1}`] || 0), 0);
-          return result;
-        }, {});
-      }
-
-      const MaterialExpenses = {
-        sumMaterialExpenses: sumByGroup(results1, uniqueGroupGlValues[0]),
-        sumMaterialExpensesMonth: sumByGroupAndMonth(
-          results1,
-          uniqueGroupGlValues[0],
-        ),
-        ExpendableMaterial: {
-          sumExpendableMaterial: sumByGroup(
-            results1,
-            uniqueGroupGlValues[0],
-            uniqueGroupDetailValues[0],
-          ),
-          sumExpendableMaterialMonth: sumByGroupAndMonth(
-            results1,
-            uniqueGroupGlValues[0],
-            uniqueGroupDetailValues[0],
-          ),
-        },
-        RepairableMaterial: {
-          sumRepairableMaterial: sumByGroup(
-            results1,
-            uniqueGroupGlValues[0],
-            uniqueGroupDetailValues[1],
-          ),
-          sumRepairableMaterialMonth: sumByGroupAndMonth(
-            results1,
-            uniqueGroupGlValues[0],
-            uniqueGroupDetailValues[1],
-          ),
-        },
-      };
-
-      const SubcontractExpenses = {
-        sumSubcontractExpenses: sumByGroup(results1, uniqueGroupGlValues[1]),
-        sumSubcontractExpensesMonth: sumByGroupAndMonth(
-          results1,
-          uniqueGroupGlValues[1],
-        ),
-        RotablepartsSubcont: {
-          sumRotablepartsSubcont: sumByGroup(
-            results1,
-            uniqueGroupGlValues[1],
-            uniqueGroupDetailValues[2],
-          ),
-          sumRotablepartsSubcontMonth: sumByGroupAndMonth(
-            results1,
-            uniqueGroupGlValues[1],
-            uniqueGroupDetailValues[2],
-          ),
-        },
-      };
-
-      const OtherOperatingExpenses = {
-        sumOtherOperating: sumByGroup(results1, 'Other operating expenses'),
-        sumOtherOperatingMonth: sumByGroupAndMonth(
-          results1,
-          'Other operating expenses',
-        ),
-        ElectricityConsumption: {
-          sumElectricityConsumption: sumByGroup(
-            results1,
-            'Other operating expenses',
-            'Electricity consumption',
-          ),
-          sumElectricityConsumptionMonth: sumByGroupAndMonth(
-            results1,
-            'Other operating expenses',
-            'Electricity consumption',
-          ),
-        },
-        Gas: {
-          sumGas: sumByGroup(results1, 'Other operating expenses', 'Gas'),
-          sumGasMonth: sumByGroupAndMonth(
-            results1,
-            'Other operating expenses',
-            'Gas',
-          ),
-        },
-        CorporateEvent: {
-          sumCorporateEvent: sumByGroup(
-            results1,
-            'Other operating expenses',
-            'Corporate Event',
-          ),
-          sumCorporateEventMonth: sumByGroupAndMonth(
-            results1,
-            'Other operating expenses',
-            'Corporate Event',
-          ),
-        },
-      };
-      // Mengalikan setiap nilai dalam results1 dengan 85%
-      const results1Modified = results1.map((item) => {
-        // Clone item to avoid modifying the original object
-        const modifiedItem = { ...item };
-
-        // Mengalikan nilai total dengan 85%
-        modifiedItem.total *= 0.85;
-
-        // Mengalikan nilai-nilai value1 hingga value12 dengan 85%
-        for (let i = 1; i <= 12; i++) {
-          modifiedItem[`value${i}`] *= 0.85;
-        }
-
-        return modifiedItem;
-      });
-
-      // console.log(results1);
-      // console.log(results1Modified);
-      return {
-        MaterialExpenses,
-        SubcontractExpenses,
-        OtherOperatingExpenses,
-      };
-    } catch (error) {
+      console.log(error);
       throw new BadRequestException(error.message || error.stack);
     }
   }

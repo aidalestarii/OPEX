@@ -56,36 +56,12 @@ export class BudgetUploadController {
     }
   }
 
-  //CRUD
   @Get('/all')
-  async findAllBudget(@Req() req: Request, @Res() res: Response) {
-    try {
-      const processedData = await this.budgetUploadService.getAllBudget(req);
-      return res.status(200).json({
-        data: processedData,
-      });
-    } catch (error) {
-      return res.status(500).json({
-        error: error.message || error.stack,
-      });
-    }
-  }
-
-  @Get('/filter')
   async findFilterBudget(@Query() queryParams: any) {
-    const findFilterBudget = await this.budgetService.getFilterBudget(
+    const findFilterBudget = await this.budgetService.findAllRealization(
       queryParams,
     );
     return findFilterBudget;
-  }
-  @Get('/filter2')
-  findAllRealization1(@Query() queryParams: any) {
-    return this.budgetService.findAllRealization(queryParams);
-  }
-
-  @Get(':id')
-  findOne(@Param('id') id: number) {
-    return this.budgetService.findOne(+id);
   }
 
   @Delete(':id')

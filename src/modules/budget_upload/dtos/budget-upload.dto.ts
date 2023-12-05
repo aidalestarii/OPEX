@@ -6,6 +6,7 @@ import {
   IsString,
   IsOptional,
   ValidateNested,
+  IsInt,
 } from 'class-validator';
 import { StringNumberBigintObject } from 'src/core/types/string-number-bigint-object.types';
 
@@ -14,13 +15,13 @@ export class ItemsBudgetUploadDto {
   @IsNumber()
   years: number;
 
-  // @IsNotEmpty()
-  @IsNumber()
-  costCenter: number;
+  @IsNotEmpty()
+  @IsInt()
+  costCenterId: number;
 
-  // @IsNotEmpty()
-  @IsNumber()
-  glAccount: number;
+  @IsNotEmpty()
+  @IsInt()
+  glAccountId: number;
 
   @IsOptional()
   @IsNumber()
@@ -90,9 +91,9 @@ export class ItemsBudgetUploadDto {
   @IsNumber()
   total: number;
 
-  // @IsOptional()
-  // @IsString()
-  // createdBy: string;
+  @IsNotEmpty()
+  @IsString()
+  createdBy: string;
 
   static propertyConfig: Partial<
     Record<
@@ -101,8 +102,8 @@ export class ItemsBudgetUploadDto {
     >
   > = {
     years: { dataType: 'number', maxLength: 300 },
-    costCenter: { dataType: 'string', maxLength: 300 },
-    glAccount: { dataType: 'number', maxLength: 300 },
+    costCenterId: { dataType: 'string', maxLength: 300 },
+    glAccountId: { dataType: 'number', maxLength: 300 },
     value1: { dataType: 'decimal', maxLength: 300 },
     value2: { dataType: 'decimal', maxLength: 300 },
     value3: { dataType: 'decimal', maxLength: 300 },
@@ -123,8 +124,8 @@ export class ItemsBudgetUploadDto {
 
   static propertyNames: (keyof ItemsBudgetUploadDto)[] = [
     'years',
-    'costCenter',
-    'glAccount',
+    'costCenterId',
+    'glAccountId',
     'value1',
     'value2',
     'value3',

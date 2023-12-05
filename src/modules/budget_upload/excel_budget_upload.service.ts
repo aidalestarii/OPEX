@@ -23,18 +23,18 @@ export class ExcelBudgetUploadService {
     try {
       const budgetUploadSheet: BudgetUploadSheetsDto =
         this.readExcelSheetBudgetUploadBuilder
-          .getSheetName('td2023')
+          .getSheetName('rkap')
           .ignoreHeaderRow()
           .setSheetNameToJsonFields(ItemsBudgetUploadDto.propertyNames)
           .setColumnPropertyToJsonFields(ItemsBudgetUploadDto.propertyConfig)
           .build();
-        const revenueSheet: BudgetUploadSheetsDto =
-          this.readExcelSheetBudgetUploadBuilder
-            .getSheetName('revenue')
-            .ignoreHeaderRow()
-            .setSheetNameToJsonFields(ItemsBudgetUploadDto.propertyNames)
-            .setColumnPropertyToJsonFields(ItemsBudgetUploadDto.propertyConfig)
-            .build();
+      // const revenueSheet: BudgetUploadSheetsDto =
+      //   this.readExcelSheetBudgetUploadBuilder
+      //     .getSheetName('revenue')
+      //     .ignoreHeaderRow()
+      //     .setSheetNameToJsonFields(ItemsBudgetUploadDto.propertyNames)
+      //     .setColumnPropertyToJsonFields(ItemsBudgetUploadDto.propertyConfig)
+      //     .build();
 
       const filePath: string = req?.file?.path;
       const data = of(filePath).pipe(
@@ -45,7 +45,7 @@ export class ExcelBudgetUploadService {
           this.processExcelToJsonBuilder
             .getFile(filePath)
             .addSheet(budgetUploadSheet)
-            .addSheet(revenueSheet)
+            // .addSheet(revenueSheet)
             .build(req),
         ),
       );
