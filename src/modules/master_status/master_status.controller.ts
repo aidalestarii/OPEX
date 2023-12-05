@@ -23,30 +23,6 @@ export class MasterStatusController {
   @Post()
   async create(@Body() data: CreateMasterStatusDto) {
     try {
-      const requiredFields = ['type', 'status', 'step', 'level', 'createdBy'];
-      for (const field of requiredFields) {
-        if (!data[field]) {
-          throw new HttpException(
-            `Field ${field} is required`,
-            HttpStatus.BAD_REQUEST,
-          );
-        }
-      }
-      const typeValidations = {
-        type: 'string',
-        status: 'string',
-        step: 'number',
-        level: 'number',
-        createdBy: 'string',
-      };
-      for (const field in typeValidations) {
-        if (typeof data[field] !== typeValidations[field]) {
-          throw new HttpException(
-            `Field ${field} must be a ${typeValidations[field]}`,
-            HttpStatus.BAD_REQUEST,
-          );
-        }
-      }
       const newStatus = await this.masterStatusService.create(data);
       return newStatus;
     } catch (error) {

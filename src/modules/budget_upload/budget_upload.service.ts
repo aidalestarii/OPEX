@@ -10,7 +10,6 @@ import { ItemsBudgetUploadDto } from './dtos/budget-upload.dto';
 import { ExcelBudgetUploadService } from './excel_budget_upload.service';
 import { ReadBudgetUploadSheetDto } from './dtos/read-budget-upload.dto';
 import { PrismaService } from 'src/core/service/prisma.service';
-import { glAccount } from 'prisma/dummy-data';
 
 @Injectable()
 export class BudgetUploadService {
@@ -91,29 +90,29 @@ export class BudgetUploadService {
             updatedAt: new Date(),
           };
 
-  //         const prismaResult = await this.prisma.budget.create({
-  //           data,
-  //           include: {
-  //             mGlAccount: {
-  //               select: {
-  //                 idGlAccount: true,
-  //                 glAccount: true,
-  //                 groupGl: true,
-  //                 groupDetail: true,
-  //               },
-  //             },
-  //             mCostCenter: {
-  //               select: {
-  //                 idCostCenter: true,
-  //                 costCenter: true,
-  //                 dinas: true,
-  //               },
-  //             },
-  //           },
-  //         });
-  //         return prismaResult;
-  //       }),
-  //     );
+          const prismaResult = await this.prisma.budget.create({
+            data,
+            include: {
+              mGlAccount: {
+                select: {
+                  idGlAccount: true,
+                  glAccount: true,
+                  groupGl: true,
+                  groupDetail: true,
+                },
+              },
+              mCostCenter: {
+                select: {
+                  idCostCenter: true,
+                  costCenter: true,
+                  dinas: true,
+                },
+              },
+            },
+          });
+          return prismaResult;
+        }),
+      );
 
       const GroupGl = await this.prisma.mGlAccount.findMany({
         distinct: ['groupGl'],

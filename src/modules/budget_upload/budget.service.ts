@@ -13,38 +13,6 @@ export class BudgetService {
     private readonly budgetUpload: BudgetUploadService,
   ) {}
 
-  async findAll() {
-    const budget = await this.prisma.budget.findMany({
-      include: {
-        mGlAccount: {
-          select: {
-            idGlAccount: true,
-            glAccount: true,
-            groupGl: true,
-            groupDetail: true,
-          },
-        },
-        mCostCenter: {
-          select: {
-            idCostCenter: true,
-            costCenter: true,
-            dinas: true,
-          },
-        },
-      },
-    });
-    return budget;
-  }
-
-  async findOne(id: number) {
-    const budget = await this.prisma.budget.findUnique({
-      where: {
-        idBudget: id,
-      },
-    });
-    return budget;
-  }
-
   async findAllRealization(queryParams: any) {
     try {
       // Dapatkan nilai filter dari queryParams
