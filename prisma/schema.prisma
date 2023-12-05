@@ -299,6 +299,7 @@ model Realization {
   createdBy        String              @map("created_by") @db.VarChar(50)
   updatedAt        DateTime            @default(now()) @updatedAt @map("updated_at") @db.Timestamp(6)
   updatedBy        String?             @map("updated_by") @db.VarChar(50)
+  roleAssignment   Json?               @map("role_assignment") @db.JsonB
 
   m_cost_center                               MCostCenter       @relation(fields: [costCenterId], references: [idCostCenter], onDelete: NoAction, onUpdate: NoAction, map: "fk_m_cost_center_to_realization")
   m_status_realization_id_statusTom_status    MStatus           @relation("realization_id_statusTom_status", fields: [statusId], references: [idStatus], onDelete: NoAction, onUpdate: NoAction, map: "fk_m_status_to_realization")
