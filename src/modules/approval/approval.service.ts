@@ -19,6 +19,7 @@ export class ApprovalService {
   async findAllWithPaginationAndFilter(
     page: number,
     order: string = 'asc',
+    nopeg: string,
     queryParams: any,
   ) {
     try {
@@ -32,30 +33,35 @@ export class ApprovalService {
 
       // Filter logic
       const {
-        status,
-        years,
-        type,
+        taReff,
         requestNumber,
         dinas,
+        typeOfLetter,
+        status,
+        statusTo,
         entryDate,
         entryDateTo,
       } = queryParams;
       let filter: any = {};
-      if (years) {
-        filter.years = +years; // konversi ke number jika diperlukan
+      if (taReff) {
+        filter.taReff = taReff; // konversi ke number jika diperlukan
       }
       if (requestNumber) {
         filter.requestNumber = requestNumber; // konversi ke number jika diperlukan
       }
+      if (dinas) {
+        filter.departmentTo = { startsWith: dinas };
+      }
+      if (typeOfLetter) {
+        filter.typeOfLetter = typeOfLetter; // konversi ke number jika diperlukan
+      }
       if (status) {
         filter.status = status;
       }
-      if (type) {
-        filter.type = type; // konversi ke number jika diperlukan
+      if (statusTo) {
+        filter.statusTo = statusTo;
       }
-      if (dinas) {
-        filter.m_cost_center = { dinas: dinas };
-      }
+
       if (entryDate && entryDateTo) {
         const formattedEntryDate = new Date(entryDate)
           .toISOString()
@@ -101,21 +107,11 @@ export class ApprovalService {
         orderBy: {
           createdAt: order.toLowerCase() as SortOrder,
         },
-        where: filter,
+        where: {
+          ...filter,
+          personalNumberTo: nopeg,
+        },
         include: {
-          m_cost_center: {
-            select: {
-              idCostCenter: true,
-              costCenter: true,
-              description: true,
-              bidang: true,
-              dinas: true,
-              directorat: true,
-              groupDinas: true,
-              profitCenter: true,
-              active: true,
-            },
-          },
           realizationItem: true,
         },
       });
@@ -134,13 +130,12 @@ export class ApprovalService {
           idRealization: realizationItem.idRealization,
           taReff: realizationItem.taReff,
           requestNumber: realizationItem.requestNumber,
-          typeOfLetter: 'Realokasi Anggaran',
+          typeOfLetter: 'Realisasi Anggaran',
           entryDate: realizationItem.createdAt,
-          m_cost_center: realizationItem.m_cost_center,
+          amountSubmission: totalAmount,
           status: realizationItem.status,
           statusTo: realizationItem.personalNumberTo,
           departmentTo: realizationItem.departmentTo,
-          submissionValue: totalAmount,
           description: realizationItem.titleRequest,
         };
       });
@@ -153,10 +148,9 @@ export class ApprovalService {
           currentPage: Number(page),
           totalItems,
           lastpage: Math.ceil(totalItems / perPage),
-          // totalItemsPerPage: Number(isLastPage ? remainingItems : perPage),
           totalItemsPerPage: Number(totalItemsPerPage),
         },
-        message: 'Pagination dashboard retrieved',
+        message: 'Pagination need approval retrieved',
         status: HttpStatus.OK,
         time: new Date(),
       };

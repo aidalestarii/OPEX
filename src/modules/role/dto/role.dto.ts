@@ -1,4 +1,4 @@
-export interface UserDataDTO {
+export interface RoleDTO {
   personalName: string;
   personalNumber: string;
   personalTitle: string;

@@ -58,7 +58,7 @@ export class RealizationService {
     createRealization: CreateRealizationDto,
     realizationItems: CreateRealizationItemDto[],
     uploadfile: CreateFileDto[],
-    status?: StatusEnum,
+    status: 'save' | 'submit',
   ) {
     return this.prisma.$transaction(async (prisma) => {
       try {
@@ -67,7 +67,7 @@ export class RealizationService {
         let requestNumber: string | null = null;
         let department: string | null = null;
 
-        if (status && status == StatusEnum.PROGRESS) {
+        if (status && status == 'submit') {
           statusTom = 2;
           statusToTom = 3;
           requestNumber = await this.generateRequestNumber(
@@ -96,7 +96,7 @@ export class RealizationService {
             departmentTo: realizationData.departmentTo,
             personalNumberTo: realizationData.personalNumberTo,
             createdBy: realizationData.createdBy,
-            status: status ? status : StatusEnum.OPEN,
+            status: StatusEnum.OPEN,
             type: realizationData.type,
             m_status_realization_id_statusTom_status: {
               connect: {

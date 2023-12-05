@@ -14,10 +14,6 @@ import { SortOrder } from '@elastic/elasticsearch/lib/api/types';
 export class DashboardService {
   constructor(private readonly prisma: PrismaService) {}
 
-  create(createDashboardDto: CreateDashboardDto) {
-    return 'This action adds a new dashboard';
-  }
-
   async findAll() {
     const realization = await this.prisma.realization.findMany({
       include: {
