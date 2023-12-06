@@ -34,58 +34,34 @@ export class BudgetUploadController {
 
   @Post('upload')
   @UseInterceptors(FileInterceptor('file', multerOptions))
-  // async uploadDataBleed<T>(
-  //   @UploadedFile() file: Express.Multer.File,
-  //   @Req() req: Request,
-  //   @Res() res: Response,
-  // ): Promise<Response<T, Record<string, T>>> {
-  //   try {
-  //     const payload =
-  //       await this.budgetUploadService.convertBudgetUploadFromExcelToJson(req);
-  //     return res.status(201).json({
-  //       data: payload,
-  //       meta: {
-  //         fileName: req?.file?.originalname,
-  //         status: 'OK',
-  //       },
-  //       message: 'Data has been converted & saved',
-  //       time: new Date(),
-  //     });
-  //   } catch (error) {
-  //     return res.status(400).json(error.response);
-  //   }
-  // }
-
-  //CRUD
-  @Get('/all')
-  async findAllBudget(@Req() req: Request, @Res() res: Response) {
+  async uploadDataBleed<T>(
+    @UploadedFile() file: Express.Multer.File,
+    @Req() req: Request,
+    @Res() res: Response,
+  ): Promise<Response<T, Record<string, T>>> {
     try {
-      const processedData = await this.budgetUploadService.getAllBudget(req);
-      return res.status(200).json({
-        data: processedData,
+      const payload =
+        await this.budgetUploadService.convertBudgetUploadFromExcelToJson(req);
+      return res.status(201).json({
+        data: payload,
+        meta: {
+          fileName: req?.file?.originalname,
+          status: 'OK',
+        },
+        message: 'Data has been converted & saved',
+        time: new Date(),
       });
     } catch (error) {
-      return res.status(500).json({
-        error: error.message || error.stack,
-      });
+      return res.status(400).json(error.response);
     }
   }
 
-  @Get('/filter')
+  @Get('/all')
   async findFilterBudget(@Query() queryParams: any) {
-    const findFilterBudget = await this.budgetService.getFilterBudget(
+    const findFilterBudget = await this.budgetService.findAllRealization(
       queryParams,
     );
     return findFilterBudget;
-  }
-  @Get('/filter2')
-  findAllRealization1(@Query() queryParams: any) {
-    return this.budgetService.findAllRealization(queryParams);
-  }
-
-  @Get(':id')
-  findOne(@Param('id') id: number) {
-    return this.budgetService.findOne(+id);
   }
 
   @Delete(':id')

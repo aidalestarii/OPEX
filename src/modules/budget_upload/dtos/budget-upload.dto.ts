@@ -6,6 +6,7 @@ import {
   IsString,
   IsOptional,
   ValidateNested,
+  IsInt,
 } from 'class-validator';
 import { StringNumberBigintObject } from 'src/core/types/string-number-bigint-object.types';
 
@@ -14,12 +15,12 @@ export class ItemsBudgetUploadDto {
   @IsNumber()
   years: number;
 
-  // @IsNotEmpty()
-  @IsNumber()
+  @IsNotEmpty()
+  @IsInt()
   costCenterId: number;
 
-  // @IsNotEmpty()
-  @IsNumber()
+  @IsNotEmpty()
+  @IsInt()
   glAccountId: number;
 
   @IsOptional()
@@ -90,9 +91,9 @@ export class ItemsBudgetUploadDto {
   @IsNumber()
   total: number;
 
-  // @IsOptional()
-  // @IsString()
-  // createdBy: string;
+  @IsNotEmpty()
+  @IsString()
+  createdBy: string;
 
   static propertyConfig: Partial<
     Record<

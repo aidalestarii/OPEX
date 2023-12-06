@@ -3,25 +3,41 @@ import { PrismaClient } from '@prisma/client';
 
 const prisma = new PrismaClient();
 
-async function main() {
-  for (let costcenter of costCenters) {
-    await prisma.mCostCenter.create({
-      data: costcenter,
-    });
-  }
+async function seedGlAccounts() {
+  await prisma.mGlAccount.createMany({
+    data: glAccount,
+  });
+}
 
-  for (let glaccount of glAccount) {
-    await prisma.mGlAccount.create({
-      data: glaccount,
-    });
-  }
+async function seedCostCenters() {
+  await prisma.mCostCenter.createMany({
+    data: costCenters,
+  });
+}
+
+async function seedDocCategories() {
+  await prisma.mDocCategory.createMany({
+    data: docCategory,
+  });
+}
+
+async function seedStatus() {
+  await prisma.mStatus.createMany({
+    data: status,
+  });
+}
+
+async function main() {
+  await seedGlAccounts();
+  await seedCostCenters();
+  await seedDocCategories();
+  await seedStatus();
 }
 
 main()
   .catch((e) => {
-    console.log(e);
-    process.exit(1);
+    throw e;
   })
-  .finally(() => {
-    prisma.$disconnect();
+  .finally(async () => {
+    await prisma.$disconnect();
   });
