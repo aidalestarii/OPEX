@@ -706,12 +706,12 @@ export class RealizationService {
       const totalBudget = budget ? budget.total : 0;
 
       // Calculate the total amount
-      const totalAmount =
+      const totalAvailable =
         totalBudget - amount + budgetReallocationPlus - budgetReallocationMinus;
 
       return {
         data: {
-          total: totalAmount,
+          available: totalAvailable,
           mGlAccount: budget.mGlAccount,
           mCostCenter: budget.mCostCenter,
         },
