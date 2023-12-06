@@ -122,19 +122,19 @@ export class RealizationController {
     @Param('status') status?: StatusEnum,
   ) {
     try {
-      // if (!dto.realizationItems || dto.realizationItems.length === 0) {
-      //   throw new HttpException(
-      //     'At least one realization item must be provided',
-      //     HttpStatus.BAD_REQUEST,
-      //   );
-      // }
+      if (!dto.realizationItems || dto.realizationItems.length === 0) {
+        throw new HttpException(
+          'At least one realization item must be provided',
+          HttpStatus.BAD_REQUEST,
+        );
+      }
 
-      // if (!files || files.length === 0) {
-      //   throw new HttpException(
-      //     'At least one file must be uploaded',
-      //     HttpStatus.BAD_REQUEST,
-      //   );
-      // }
+      if (!files || files.length === 0) {
+        throw new HttpException(
+          'At least one file must be uploaded',
+          HttpStatus.BAD_REQUEST,
+        );
+      }
       const fromRequest = UpdateRealizationDto.fromRequest(dto);
 
       const realizationItems: UpdateRealizationItemDto[] =
