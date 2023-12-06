@@ -71,7 +71,7 @@ export class RealizationService {
         let statusTom: number = 1;
         let statusToTom: number = 2;
         let requestNumber: string | null = null;
-        let sampleResult: any = null;
+        let roleAssignment: any = null;
 
         let department = await this.generateDepartment(
           createRealization.costCenterId,
@@ -84,7 +84,7 @@ export class RealizationService {
             createRealization.costCenterId,
           );
 
-          sampleResult = await this.roleService.sample(
+          roleAssignment = await this.roleService.sample(
             createRealization.createdBy,
           );
         }
@@ -104,16 +104,17 @@ export class RealizationService {
             noteRequest: realizationData.noteRequest,
             department: department,
             personalNumber: realizationData.personalNumber,
-            departmentTo: sampleResult?.manager?.personalUnit || null,
-            personalNumberTo: sampleResult?.manager?.personalNumber || null,
+            departmentTo: roleAssignment?.manager?.personalUnit || null,
+            personalNumberTo: roleAssignment?.manager?.personalNumber || null,
             createdBy: realizationData.createdBy,
             status: StatusEnum.OPEN,
             type: realizationData.type,
             roleAssignment:
               {
-                employee: sampleResult?.employee,
-                manager: sampleResult?.manager,
-                seniorManager: sampleResult?.seniorManager,
+                employee: roleAssignment?.employee,
+                manager: roleAssignment?.manager,
+                seniorManager: roleAssignment?.seniorManager,
+                personalSuperior: roleAssignment?.personalSuperior,
               } || null,
             m_status_realization_id_statusTom_status: {
               connect: {

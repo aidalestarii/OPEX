@@ -19,8 +19,6 @@ export class RoleService {
       this.httpService.get(apiUrl, { headers }).pipe(
         tap((v) => {
           result = v.data;
-          // if
-          // result['isApprove'] =
         }),
       ),
     );
@@ -29,16 +27,13 @@ export class RoleService {
     const VP_USER = result.body.seniorManager.personalNumber;
 
     const apiUrl2 = `https://api.gmf-aeroasia.co.id/th/soev2/v2/employee/${VP_USER}?superior=true`;
-
-    console.log(VP_USER);
-    // VP USER
-
-    // Corrected: You should await the result of the second API call
     const data2 = await lastValueFrom(
       this.httpService.get(apiUrl2, { headers }),
     );
 
-    // Corrected: Return both results
-    return { ...result.body, data: data2.data };
+    return {
+      ...result.body,
+      personalSuperior: data2.data.body.personalSuperior,
+    };
   }
 }

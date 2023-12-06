@@ -8,7 +8,6 @@ export class CreateFileDto {
   tableId: number;
 
   @IsNotEmpty()
-  @IsString()
   docName: string;
 
   @IsNotEmpty()
