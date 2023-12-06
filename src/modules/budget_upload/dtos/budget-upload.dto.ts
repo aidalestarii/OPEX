@@ -16,11 +16,11 @@ export class ItemsBudgetUploadDto {
 
   // @IsNotEmpty()
   @IsNumber()
-  costCenter: number;
+  costCenterId: number;
 
   // @IsNotEmpty()
   @IsNumber()
-  glAccount: number;
+  glAccountId: number;
 
   @IsOptional()
   @IsNumber()
@@ -101,8 +101,8 @@ export class ItemsBudgetUploadDto {
     >
   > = {
     years: { dataType: 'number', maxLength: 300 },
-    costCenter: { dataType: 'string', maxLength: 300 },
-    glAccount: { dataType: 'number', maxLength: 300 },
+    costCenterId: { dataType: 'string', maxLength: 300 },
+    glAccountId: { dataType: 'number', maxLength: 300 },
     value1: { dataType: 'decimal', maxLength: 300 },
     value2: { dataType: 'decimal', maxLength: 300 },
     value3: { dataType: 'decimal', maxLength: 300 },
@@ -123,8 +123,8 @@ export class ItemsBudgetUploadDto {
 
   static propertyNames: (keyof ItemsBudgetUploadDto)[] = [
     'years',
-    'costCenter',
-    'glAccount',
+    'costCenterId',
+    'glAccountId',
     'value1',
     'value2',
     'value3',

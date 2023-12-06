@@ -17,10 +17,16 @@ import {
   UpdateRealizationItemDto,
 } from './dto/update-realization.dto';
 import { UpdateFileDto } from './dto/update-file-upload.dto';
+import { lastValueFrom, tap } from 'rxjs';
+import { RoleService } from '../role/role.service';
 
 @Injectable()
 export class RealizationService {
-  constructor(private readonly prisma: PrismaService) {}
+  httpService: any;
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly roleService: RoleService,
+  ) {}
 
   async generateRequestNumber(idCostCenter: number): Promise<string> {
     const year = new Date().getFullYear() % 100;
@@ -65,7 +71,11 @@ export class RealizationService {
         let statusTom: number = 1;
         let statusToTom: number = 2;
         let requestNumber: string | null = null;
-        let department: string | null = null;
+        let sampleResult: any = null;
+
+        let department = await this.generateDepartment(
+          createRealization.costCenterId,
+        );
 
         if (status && status == 'submit') {
           statusTom = 2;
@@ -73,8 +83,9 @@ export class RealizationService {
           requestNumber = await this.generateRequestNumber(
             createRealization.costCenterId,
           );
-          department = await this.generateDepartment(
-            createRealization.costCenterId,
+
+          sampleResult = await this.roleService.sample(
+            createRealization.createdBy,
           );
         }
 
@@ -93,11 +104,17 @@ export class RealizationService {
             noteRequest: realizationData.noteRequest,
             department: department,
             personalNumber: realizationData.personalNumber,
-            departmentTo: realizationData.departmentTo,
-            personalNumberTo: realizationData.personalNumberTo,
+            departmentTo: sampleResult?.manager?.personalUnit || null,
+            personalNumberTo: sampleResult?.manager?.personalNumber || null,
             createdBy: realizationData.createdBy,
             status: StatusEnum.OPEN,
             type: realizationData.type,
+            roleAssignment:
+              {
+                employee: sampleResult?.employee,
+                manager: sampleResult?.manager,
+                seniorManager: sampleResult?.seniorManager,
+              } || null,
             m_status_realization_id_statusTom_status: {
               connect: {
                 idStatus: statusTom,

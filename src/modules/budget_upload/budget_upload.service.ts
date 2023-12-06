@@ -43,7 +43,7 @@ export class BudgetUploadService {
   //             idCostCenter: true,
   //           },
   //           where: {
-  //             bidang: String(item.costCenter),
+  //             bidang: String(item.costCenterId),
   //           },
   //         });
 
@@ -52,7 +52,7 @@ export class BudgetUploadService {
   //             idGlAccount: true,
   //           },
   //           where: {
-  //             glAccount: Number(item.glAccount),
+  //             glAccount: Number(item.glAccountId),
   //           },
   //         });
   //         const data = {

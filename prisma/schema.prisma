@@ -8,19 +8,20 @@ datasource db {
 }
 
 model Approval {
-  idApproval Int        @id @default(autoincrement()) @map("id_approval")
-  uniqueId   String     @unique @default(uuid()) @map("unique_id") @db.Uuid
-  tableName  String     @map("table_name") @db.VarChar(20)
-  tableId    Int        @map("table_id") @db.Integer
-  name       String     @map("name") @db.VarChar(50)
-  jabatan    String     @map("jabatan") @db.VarChar(50)
-  unit       String     @map("unit") @db.VarChar(8)
-  status     StatusEnum @default(PROGRESS) @map("status")
-  remark     String?    @map("remark")
-  createdAt  DateTime   @default(now()) @map("created_at") @db.Timestamp(6)
-  createdBy  String?    @map("created_by") @db.VarChar(50)
-  updatedAt  DateTime   @default(now()) @updatedAt @map("updated_at") @db.Timestamp(6)
-  updatedBy  String?    @map("updated_by") @db.VarChar(50)
+  idApproval   Int        @id @default(autoincrement()) @map("id_approval")
+  uniqueId     String     @unique @default(uuid()) @map("unique_id") @db.Uuid
+  tableName    String     @map("table_name") @db.VarChar(20)
+  tableId      Int        @map("table_id") @db.Integer
+  name         String     @map("name") @db.VarChar(50)
+  jabatan      String     @map("jabatan") @db.VarChar(50)
+  unit         String     @map("unit") @db.VarChar(8)
+  status       StatusEnum @default(PROGRESS) @map("status")
+  remark       String?    @map("remark")
+  configButton Json?      @map("config_button") @db.JsonB
+  createdAt    DateTime   @default(now()) @map("created_at") @db.Timestamp(6)
+  createdBy    String?    @map("created_by") @db.VarChar(50)
+  updatedAt    DateTime   @default(now()) @updatedAt @map("updated_at") @db.Timestamp(6)
+  updatedBy    String?    @map("updated_by") @db.VarChar(50)
 
   noteMemo NoteMemo[]
 
@@ -299,6 +300,8 @@ model Realization {
   createdBy        String              @map("created_by") @db.VarChar(50)
   updatedAt        DateTime            @default(now()) @updatedAt @map("updated_at") @db.Timestamp(6)
   updatedBy        String?             @map("updated_by") @db.VarChar(50)
+  contributors     Json?               @map("contributors") @db.JsonB //isi nopeg yg uda approve nanti ada yg approve pake push
+  //nanti di prisma ada find array
   roleAssignment   Json?               @map("role_assignment") @db.JsonB
 
   m_cost_center                               MCostCenter       @relation(fields: [costCenterId], references: [idCostCenter], onDelete: NoAction, onUpdate: NoAction, map: "fk_m_cost_center_to_realization")
@@ -392,7 +395,7 @@ model RealizationItem {
   periodFinish      DateTime @map("period_finish") @db.Date
   descPby           String   @map("desc_pby")
   remarkPby         String   @map("remark_pby")
-  memo              String?  @map("memo") //utk vp user
+  memo              String?  @map("memo") //utk vp 
   createdAt         DateTime @default(now()) @map("created_at") @db.Timestamp(6)
   createdBy         String   @map("created_by") @db.VarChar(50)
   updatedAt         DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamp(6)
