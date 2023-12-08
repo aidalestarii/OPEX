@@ -53,7 +53,7 @@ export class ApprovalService {
         filter.departmentTo = { startsWith: dinas };
       }
       if (typeOfLetter) {
-        filter.typeOfLetter = typeOfLetter; // konversi ke number jika diperlukan
+        filter.typeOfLetter = { typeOfLetter: dinas }; // konversi ke number jika diperlukan
       }
       if (status) {
         filter.status = status;
@@ -133,7 +133,7 @@ export class ApprovalService {
           idRealization: realizationItem.idRealization,
           taReff: realizationItem.taReff,
           requestNumber: realizationItem.requestNumber,
-          typeOfLetter: 'Realisasi Anggaran',
+          typeOfLetter: realizationItem.typeOfLetter,
           entryDate: realizationItem.createdAt,
           amountSubmission: totalAmount,
           status: realizationItem.status,
