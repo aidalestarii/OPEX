@@ -1,5 +1,5 @@
 import { StatusEnum } from '@prisma/client';
-import { IsEnum } from 'class-validator';
+import { IsEnum, IsOptional } from 'class-validator';
 
 export class ApprovalDto {
   tableName: string;
@@ -11,4 +11,10 @@ export class ApprovalDto {
   status: StatusEnum;
   remark?: string;
   createdBy: string;
+  statusId: number;
+
+  @IsOptional()
+  statusToId: number;
+
+  updatedBy: string;
 }
