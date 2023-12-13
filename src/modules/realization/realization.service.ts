@@ -160,6 +160,7 @@ export class RealizationService {
                   ...file,
                   tableName: 'Realization',
                   tableId: createdRealization.idRealization,
+                  department: department,
                   createdBy: createdRealization.createdBy,
                 },
               });

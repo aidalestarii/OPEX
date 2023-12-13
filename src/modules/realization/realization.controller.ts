@@ -81,6 +81,7 @@ export class RealizationController {
           docLink: file.path,
           docSize: parseFloat((file.size / 1000000).toFixed(2)),
           docType: extname(file.originalname),
+          department: '',
           createdBy: '',
           tableId: 1,
           docCategoryId: parseInt(dtoFile.docCategoryId[index]),

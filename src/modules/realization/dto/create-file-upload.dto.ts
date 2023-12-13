@@ -20,6 +20,7 @@ export class CreateFileDto {
   docSize: number;
 
   docType: string;
+  department: string;
 
   //files?: any;
 
