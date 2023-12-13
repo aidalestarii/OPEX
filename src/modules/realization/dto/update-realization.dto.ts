@@ -37,6 +37,7 @@ export class UpdateRealizationDto {
   // // @IsString()
   // // @IsNotEmpty()
   // noteRequest: string;
+  idRealization?: number;
 
   statusId: number;
 

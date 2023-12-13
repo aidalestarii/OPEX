@@ -11,6 +11,7 @@ import { PrismaService } from 'src/core/service/prisma.service';
 import { StatusEnum } from '@prisma/client';
 import { UpdateRealizationDto } from '../realization/dto/update-realization.dto';
 import { SortOrder } from '@elastic/elasticsearch/lib/api/types';
+import { status } from 'prisma/dummy-data';
 
 @Injectable()
 export class ApprovalService {
@@ -202,20 +203,25 @@ export class ApprovalService {
   }
 
   async reject(
-    id: number,
+    // id: number,
     updateRealizationDto: UpdateRealizationDto,
     approvalDto: ApprovalDto,
   ) {
     try {
       const rejectRealization = await this.prisma.realization.update({
-        where: { idRealization: id },
-        data: updateRealizationDto,
+        where: { idRealization: updateRealizationDto.idRealization },
+        data: {
+          status: updateRealizationDto.status,
+          statusId: updateRealizationDto.statusId,
+          statusToId: updateRealizationDto.statusToId,
+          updatedBy: updateRealizationDto.updatedBy,
+        },
       });
       const rejectApproval = await this.prisma.approval.create({
         data: {
           ...approvalDto,
           tableName: 'Realization',
-          tableId: id,
+          tableId: updateRealizationDto.idRealization,
           status: updateRealizationDto.status,
           createdBy: updateRealizationDto.updatedBy,
         },

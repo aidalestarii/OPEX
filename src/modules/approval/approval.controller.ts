@@ -36,12 +36,12 @@ export class ApprovalController {
     );
   }
 
-  @Put('/:id/reject')
+  @Post('/reject')
   async rejectRealization(
-    @Param('id') id: number,
+    //@Param('id') id: number,
     @Body() approvalDto: ApprovalDto,
     @Body() updateRealizationDto: UpdateRealizationDto,
   ) {
-    return this.approvalService.reject(+id, updateRealizationDto, approvalDto);
+    return this.approvalService.reject(updateRealizationDto, approvalDto);
   }
 }
