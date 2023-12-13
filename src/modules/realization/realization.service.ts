@@ -248,7 +248,6 @@ export class RealizationService {
       },
     });
 
-    //abis where baru filter
     if (!realization) {
       throw new HttpException(
         {

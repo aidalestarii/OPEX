@@ -41,6 +41,11 @@ export class ApprovalController {
     return this.approvalService.countNeedApproval(personalNumberTo);
   }
 
+  @Get(':id')
+  findOne(@Param('id') id: number) {
+    return this.approvalService.findOneApproval(+id);
+  }
+
   @Post('/reject')
   async rejectRealization(
     //@Param('id') id: number,

@@ -17,6 +17,36 @@ import { status } from 'prisma/dummy-data';
 export class ApprovalService {
   constructor(private readonly prisma: PrismaService) {}
 
+  async countNeedApproval(personalNumberTo: string) {
+    try {
+      const totalItems = await this.prisma.realization.count({
+        where: {
+          personalNumberTo: personalNumberTo,
+        },
+      });
+
+      return {
+        data: totalItems,
+        meta: { personalNumberTo: personalNumberTo },
+        message: 'Total items needing approval retrieved',
+        status: HttpStatus.OK,
+        time: new Date(),
+      };
+    } catch (error) {
+      console.error(error);
+      throw new HttpException(
+        {
+          data: null,
+          meta: null,
+          message: 'Failed to retrieve total items needing approval',
+          status: HttpStatus.INTERNAL_SERVER_ERROR,
+          time: new Date(),
+        },
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+  }
+
   async findAllWithPaginationAndFilter(
     page: number,
     order: string = 'asc',
@@ -172,34 +202,51 @@ export class ApprovalService {
     }
   }
 
-  async countNeedApproval(personalNumberTo: string) {
-    try {
-      const totalItems = await this.prisma.realization.count({
-        where: {
-          personalNumberTo: personalNumberTo,
-        },
-      });
+  async findOneApproval(id: number) {
+    const realization = await this.prisma.realization.findUnique({
+      where: {
+        idRealization: id,
+      },
+      include: {
+        realizationItem: true,
+      },
+    });
 
-      return {
-        data: totalItems,
-        meta: { personalNumberTo: personalNumberTo },
-        message: 'Total items needing approval retrieved',
-        status: HttpStatus.OK,
-        time: new Date(),
-      };
-    } catch (error) {
-      console.error(error);
+    if (!realization) {
       throw new HttpException(
         {
           data: null,
           meta: null,
-          message: 'Failed to retrieve total items needing approval',
-          status: HttpStatus.INTERNAL_SERVER_ERROR,
+          message: 'Realization not found',
+          status: HttpStatus.NOT_FOUND,
           time: new Date(),
         },
-        HttpStatus.INTERNAL_SERVER_ERROR,
+        HttpStatus.NOT_FOUND,
       );
     }
+
+    const fileUpload = await this.prisma.fileUpload.findMany({
+      where: {
+        tableName: 'Realization',
+      },
+    });
+
+    const correspondingFileUploads = fileUpload.filter(
+      (fileUpload) => fileUpload.tableId === realization.idRealization,
+    );
+
+    const realizationWithFileUpload = {
+      realization: {
+        ...realization,
+        fileUploads: correspondingFileUploads || [], // Array of file uploads or an empty array
+      },
+      meta: null,
+      message: 'Realization found',
+      status: HttpStatus.OK,
+      time: new Date(),
+    };
+
+    return realizationWithFileUpload;
   }
 
   async approve(id: number) {
