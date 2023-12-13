@@ -172,6 +172,36 @@ export class ApprovalService {
     }
   }
 
+  async countNeedApproval(personalNumberTo: string) {
+    try {
+      const totalItems = await this.prisma.realization.count({
+        where: {
+          personalNumberTo: personalNumberTo,
+        },
+      });
+
+      return {
+        data: totalItems,
+        meta: { personalNumberTo: personalNumberTo },
+        message: 'Total items needing approval retrieved',
+        status: HttpStatus.OK,
+        time: new Date(),
+      };
+    } catch (error) {
+      console.error(error);
+      throw new HttpException(
+        {
+          data: null,
+          meta: null,
+          message: 'Failed to retrieve total items needing approval',
+          status: HttpStatus.INTERNAL_SERVER_ERROR,
+          time: new Date(),
+        },
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+  }
+
   async approve(id: number) {
     try {
       const approveRealization = await this.prisma.realization.update({

@@ -36,6 +36,11 @@ export class ApprovalController {
     );
   }
 
+  @Get('/:personalNumberTo')
+  countNeedApproval(@Param('personalNumberTo') personalNumberTo: string) {
+    return this.approvalService.countNeedApproval(personalNumberTo);
+  }
+
   @Post('/reject')
   async rejectRealization(
     //@Param('id') id: number,
