@@ -306,4 +306,145 @@ export class ApprovalService {
       );
     }
   }
+
+  async remark(
+    page: number,
+    order: string = 'asc',
+    personalNumberTo: string,
+    queryParams: any,
+  ) {
+    try {
+      const perPage = 10;
+
+      if (!['asc', 'desc'].includes(order.toLowerCase())) {
+        throw new BadRequestException(
+          'Invalid order parameter. Use "asc" or "desc".',
+        );
+      }
+
+      // Filter logic
+      const { status, statusTo, dateOfRemarkFrom, dateOfRemarkTo } =
+        queryParams;
+      let filter: any = {};
+
+      if (status) {
+        filter.status = status;
+      }
+      if (statusTo) {
+        filter.unit = statusTo; // Assuming `statusTo` corresponds to `unit` in the `Approval` model
+      }
+
+      if (dateOfRemarkFrom && dateOfRemarkTo) {
+        const formattedDateOfRemarkFrom = new Date(dateOfRemarkFrom)
+          .toISOString()
+          .split('T')[0];
+        const formattedDateOfRemarkTo = new Date(dateOfRemarkTo)
+          .toISOString()
+          .split('T')[0];
+        filter.createdAt = {
+          gte: new Date(formattedDateOfRemarkFrom),
+          lte: new Date(formattedDateOfRemarkTo + 'T23:59:59.999Z'),
+        };
+      }
+
+      // Count total items with applied filters
+      const totalItems = await this.prisma.approval.count({
+        where: {
+          ...filter,
+          remark: {
+            not: null,
+          },
+        },
+      });
+
+      const skip = (page - 1) * perPage;
+
+      // Determine the last available page
+      const lastPage = Math.ceil(totalItems / perPage);
+
+      // Check if the requested page exceeds the last available page
+      if (page > lastPage) {
+        return {
+          data: [],
+          meta: {
+            currentPage: Number(page),
+            totalItems,
+            lastpage: lastPage,
+            totalItemsPerPage: 0,
+          },
+          message: 'Pagination remark retrieved',
+          status: HttpStatus.OK,
+          time: new Date(),
+        };
+      }
+
+      const approvalList = await this.prisma.approval.findMany({
+        skip,
+        take: perPage,
+        orderBy: {
+          createdAt: order.toLowerCase() as SortOrder,
+        },
+        where: {
+          ...filter,
+          remark: {
+            not: null,
+          },
+        },
+      });
+
+      const realization = approvalList.map((approval) => approval.tableId);
+
+      const realizationList = await this.prisma.realization.findMany({
+        where: {
+          idRealization: {
+            in: realization,
+          },
+        },
+      });
+
+      const data = approvalList.map((approval) => {
+        const relatedRealization = realizationList.find(
+          (realization) => realization.idRealization === approval.tableId,
+        );
+
+        return {
+          dateOfRemark: approval.createdAt,
+          status: approval.status,
+          statusFrom: approval.createdBy,
+          departmentFrom: approval.unit,
+          remark: approval.remark,
+          statusTo: relatedRealization.createdBy,
+          departmentTo: relatedRealization.department,
+        };
+      });
+
+      const remainingItems = totalItems - skip;
+      const isLastPage = page * perPage >= totalItems;
+      const totalItemsPerPage = isLastPage ? remainingItems : perPage;
+
+      return {
+        data,
+        meta: {
+          currentPage: Number(page),
+          totalItems,
+          lastpage: Math.ceil(totalItems / perPage),
+          totalItemsPerPage: Number(totalItemsPerPage),
+        },
+        message: 'Pagination remark retrieved',
+        status: HttpStatus.OK,
+        time: new Date(),
+      };
+    } catch (error) {
+      // Handle errors
+      if (error instanceof BadRequestException) {
+        throw new BadRequestException(
+          'Invalid filter parameters. ' + error.message,
+        );
+      } else {
+        throw new InternalServerErrorException(
+          'Internal Server Error: ' + error.message,
+        );
+      }
+    }
+  }
 }

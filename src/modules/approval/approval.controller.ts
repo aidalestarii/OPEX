@@ -50,4 +50,19 @@ export class ApprovalController {
   async approval(@Body() dto: ApproveDto) {
     return this.approvalService.approval(dto);
   }
+
+  @Get('/remark/pageRemark')
+  remark(
+    @Param('personalNumberTo') personalNumberTo: string,
+    @Query('page') page: number,
+    @Query('orderBy') orderBy: string,
+    @Query() queryParams: any,
+  ) {
+    return this.approvalService.remark(
+      page,
+      orderBy,
+      personalNumberTo,
+      queryParams,
+    );
+  }
 }
