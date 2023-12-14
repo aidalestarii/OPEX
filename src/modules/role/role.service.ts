@@ -8,7 +8,7 @@ export class RoleService {
 
   private apiKey: string = '543C-EF0B-4137-A27F';
 
-  async sample(createdBy: string): Promise<any> {
+  async getRole(createdBy: string): Promise<any> {
     const apiUrl = `https://api.gmf-aeroasia.co.id/th/soev2/v2/employee/${createdBy}/get-manager-and-sm`;
     const headers = {
       'x-api-key': this.apiKey,

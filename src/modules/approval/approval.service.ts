@@ -5,7 +5,7 @@ import {
   Injectable,
   InternalServerErrorException,
 } from '@nestjs/common';
-import { ApprovalDto } from './dto/create-approval.dto';
+import { ApprovalDto, ApproveDto } from './dto/create-approval.dto';
 import { UpdateApprovalDto } from './dto/update-approval.dto';
 import { PrismaService } from 'src/core/service/prisma.service';
 import { StatusEnum } from '@prisma/client';
@@ -249,44 +249,12 @@ export class ApprovalService {
     return realizationWithFileUpload;
   }
 
-  async approve(id: number) {
-    try {
-      const approveRealization = await this.prisma.realization.update({
-        where: { idRealization: id },
-        data: {
-          statusId: 4,
-          statusToId: 5,
-        },
-      });
-      return {
-        data: approveRealization,
-        meta: null,
-        message: 'Realization reject successfully',
-        status: HttpStatus.OK,
-        time: new Date(),
-      };
-    } catch (error) {
-      throw new HttpException(
-        {
-          data: null,
-          meta: null,
-          message: 'Failed to reject realization',
-          status: HttpStatus.INTERNAL_SERVER_ERROR,
-          time: new Date(),
-        },
-        HttpStatus.INTERNAL_SERVER_ERROR,
-      );
-    }
-  }
+  async approval(dto: ApproveDto) {
+    const { idRealization, updateRealizationDto, approvalDto } = dto;
 
-  async reject(
-    // id: number,
-    updateRealizationDto: UpdateRealizationDto,
-    approvalDto: ApprovalDto,
-  ) {
     try {
-      const rejectRealization = await this.prisma.realization.update({
-        where: { idRealization: updateRealizationDto.idRealization },
+      const updatedRealization = await this.prisma.realization.update({
+        where: { idRealization: idRealization },
         data: {
           status: updateRealizationDto.status,
           statusId: updateRealizationDto.statusId,
@@ -294,20 +262,21 @@ export class ApprovalService {
           updatedBy: updateRealizationDto.updatedBy,
         },
       });
-      const rejectApproval = await this.prisma.approval.create({
+
+      const createdApproval = await this.prisma.approval.create({
         data: {
           ...approvalDto,
           tableName: 'Realization',
-          tableId: updateRealizationDto.idRealization,
+          tableId: idRealization,
           status: updateRealizationDto.status,
           createdBy: updateRealizationDto.updatedBy,
         },
       });
 
       return {
-        data: { rejectRealization, rejectApproval },
+        data: { updatedRealization, createdApproval },
         meta: null,
-        message: 'Realization reject successfully',
+        message: 'Realization updated, and Approval created successfully',
         status: HttpStatus.OK,
         time: new Date(),
       };
@@ -317,7 +286,7 @@ export class ApprovalService {
         {
           data: null,
           meta: null,
-          message: 'Failed to reject realization',
+          message: 'Failed to update Realization and insert Approval',
           status: HttpStatus.INTERNAL_SERVER_ERROR,
           time: new Date(),
         },

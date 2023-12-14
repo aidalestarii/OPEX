@@ -15,9 +15,7 @@ export class RoleController {
   constructor(private readonly roleService: RoleService) {}
 
   @Get(':personalNumber')
-  async getSample(
-    @Param('personalNumber') personalNumber: string,
-  ): Promise<any> {
-    return this.roleService.sample(personalNumber);
+  async getSample(@Param('personalNumber') personalNumber: string) {
+    return this.roleService.getRole(personalNumber);
   }
 }

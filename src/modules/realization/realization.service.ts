@@ -89,7 +89,7 @@ export class RealizationService {
               createRealization.costCenterId,
             );
 
-            roleAssignment = await this.roleService.sample(
+            roleAssignment = await this.roleService.getRole(
               createRealization.createdBy,
             );
           }
