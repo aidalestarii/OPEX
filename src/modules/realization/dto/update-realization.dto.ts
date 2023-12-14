@@ -48,6 +48,7 @@ export class UpdateRealizationDto {
   status: StatusEnum;
 
   updatedBy: string;
+  roleAssignment: JSON;
 
   readonly department: string;
 

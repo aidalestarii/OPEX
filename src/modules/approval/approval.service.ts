@@ -251,14 +251,26 @@ export class ApprovalService {
 
   async approval(dto: ApproveDto) {
     const { idRealization, updateRealizationDto, approvalDto } = dto;
+    const realization = await this.prisma.realization.findUnique({
+      where: { idRealization: idRealization },
+    });
 
     try {
+      let personalNumberTo: string | null = null;
+
+      if (updateRealizationDto.statusToId === null) {
+        personalNumberTo = null;
+      } else if (updateRealizationDto.statusToId === 2) {
+        personalNumberTo = 'string';
+      }
+
       const updatedRealization = await this.prisma.realization.update({
         where: { idRealization: idRealization },
         data: {
           status: updateRealizationDto.status,
           statusId: updateRealizationDto.statusId,
           statusToId: updateRealizationDto.statusToId,
+          personalNumberTo: personalNumberTo,
           updatedBy: updateRealizationDto.updatedBy,
         },
       });

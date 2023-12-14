@@ -16,10 +16,11 @@ import { UpdateRealizationDto } from './dto/update-realization.dto';
 import { UpdateFileDto } from './dto/update-file-upload.dto';
 import { lastValueFrom, tap } from 'rxjs';
 import { RoleService } from '../role/role.service';
+import { HttpService } from '@nestjs/axios';
 
 @Injectable()
 export class RealizationService {
-  httpService: any;
+  httpService: HttpService;
   prismaService: PrismaClient;
   constructor(
     private readonly prisma: PrismaService,
@@ -109,7 +110,7 @@ export class RealizationService {
               noteRequest: realizationData.noteRequest,
               department: department,
               personalNumber: realizationData.personalNumber,
-              departmentTo: roleAssignment?.manager?.personalUnit || null,
+              departmentTo: roleAssignment?.seniorManager?.personalUnit || null,
               personalNumberTo: roleAssignment?.manager?.personalNumber || null,
               createdBy: realizationData.createdBy,
               status: StatusEnum.OPEN,
