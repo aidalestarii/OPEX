@@ -15,10 +15,11 @@ import { PrismaClient, Realization, StatusEnum } from '@prisma/client';
 import { UpdateRealizationDto } from './dto/update-realization.dto';
 import { lastValueFrom, tap } from 'rxjs';
 import { RoleService } from '../role/role.service';
+import { HttpService } from '@nestjs/axios';
 
 @Injectable()
 export class RealizationService {
-  httpService: any;
+  httpService: HttpService;
   prismaService: PrismaClient;
   constructor(
     private readonly prisma: PrismaService,
@@ -88,7 +89,7 @@ export class RealizationService {
               createRealization.costCenterId,
             );
 
-            roleAssignment = await this.roleService.sample(
+            roleAssignment = await this.roleService.getRole(
               createRealization.createdBy,
             );
           }
@@ -108,7 +109,7 @@ export class RealizationService {
               noteRequest: realizationData.noteRequest,
               department: department,
               personalNumber: realizationData.personalNumber,
-              departmentTo: roleAssignment?.manager?.personalUnit || null,
+              departmentTo: roleAssignment?.seniorManager?.personalUnit || null,
               personalNumberTo: roleAssignment?.manager?.personalNumber || null,
               createdBy: realizationData.createdBy,
               status: StatusEnum.OPEN,
@@ -247,7 +248,6 @@ export class RealizationService {
       },
     });
 
-    //abis where baru filter
     if (!realization) {
       throw new HttpException(
         {

@@ -10,32 +10,32 @@ import {
 } from 'class-validator';
 
 export class UpdateRealizationDto {
-  // years: number;
+  years: number;
 
-  // month: number;
+  month: number;
 
-  // costCenterId: number;
+  costCenterId: number;
 
-  // requestNumber: String;
+  requestNumber: String;
 
-  // @Type(() => Number)
-  // taReff: number;
+  @Type(() => Number)
+  taReff: number;
 
-  // @IsOptional()
-  // @IsEnum(RealizationTypeEnum)
-  // type: RealizationTypeEnum;
+  @IsOptional()
+  @IsEnum(RealizationTypeEnum)
+  type: RealizationTypeEnum;
+
+  @IsString()
+  @IsNotEmpty()
+  responsibleNopeg: string;
 
   // @IsString()
   // @IsNotEmpty()
-  // responsibleNopeg: string;
+  titleRequest: string;
 
-  // // @IsString()
-  // // @IsNotEmpty()
-  // titleRequest: string;
-
-  // // @IsString()
-  // // @IsNotEmpty()
-  // noteRequest: string;
+  // @IsString()
+  // @IsNotEmpty()
+  noteRequest: string;
 
   statusId: number;
 
@@ -47,14 +47,15 @@ export class UpdateRealizationDto {
   status: StatusEnum;
 
   updatedBy: string;
+  roleAssignment: JSON;
 
-  // readonly department: string;
+  readonly department: string;
 
-  // readonly personalNumber: string;
+  readonly personalNumber: string;
 
-  // readonly departmentTo: string;
+  readonly departmentTo: string;
 
-  // readonly personalNumberTo: string;
+  readonly personalNumberTo: string;
 
   // @IsString()
   // @IsNotEmpty()
