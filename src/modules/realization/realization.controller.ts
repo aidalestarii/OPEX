@@ -36,7 +36,6 @@ import {
 import { Request } from 'express';
 import { validate, validateOrReject } from 'class-validator';
 import { RealizationTypeEnum, StatusEnum } from '@prisma/client';
-import { UpdateFileDto } from './dto/update-file-upload.dto';
 
 @Controller({
   version: '1',
