@@ -14,7 +14,6 @@ import {
 import { CreateFileDto } from './dto/create-file-upload.dto';
 import { PrismaClient, Realization, StatusEnum } from '@prisma/client';
 import { UpdateRealizationDto } from './dto/update-realization.dto';
-import { UpdateFileDto } from './dto/update-file-upload.dto';
 import { lastValueFrom, tap } from 'rxjs';
 import { RoleService } from '../role/role.service';
 import { HttpService } from '@nestjs/axios';
@@ -181,7 +180,7 @@ export class RealizationService {
           };
         },
         {
-          timeout: 10000, // default: 5000
+          timeout: 100000, // default: 5000
         },
       );
 

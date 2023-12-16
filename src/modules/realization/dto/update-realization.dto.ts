@@ -8,7 +8,6 @@ import {
   IsOptional,
   IsString,
 } from 'class-validator';
-import { UpdateFileDto } from './update-file-upload.dto';
 
 export class UpdateRealizationDto {
   years: number;
