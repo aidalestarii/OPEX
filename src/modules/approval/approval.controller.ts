@@ -36,7 +36,7 @@ export class ApprovalController {
     );
   }
 
-  @Get('/:personalNumberTo')
+  @Get('count/:personalNumberTo')
   countNeedApproval(@Param('personalNumberTo') personalNumberTo: string) {
     return this.approvalService.countNeedApproval(personalNumberTo);
   }

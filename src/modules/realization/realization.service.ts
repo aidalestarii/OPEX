@@ -7,6 +7,7 @@ import {
 } from '@nestjs/common';
 import { PrismaService } from 'src/core/service/prisma.service';
 import {
+  AllRoleDto,
   CreateRealizationDto,
   CreateRealizationItemDto,
 } from './dto/create-realization.dto';
@@ -61,7 +62,7 @@ export class RealizationService {
     return department;
   }
 
-  async createRealization(
+  async createRealization<T>(
     createRealization: CreateRealizationDto,
     realizationItems: CreateRealizationItemDto[],
     uploadfile: CreateFileDto[],
@@ -78,7 +79,7 @@ export class RealizationService {
           let statusToTom: number = 2;
           let requestNumber: string | null = null;
           let roleAssignment: any = null;
-
+          let dtoRoleAssignment = null;
           let department = await this.generateDepartment(
             createRealization.costCenterId,
           );
@@ -93,12 +94,20 @@ export class RealizationService {
             roleAssignment = await this.roleService.getRole(
               createRealization.createdBy,
             );
+            dtoRoleAssignment = this.mapRoleAssignment(roleAssignment);
+            // dtoRoleAssignment = {
+            //   employee: roleAssignment?.employee ?? null,
+            //   seniorManager: roleAssignment?.seniorManager ?? null,
+            //   vicePresident: roleAssignment?.personalSuperior ?? null,
+            //   employeeTAB: roleAssignment?.employeeTAB ?? null,
+            //   vicePresidentTAB: roleAssignment?.vicePresidentTAB ?? null,
+            // };
           }
 
           // Extract Realization data from the DTO
           const { ...realizationData } = createRealization;
 
-          // Create realization within the transaction
+          // // Create realization within the transaction
           const createdRealization = await prisma.realization.create({
             data: {
               years: new Date().getFullYear(),
@@ -115,12 +124,7 @@ export class RealizationService {
               createdBy: realizationData.createdBy,
               status: StatusEnum.OPEN,
               type: realizationData.type,
-              roleAssignment:
-                {
-                  employee: roleAssignment?.employee,
-                  seniorManager: roleAssignment?.seniorManager,
-                  vicePresident: roleAssignment?.personalSuperior,
-                } || null,
+              roleAssignment: dtoRoleAssignment,
               m_status_realization_id_statusTom_status: {
                 connect: {
                   idStatus: statusTom,
@@ -167,7 +171,7 @@ export class RealizationService {
               });
             }),
           );
-
+          console.log(createdRealization.personalNumber);
           return {
             realization: {
               ...createdRealization,
@@ -202,6 +206,18 @@ export class RealizationService {
         HttpStatus.INTERNAL_SERVER_ERROR,
       );
     }
+  }
+
+  private mapRoleAssignment(roleAssignment: any) {
+    const roleKeys = AllRoleDto.propertyNames;
+    const mappedRoleAssignment: any = {};
+
+    roleKeys.forEach((key) => {
+      mappedRoleAssignment[key] = roleAssignment?.[key] ?? null;
+    });
+    console.log(mappedRoleAssignment);
+
+    return mappedRoleAssignment;
   }
 
   async findAllRealization() {
