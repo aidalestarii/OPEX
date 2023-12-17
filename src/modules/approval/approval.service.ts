@@ -249,6 +249,25 @@ export class ApprovalService {
     return realizationWithFileUpload;
   }
 
+  async getNopeg(idRealization: number) {
+    const realization = await this.prisma.realization.findUnique({
+      where: { idRealization },
+    });
+    console.log(realization.roleAssignment);
+    const empolyeePersonalNumber1 =
+      realization.roleAssignment['employee']?.personalNumber ?? null;
+    const empolyeePersonalNumber2 =
+      realization.roleAssignment['seniorManager']?.personalNumber ?? null;
+    const empolyeePersonalNumber3 =
+      realization.roleAssignment['vicePresident']?.personalNumber ?? null;
+    //const empolyeePersonalNumber = realization.roleAssignment['employee']?.personalNumber ?? null;
+    console.log(
+      empolyeePersonalNumber1,
+      empolyeePersonalNumber2,
+      empolyeePersonalNumber3,
+    );
+  }
+
   async approval(dto: ApproveDto) {
     const { idRealization, updateRealizationDto, approvalDto } = dto;
     const realization = await this.prisma.realization.findUnique({
@@ -272,6 +291,7 @@ export class ApprovalService {
           statusToId: updateRealizationDto.statusToId,
           personalNumberTo: personalNumberTo,
           updatedBy: updateRealizationDto.updatedBy,
+          //contributors: updateRealizationDto.updatedBy,
         },
       });
 
