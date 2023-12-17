@@ -2,7 +2,6 @@ import { Module } from '@nestjs/common';
 import { BudgetUploadController } from './budget_upload.controller';
 import { BudgetUploadService } from './budget_upload.service';
 import { ExcelBudgetUploadService } from './excel_budget_upload.service';
-import { BudgetService } from './budget.service';
 import { ReadExcelSheetBudgetUploadBuilder } from 'src/core/utils/read-excel-sheet-budget-upload-builder.util';
 import { BudgetUploadProcessExcelToJsonBuilder } from 'src/core/utils/budget-upload-process-excel-to-json-builder.util';
 import { PrismaService } from 'src/core/service/prisma.service';
@@ -13,7 +12,6 @@ import { PrismaService } from 'src/core/service/prisma.service';
     BudgetUploadService,
     ExcelBudgetUploadService,
     ReadExcelSheetBudgetUploadBuilder,
-    BudgetService,
     BudgetUploadProcessExcelToJsonBuilder,
     PrismaService,
   ],

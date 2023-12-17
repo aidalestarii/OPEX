@@ -18,19 +18,12 @@ import { multerOptions } from 'src/config/multer-options.config';
 import { BudgetUploadService } from './budget_upload.service';
 // import { UpdateBudgetDto } from './dtos/update-budget.dto';
 import { ItemsBudgetUploadDto } from './dtos/budget-upload.dto';
-import { BudgetService } from './budget.service';
-
 @Controller({
   version: '1',
   path: 'api/budget',
 })
 export class BudgetUploadController {
-  constructor(
-    private readonly budgetUploadService: BudgetUploadService,
-    private readonly budgetService: BudgetService,
-  ) {
-    BudgetUploadController.name;
-  }
+  constructor(private readonly budgetUploadService: BudgetUploadService) {}
 
   @Post('upload')
   @UseInterceptors(FileInterceptor('file', multerOptions))
@@ -55,23 +48,11 @@ export class BudgetUploadController {
       return res.status(400).json(error.response);
     }
   }
-
   @Get('/all')
   async findFilterBudget(@Query() queryParams: any) {
-    const findFilterBudget = await this.budgetService.findAllRealization(
+    const findFilterBudget = await this.budgetUploadService.findAllRealization(
       queryParams,
     );
     return findFilterBudget;
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.budgetService.remove(+id);
-  }
-
-  @Delete()
-  async deleteAll() {
-    await this.budgetService.deleteAll();
-    return 'All records have been deleted from the Budget table.';
   }
 }
