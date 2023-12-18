@@ -299,20 +299,21 @@ export class ApprovalService {
 
   async approval(dto: ApproveDto) {
     const { idRealization, updateRealizationDto, approvalDto } = dto;
-    const existingContributors = await this.prisma.realization
-      .findUnique({
-        where: { idRealization: idRealization },
-        select: { contributors: true },
-      })
-      .then((result) => result?.contributors || []);
+    const realization = await this.prisma.realization.findUnique({
+      where: { idRealization },
+    });
 
     try {
       let personalNumberTo: string | null = null;
 
       if (updateRealizationDto.statusToId === null) {
         personalNumberTo = null;
-      } else if (updateRealizationDto.statusToId === 2) {
-        personalNumberTo = 'string';
+      } else if (updateRealizationDto.statusToId === 4) {
+        personalNumberTo =
+          realization.roleAssignment['seniorManager']?.personalNumber ?? null;
+      } else if (updateRealizationDto.statusToId === 5) {
+        personalNumberTo =
+          realization.roleAssignment['vicePresident']?.personalNumber ?? null;
       }
 
       const updatedRealization = await this.prisma.realization.update({

@@ -36,7 +36,7 @@ export class RoleService {
 
     const result2 = {
       ...result.body,
-      personalSuperior: data2.data.body.personalSuperior.RoleDto,
+      vicePresident: data2.data.body.personalSuperior,
     } as RoleDto;
 
     //result2.map(async);
@@ -44,7 +44,8 @@ export class RoleService {
       if (Object.prototype.hasOwnProperty.call(RoleDto, role))
         result2[role] ||= null;
     }
-    //console.log(result2);
+
+    console.log(result2);
     return result2;
   }
 }
