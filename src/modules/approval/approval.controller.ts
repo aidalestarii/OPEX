@@ -56,7 +56,7 @@ export class ApprovalController {
     return this.approvalService.approval(dto);
   }
 
-  @Get('/remark/pageRemark')
+  @Get('remark/')
   remark(
     @Param('personalNumberTo') personalNumberTo: string,
     @Query('page') page: number,
