@@ -46,6 +46,11 @@ export class ApprovalController {
     return this.approvalService.findOneApproval(+id);
   }
 
+  @Get('/contributor/:id')
+  findContributor(@Param('id') id: string) {
+    return this.approvalService.findContributors(id);
+  }
+
   @Post('/reject')
   async approval(@Body() dto: ApproveDto) {
     return this.approvalService.approval(dto);

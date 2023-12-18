@@ -303,7 +303,7 @@ model Realization {
   createdBy        String              @map("created_by") @db.VarChar(50)
   updatedAt        DateTime            @default(now()) @updatedAt @map("updated_at") @db.Timestamp(6)
   updatedBy        String?             @map("updated_by") @db.VarChar(50)
-  contributors     String[]            @map("contributors") @db.Char() //isi nopeg yg uda approve nanti ada yg approve pake push
+  contributors     String[]            @map("contributors") //isi nopeg yg uda approve nanti ada yg approve pake push
   //nanti di prisma ada find array
   roleAssignment   Json?               @map("role_assignment") @db.JsonB
 

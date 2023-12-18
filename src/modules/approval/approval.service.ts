@@ -12,6 +12,7 @@ import { StatusEnum } from '@prisma/client';
 import { UpdateRealizationDto } from '../realization/dto/update-realization.dto';
 import { SortOrder } from '@elastic/elasticsearch/lib/api/types';
 import { status } from 'prisma/dummy-data';
+import { JsonObject } from '@prisma/client/runtime/library';
 
 @Injectable()
 export class ApprovalService {
@@ -249,6 +250,34 @@ export class ApprovalService {
     return realizationWithFileUpload;
   }
 
+  async findContributors(id: string) {
+    const realization = await this.prisma.realization.findMany({
+      where: {
+        contributors: {
+          has: id.toString(),
+        },
+      },
+      orderBy: {
+        idRealization: 'asc',
+      },
+    });
+
+    if (!realization) {
+      throw new HttpException(
+        {
+          data: null,
+          meta: null,
+          message: 'Realization not found',
+          status: HttpStatus.NOT_FOUND,
+          time: new Date(),
+        },
+        HttpStatus.NOT_FOUND,
+      );
+    }
+
+    return realization;
+  }
+
   async getNopeg(idRealization: number) {
     const realization = await this.prisma.realization.findUnique({
       where: { idRealization },
@@ -270,9 +299,12 @@ export class ApprovalService {
 
   async approval(dto: ApproveDto) {
     const { idRealization, updateRealizationDto, approvalDto } = dto;
-    const realization = await this.prisma.realization.findUnique({
-      where: { idRealization: idRealization },
-    });
+    const existingContributors = await this.prisma.realization
+      .findUnique({
+        where: { idRealization: idRealization },
+        select: { contributors: true },
+      })
+      .then((result) => result?.contributors || []);
 
     try {
       let personalNumberTo: string | null = null;
@@ -291,7 +323,9 @@ export class ApprovalService {
           statusToId: updateRealizationDto.statusToId,
           personalNumberTo: personalNumberTo,
           updatedBy: updateRealizationDto.updatedBy,
-          //contributors: updateRealizationDto.updatedBy,
+          contributors: {
+            push: updateRealizationDto.updatedBy,
+          },
         },
       });
 
@@ -326,7 +360,6 @@ export class ApprovalService {
       );
     }
   }
-
   async remark(
     page: number,
     order: string = 'asc',
