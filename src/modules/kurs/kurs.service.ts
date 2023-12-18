@@ -98,7 +98,8 @@ export class KursService {
     };
   }
 
-  async findAllPaginated(page: number, perPage, order: string = 'asc') {
+  async findAllPaginated(page: number, order: string = 'asc') {
+    const perPage = 10;
     // Validate order input
     if (!['asc', 'desc'].includes(order.toLowerCase())) {
       throw new BadRequestException(
@@ -109,7 +110,7 @@ export class KursService {
 
     const kurs = await this.prisma.mKurs.findMany({
       skip,
-      take: parseInt(perPage),
+      take: perPage,
       orderBy: {
         years: order.toLowerCase() as SortOrder,
       },

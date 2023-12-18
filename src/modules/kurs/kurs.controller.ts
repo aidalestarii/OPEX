@@ -54,10 +54,9 @@ export class KursController extends BaseController {
   @Get()
   findAllPaginated(
     @Query('page') page: number,
-    @Query('perPage') perPage: number,
     @Query('orderBy') orderBy: string,
   ) {
-    return this.kursService.findAllPaginated(page, perPage, orderBy);
+    return this.kursService.findAllPaginated(page, orderBy);
   }
 
   @Get('/years/:years')
