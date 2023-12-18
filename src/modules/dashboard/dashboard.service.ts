@@ -53,7 +53,6 @@ export class DashboardService {
   }
 
   async findAllWithPaginationAndFilter(
-    contributors: string,
     page: number,
     order: string = 'asc',
     queryParams: any,
@@ -96,9 +95,6 @@ export class DashboardService {
       const totalItems = await this.prisma.realization.count({
         where: {
           ...filter,
-          contributors: {
-            has: contributors.toString(),
-          },
         },
       });
 
@@ -129,12 +125,7 @@ export class DashboardService {
         orderBy: {
           updatedAt: order.toLowerCase() as SortOrder,
         },
-        where: {
-          ...filter,
-          contributors: {
-            has: contributors.toString(),
-          },
-        },
+        where: filter,
         include: {
           m_cost_center: true,
           realizationItem: true,
