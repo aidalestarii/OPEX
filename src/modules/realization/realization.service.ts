@@ -94,13 +94,6 @@ export class RealizationService {
               createRealization.createdBy,
             );
             dtoRoleAssignment = this.mapRoleAssignment(roleAssignment);
-            // dtoRoleAssignment = {
-            //   employee: roleAssignment?.employee ?? null,
-            //   seniorManager: roleAssignment?.seniorManager ?? null,
-            //   vicePresident: roleAssignment?.personalSuperior ?? null,
-            //   employeeTAB: roleAssignment?.employeeTAB ?? null,
-            //   vicePresidentTAB: roleAssignment?.vicePresidentTAB ?? null,
-            // };
           }
 
           // Extract Realization data from the DTO
@@ -124,6 +117,7 @@ export class RealizationService {
               status: StatusEnum.OPEN,
               type: realizationData.type,
               roleAssignment: dtoRoleAssignment,
+              contributors: [realizationData.createdBy],
               m_status_realization_id_statusTom_status: {
                 connect: {
                   idStatus: statusTom,
@@ -170,7 +164,7 @@ export class RealizationService {
               });
             }),
           );
-          console.log(createdRealization.personalNumber);
+
           return {
             realization: {
               ...createdRealization,
@@ -214,7 +208,6 @@ export class RealizationService {
     roleKeys.forEach((key) => {
       mappedRoleAssignment[key] = roleAssignment?.[key] ?? null;
     });
-    console.log(mappedRoleAssignment);
 
     return mappedRoleAssignment;
   }

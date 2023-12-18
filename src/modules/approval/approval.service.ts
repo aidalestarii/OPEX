@@ -282,7 +282,7 @@ export class ApprovalService {
     const realization = await this.prisma.realization.findUnique({
       where: { idRealization },
     });
-    console.log(realization.roleAssignment);
+
     const empolyeePersonalNumber1 =
       realization.roleAssignment['employee']?.personalNumber ?? null;
     const empolyeePersonalNumber2 =
@@ -290,11 +290,11 @@ export class ApprovalService {
     const empolyeePersonalNumber3 =
       realization.roleAssignment['vicePresident']?.personalNumber ?? null;
     //const empolyeePersonalNumber = realization.roleAssignment['employee']?.personalNumber ?? null;
-    console.log(
-      empolyeePersonalNumber1,
-      empolyeePersonalNumber2,
-      empolyeePersonalNumber3,
-    );
+    // console.log(
+    //   empolyeePersonalNumber1,
+    //   empolyeePersonalNumber2,
+    //   empolyeePersonalNumber3,
+    // );
   }
 
   async approval(dto: ApproveDto) {
