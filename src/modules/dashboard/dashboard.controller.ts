@@ -26,14 +26,14 @@ export class DashboardController {
 
   @Get('/all')
   findAllWithPaginationAndFilter(
+    @Query('contributors') contributors: string,
     @Query('page') page: number,
-    @Query('perPage') perPage: number,
     @Query('orderBy') orderBy: string,
     @Query() queryParams: any,
   ) {
     return this.dashboardService.findAllWithPaginationAndFilter(
+      contributors,
       page,
-      perPage,
       orderBy,
       queryParams,
     );

@@ -53,12 +53,14 @@ export class DashboardService {
   }
 
   async findAllWithPaginationAndFilter(
+    contributors: string,
     page: number,
-    perPage,
     order: string = 'asc',
     queryParams: any,
   ) {
     try {
+      const perPage = 10;
+
       if (!['asc', 'desc'].includes(order.toLowerCase())) {
         throw new BadRequestException(
           'Invalid order parameter. Use "asc" or "desc".',
@@ -92,7 +94,12 @@ export class DashboardService {
 
       // Count total items with applied filters
       const totalItems = await this.prisma.realization.count({
-        where: filter,
+        where: {
+          ...filter,
+          contributors: {
+            has: contributors.toString(),
+          },
+        },
       });
 
       const skip = (page - 1) * perPage;
@@ -118,11 +125,16 @@ export class DashboardService {
 
       const realization = await this.prisma.realization.findMany({
         skip,
-        take: parseInt(perPage),
+        take: perPage,
         orderBy: {
           updatedAt: order.toLowerCase() as SortOrder,
         },
-        where: filter,
+        where: {
+          ...filter,
+          contributors: {
+            has: contributors.toString(),
+          },
+        },
         include: {
           m_cost_center: true,
           realizationItem: true,
