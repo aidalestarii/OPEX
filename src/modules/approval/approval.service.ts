@@ -502,9 +502,7 @@ export class ApprovalService {
         },
       });
 
-      const data = approvalList.map((approval) => ({
-        idRealization: realization.idRealization,
-        requestNumber: realization.requestNumber,
+      const listRemark = approvalList.map((approval) => ({
         idRemark: approval.idApproval,
         dateOfRemark: approval.createdAt,
         status: approval.status,
@@ -520,7 +518,11 @@ export class ApprovalService {
       const totalItemsPerPage = isLastPage ? remainingItems : perPage;
 
       return {
-        data,
+        data: {
+          idRealization: realization.idRealization,
+          requestNumber: realization.requestNumber,
+          listRemark,
+        },
         meta: {
           currentPage: Number(page),
           totalItems,
