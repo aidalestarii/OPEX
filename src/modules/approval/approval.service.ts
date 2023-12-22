@@ -409,7 +409,12 @@ export class ApprovalService {
     }
   }
 
-  async remark(page: number, order: string = 'asc', queryParams: any) {
+  async remark(
+    id: number,
+    page: number,
+    order: string = 'asc',
+    queryParams: any,
+  ) {
     try {
       const perPage = 10;
 
@@ -444,10 +449,17 @@ export class ApprovalService {
         };
       }
 
+      const realization = await this.prisma.realization.findUnique({
+        where: {
+          idRealization: id,
+        },
+      });
+
       // Count total items with applied filters
       const totalItems = await this.prisma.approval.count({
         where: {
           ...filter,
+          tableId: realization.idRealization,
           remark: {
             not: null,
           },
@@ -479,42 +491,29 @@ export class ApprovalService {
         skip,
         take: perPage,
         orderBy: {
-          createdAt: order.toLowerCase() as SortOrder,
+          createdAt: order.toLowerCase() as 'asc' | 'desc',
         },
         where: {
           ...filter,
+          tableId: realization.idRealization,
           remark: {
             not: null,
           },
         },
       });
 
-      const realization = approvalList.map((approval) => approval.tableId);
-
-      const realizationList = await this.prisma.realization.findMany({
-        where: {
-          idRealization: {
-            in: realization,
-          },
-        },
-      });
-
-      const data = approvalList.map((approval) => {
-        const relatedRealization = realizationList.find(
-          (realization) => realization.idRealization === approval.tableId,
-        );
-
-        return {
-          idRemark: approval.idApproval,
-          dateOfRemark: approval.createdAt,
-          status: approval.status,
-          statusFrom: approval.createdBy,
-          departmentFrom: approval.unit,
-          remark: approval.remark,
-          statusTo: relatedRealization.personalNumberTo,
-          departmentTo: relatedRealization.departmentTo,
-        };
-      });
+      const data = approvalList.map((approval) => ({
+        idRealization: realization.idRealization,
+        requestNumber: realization.requestNumber,
+        idRemark: approval.idApproval,
+        dateOfRemark: approval.createdAt,
+        status: approval.status,
+        statusFrom: approval.createdBy,
+        departmentFrom: approval.unit,
+        remark: approval.remark,
+        statusTo: realization.personalNumberTo,
+        departmentTo: realization.departmentTo,
+      }));
 
       const remainingItems = totalItems - skip;
       const isLastPage = page * perPage >= totalItems;
