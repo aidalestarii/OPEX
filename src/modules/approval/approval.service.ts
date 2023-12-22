@@ -409,12 +409,7 @@ export class ApprovalService {
     }
   }
 
-  async remark(
-    page: number,
-    order: string = 'asc',
-    personalNumberTo: string,
-    queryParams: any,
-  ) {
+  async remark(page: number, order: string = 'asc', queryParams: any) {
     try {
       const perPage = 10;
 
@@ -433,7 +428,7 @@ export class ApprovalService {
         filter.status = status;
       }
       if (statusTo) {
-        filter.unit = statusTo; // Assuming `statusTo` corresponds to `unit` in the `Approval` model
+        filter.unit = statusTo;
       }
 
       if (dateOfRemarkFrom && dateOfRemarkTo) {
@@ -510,13 +505,14 @@ export class ApprovalService {
         );
 
         return {
+          idRemark: approval.idApproval,
           dateOfRemark: approval.createdAt,
           status: approval.status,
           statusFrom: approval.createdBy,
           departmentFrom: approval.unit,
           remark: approval.remark,
-          statusTo: relatedRealization.createdBy,
-          departmentTo: relatedRealization.department,
+          statusTo: relatedRealization.personalNumberTo,
+          departmentTo: relatedRealization.departmentTo,
         };
       });
 

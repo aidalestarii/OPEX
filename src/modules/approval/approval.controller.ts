@@ -64,18 +64,12 @@ export class ApprovalController {
     return this.approvalService.take(+id, updateRealizationDto);
   }
 
-  @Get('remark')
+  @Get('remark/pageRemark')
   remark(
-    @Param('personalNumberTo') personalNumberTo: string,
     @Query('page') page: number,
     @Query('orderBy') orderBy: string,
     @Query() queryParams: any,
   ) {
-    return this.approvalService.remark(
-      page,
-      orderBy,
-      personalNumberTo,
-      queryParams,
-    );
+    return this.approvalService.remark(page, orderBy, queryParams);
   }
 }
