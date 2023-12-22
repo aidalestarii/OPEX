@@ -49,13 +49,13 @@ export class UpdateRealizationDto {
   updatedBy: string;
   roleAssignment: JSON;
 
-  readonly department: string;
+  department: string;
 
-  readonly personalNumber: string;
+  personalNumber: string;
 
-  readonly departmentTo: string;
+  departmentTo: string;
 
-  readonly personalNumberTo: string;
+  personalNumberTo: string;
 
   // @IsString()
   // @IsNotEmpty()
