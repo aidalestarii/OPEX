@@ -210,6 +210,7 @@ export class ApprovalService {
         idRealization: id,
       },
       include: {
+        m_cost_center: true,
         realizationItem: {
           include: {
             m_gl_account: true,
