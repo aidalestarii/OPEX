@@ -210,7 +210,11 @@ export class ApprovalService {
         idRealization: id,
       },
       include: {
-        realizationItem: true,
+        realizationItem: {
+          include: {
+            m_gl_account: true,
+          },
+        },
       },
     });
 
