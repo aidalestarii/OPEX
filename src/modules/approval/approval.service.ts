@@ -326,6 +326,9 @@ export class ApprovalService {
           realization.roleAssignment['vicePresident']?.personalNumber ?? null;
         departmentTo =
           realization.roleAssignment['vicePresident']?.personalUnit ?? null;
+      } else if (updateRealizationDto.statusToId === 5) {
+        personalNumberTo = null;
+        departmentTo = 'TAB';
       }
 
       const updatedRealization = await this.prisma.realization.update({

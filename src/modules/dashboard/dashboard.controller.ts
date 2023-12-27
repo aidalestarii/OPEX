@@ -26,11 +26,13 @@ export class DashboardController {
 
   @Get('/all')
   findAllWithPaginationAndFilter(
+    //@Query('role') role: string,
     @Query('page') page: number,
     @Query('orderBy') orderBy: string,
     @Query() queryParams: any,
   ) {
     return this.dashboardService.findAllWithPaginationAndFilter(
+      // role,
       page,
       orderBy,
       queryParams,

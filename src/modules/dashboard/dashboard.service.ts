@@ -53,6 +53,7 @@ export class DashboardService {
   }
 
   async findAllWithPaginationAndFilter(
+    //  role: string,
     page: number,
     order: string = 'asc',
     queryParams: any,

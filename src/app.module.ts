@@ -12,6 +12,7 @@ import { DashboardModule } from './modules/dashboard/dashboard.module';
 import { MasterStatusModule } from './modules/master_status/master_status.module';
 import { ApprovalModule } from './modules/approval/approval.module';
 import { RoleModule } from './modules/role/role.module';
+import { ReportModule } from './modules/report/report.module';
 
 @Module({
   imports: [
@@ -26,6 +27,7 @@ import { RoleModule } from './modules/role/role.module';
     MasterStatusModule,
     ApprovalModule,
     RoleModule,
+    ReportModule,
   ],
   controllers: [AppController],
   providers: [AppService],
