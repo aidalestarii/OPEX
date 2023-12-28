@@ -97,6 +97,23 @@ export class BudgetUploadService {
               ...data,
               createdBy,
             },
+            include: {
+              mGlAccount: {
+                select: {
+                  idGlAccount: true,
+                  glAccount: true,
+                  groupGl: true,
+                  groupDetail: true,
+                },
+              },
+              mCostCenter: {
+                select: {
+                  idCostCenter: true,
+                  costCenter: true,
+                  dinas: true,
+                },
+              },
+            },
           });
           return prismaResult;
         }),
