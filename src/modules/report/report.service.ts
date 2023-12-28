@@ -367,8 +367,50 @@ export class ReportService {
     }
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} report`;
+  async findOne(queryParams: any) {
+    const { years, costCenter } = queryParams;
+
+    // Logika filter sesuai dengan kebutuhan
+    let filter: any = {};
+    if (years) {
+      filter.years = +years; // konversi ke number jika diperlukan
+    }
+    if (costCenter) {
+      filter.mCostCenter = { dinas: costCenter };
+    }
+    const results = await this.prisma.budget.findMany({
+      where: filter, // Apply the filter to the query
+      include: {
+        mGlAccount: {
+          select: {
+            idGlAccount: true,
+            glAccount: true,
+            groupGl: true,
+            groupDetail: true,
+          },
+        },
+        mCostCenter: {
+          select: {
+            idCostCenter: true,
+            costCenter: true,
+            dinas: true,
+          },
+        },
+      },
+    });
+    const allGlAccounts = await this.prisma.mGlAccount.findMany();
+    const groupedData = allGlAccounts.reduce((result, glAccount) => {
+      const { groupGl, groupDetail } = glAccount;
+
+      if (!result[groupGl]) {
+        result[groupGl] = [];
+      }
+
+      result[groupGl].push(groupDetail);
+
+      return result;
+    }, {});
+    const uniqueGroupGlValues = Object.keys(groupedData);
   }
 
   update(id: number, updateReportDto: UpdateReportDto) {

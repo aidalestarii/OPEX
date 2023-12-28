@@ -394,6 +394,7 @@ model RealizationItem {
   amountSubmission  Float    @map("amount_submission") @db.DoublePrecision
   amountHps         Float?   @map("amount_hps") @db.DoublePrecision
   amountCorrection  Float?   @map("amount_correction") @db.DoublePrecision
+  amountApprove     Float?   @map("amount_approve") @db.DoublePrecision
   periodStart       DateTime @map("period_start") @db.Date
   periodFinish      DateTime @map("period_finish") @db.Date
   descPby           String   @map("desc_pby")
