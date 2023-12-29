@@ -326,7 +326,7 @@ export class ApprovalService {
           realization.roleAssignment['vicePresident']?.personalNumber ?? null;
         departmentTo =
           realization.roleAssignment['vicePresident']?.personalUnit ?? null;
-      } else if (updateRealizationDto.statusToId === 5) {
+      } else if (updateRealizationDto.statusToId === 6) {
         personalNumberTo = null;
         departmentTo = 'TAB';
       }

@@ -378,6 +378,8 @@ export class ReportService {
     if (costCenter) {
       filter.mCostCenter = { dinas: costCenter };
     }
+
+    // Panggil metode prisma atau logika lainnya dengan filter
     const results = await this.prisma.budget.findMany({
       where: filter, // Apply the filter to the query
       include: {
@@ -398,6 +400,12 @@ export class ReportService {
         },
       },
     });
+
+    if (!results || results.length === 0) {
+      throw new NotFoundException(
+        'No realizations found with the specified filter.',
+      );
+    }
     const allGlAccounts = await this.prisma.mGlAccount.findMany();
     const groupedData = allGlAccounts.reduce((result, glAccount) => {
       const { groupGl, groupDetail } = glAccount;
@@ -411,6 +419,99 @@ export class ReportService {
       return result;
     }, {});
     const uniqueGroupGlValues = Object.keys(groupedData);
+
+    function sumByGroup(results, group, detail = null) {
+      return results
+        .filter((item) =>
+          detail
+            ? item.mGlAccount.groupGl === group &&
+              item.mGlAccount.groupDetail === detail
+            : item.mGlAccount.groupGl === group,
+        )
+        .reduce((sum, item) => sum + item.total, 0);
+    }
+
+    function getGlAccount(results, group, detail) {
+      return results
+        .filter(
+          (item) =>
+            item.mGlAccount.groupGl === group &&
+            item.mGlAccount.groupDetail === detail,
+        )
+        .reduce((acc, item) => {
+          // Anda dapat menyesuaikan nilai sesuai kebutuhan
+          return parseInt(item.mGlAccount.glAccount);
+        }, {});
+    }
+    function getTotalSum(results) {
+      return uniqueGroupGlValues.reduce((total, group) => {
+        const groupTotal = sumByGroup(results, group);
+        return total + groupTotal;
+      }, 0);
+    }
+
+    //For Detail or Child or Nested
+    const createCategoryObject = (group, detail, results) => {
+      const monthTotalKey = `month${detail.replace(/\s+/g, '')}`;
+      return {
+        glAccount: getGlAccount(results, group, detail),
+        total: sumByGroup(results, group, detail),
+        //[monthTotalKey]: sumByGroupAndMonth(results, group, detail),
+      };
+    };
+
+    //For Parent
+    const convertToCategoryObject = (group, details, results) => {
+      const categoryObject = {
+        total: sumByGroup(results, group),
+        //monthTotal: sumByGroupAndMonth(results, group),
+        details: {},
+      };
+
+      details.forEach((detail) => {
+        categoryObject.details[detail] = createCategoryObject(
+          group,
+          detail,
+          results,
+        );
+      });
+      return categoryObject;
+    };
+
+    const categories = Object.keys(groupedData).reduce((result, group) => {
+      const categoryObject = convertToCategoryObject(
+        group,
+        groupedData[group],
+        results,
+      );
+
+      // Menghilangkan tingkat "details" dan menyertakan nilainya langsung
+      result[group] = {
+        title: group,
+        total: categoryObject.total,
+        groupDetail: Object.keys(categoryObject.details).map((detail) => {
+          const subcategoryObject = categoryObject.details[detail];
+          const subcategoryMonthTotalKey = `month${detail.replace(/\s+/g, '')}`;
+
+          return {
+            title: detail,
+            glNumber: subcategoryObject.glAccount,
+            total: subcategoryObject.total,
+          };
+        }),
+      };
+
+      return result;
+    }, {});
+
+    const DirectExpenses = {
+      title: 'All Direct Expenses',
+      total: getTotalSum(results),
+    };
+
+    const finalResult = [DirectExpenses, ...Object.values(categories)];
+
+    return finalResult;
   }
 
   update(id: number, updateReportDto: UpdateReportDto) {
