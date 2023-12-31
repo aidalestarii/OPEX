@@ -85,7 +85,7 @@ export class RealizationService {
 
           if (status && status == 'submit') {
             statusTom = 2;
-            statusToTom = 3;
+            statusToTom = 4;
             requestNumber = await this.generateRequestNumber(
               createRealization.costCenterId,
             );
@@ -112,12 +112,13 @@ export class RealizationService {
               department: department,
               personalNumber: realizationData.personalNumber,
               departmentTo: roleAssignment?.seniorManager?.personalUnit || null,
-              personalNumberTo: roleAssignment?.manager?.personalNumber || null,
+              personalNumberTo:
+                roleAssignment?.seniorManager?.personalNumber || null,
               createdBy: realizationData.createdBy,
               status: StatusEnum.OPEN,
               type: realizationData.type,
               roleAssignment: dtoRoleAssignment,
-              contributors: [realizationData.createdBy],
+              contributors: null,
               m_status_realization_id_statusTom_status: {
                 connect: {
                   idStatus: statusTom,

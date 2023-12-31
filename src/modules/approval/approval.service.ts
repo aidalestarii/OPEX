@@ -316,11 +316,6 @@ export class ApprovalService {
       if (updateRealizationDto.statusToId === null) {
         personalNumberTo = null;
         departmentTo = null;
-      } else if (updateRealizationDto.statusToId === 4) {
-        personalNumberTo =
-          realization.roleAssignment['seniorManager']?.personalNumber ?? null;
-        departmentTo =
-          realization.roleAssignment['seniorManager']?.personalUnit ?? null;
       } else if (updateRealizationDto.statusToId === 5) {
         personalNumberTo =
           realization.roleAssignment['vicePresident']?.personalNumber ?? null;
@@ -372,6 +367,7 @@ export class ApprovalService {
           message: 'Failed to update Realization and insert Approval',
           status: HttpStatus.INTERNAL_SERVER_ERROR,
           time: new Date(),
+          error: error.message,
         },
         HttpStatus.INTERNAL_SERVER_ERROR,
       );
@@ -411,6 +407,7 @@ export class ApprovalService {
           message: 'Failed to update Realization and insert Approval',
           status: HttpStatus.INTERNAL_SERVER_ERROR,
           time: new Date(),
+          error: error.message,
         },
         HttpStatus.INTERNAL_SERVER_ERROR,
       );
