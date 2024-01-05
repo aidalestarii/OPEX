@@ -56,6 +56,7 @@ export class UpdateRealizationDto {
   departmentTo: string;
 
   personalNumberTo: string;
+  contributors;
 
   // @IsString()
   // @IsNotEmpty()
