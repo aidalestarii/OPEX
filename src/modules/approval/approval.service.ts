@@ -9,15 +9,23 @@ import {
 import { ApprovalDto, ApproveDto } from './dto/create-approval.dto';
 import { UpdateApprovalDto } from './dto/update-approval.dto';
 import { PrismaService } from 'src/core/service/prisma.service';
-import { StatusEnum } from '@prisma/client';
+import { PrismaClient, StatusEnum } from '@prisma/client';
 import { UpdateRealizationDto } from '../realization/dto/update-realization.dto';
 import { SortOrder } from '@elastic/elasticsearch/lib/api/types';
-import { status } from 'prisma/dummy-data';
-import { JsonObject } from '@prisma/client/runtime/library';
+import { RoleService } from '../role/role.service';
+import { HttpService } from '@nestjs/axios';
+import { AllRoleDto } from '../realization/dto/create-realization.dto';
 
 @Injectable()
 export class ApprovalService {
-  constructor(private readonly prisma: PrismaService) {}
+  httpService: HttpService;
+  prismaService: PrismaClient;
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly roleService: RoleService,
+  ) {
+    this.prismaService = new PrismaClient();
+  }
 
   async countNeedApproval(personalNumberTo: string) {
     try {
@@ -54,6 +62,8 @@ export class ApprovalService {
     order: string = 'asc',
     personalNumberTo: string,
     queryParams: any,
+    isTAB: boolean,
+    isTXC_3: boolean,
   ) {
     try {
       const perPage = 10;
@@ -109,12 +119,38 @@ export class ApprovalService {
       }
 
       // Count total items with applied filters
-      const totalItems = await this.prisma.realization.count({
-        where: {
-          ...filter,
-          personalNumberTo: personalNumberTo,
-        },
-      });
+      let totalItems: number;
+
+      if (isTAB) {
+        totalItems = await this.prisma.realization.count({
+          where: {
+            ...filter,
+            OR: [
+              { personalNumberTo: personalNumberTo },
+              { personalNumberTo: null, departmentTo: 'TAB' },
+            ],
+          },
+        });
+      }
+
+      if ((isTXC_3 = true)) {
+        totalItems = await this.prisma.realization.count({
+          where: {
+            ...filter,
+            OR: [
+              { personalNumberTo: personalNumberTo },
+              { personalNumberTo: null, departmentTo: 'TXC_3' },
+            ],
+          },
+        });
+      } else {
+        totalItems = await this.prisma.realization.count({
+          where: {
+            ...filter,
+            personalNumberTo: personalNumberTo,
+          },
+        });
+      }
 
       const skip = (page - 1) * perPage;
 
@@ -178,6 +214,14 @@ export class ApprovalService {
 
       const totalItemsPerPage = isLastPage ? remainingItems : perPage;
 
+      console.log(
+        'Query Parameters:',
+        page,
+        personalNumberTo,
+        queryParams,
+        isTAB,
+        isTXC_3,
+      );
       return {
         data: realizationWithFileUpload,
         meta: {
@@ -284,30 +328,16 @@ export class ApprovalService {
     return realization;
   }
 
-  async getNopeg(idRealization: number) {
-    const realization = await this.prisma.realization.findUnique({
-      where: { idRealization },
-    });
-
-    const empolyeePersonalNumber1 =
-      realization.roleAssignment['employee']?.personalNumber ?? null;
-    const empolyeePersonalNumber2 =
-      realization.roleAssignment['seniorManager']?.personalNumber ?? null;
-    const empolyeePersonalNumber3 =
-      realization.roleAssignment['vicePresident']?.personalNumber ?? null;
-    //const empolyeePersonalNumber = realization.roleAssignment['employee']?.personalNumber ?? null;
-    // console.log(
-    //   empolyeePersonalNumber1,
-    //   empolyeePersonalNumber2,
-    //   empolyeePersonalNumber3,
-    // );
-  }
-
   async approval(dto: ApproveDto) {
     const { idRealization, updateRealizationDto, approvalDto } = dto;
     const realization = await this.prisma.realization.findUnique({
       where: { idRealization },
     });
+    if (!realization) {
+      throw new NotFoundException(
+        `Realization with id ${idRealization} not found`,
+      );
+    }
 
     try {
       let personalNumberTo: string | null = null;
@@ -383,12 +413,19 @@ export class ApprovalService {
     }
     try {
       let contributorsArray = realization.contributors || [];
+      let roleAssignment = realization.roleAssignment;
+      let dtoRoleAssignment = null;
 
       if (
         updateRealizationDto.personalNumberTo === null &&
         contributorsArray.length > 0
       ) {
         contributorsArray.pop();
+
+        // roleAssignment = await this.roleService.getUserData(
+        //   updateRealizationDto.personalNumberTo,
+        // );
+        // dtoRoleAssignment = this.mapRoleAssignment(roleAssignment);
       } else if (updateRealizationDto.personalNumberTo !== null) {
         contributorsArray.push(updateRealizationDto.personalNumberTo);
       }
@@ -426,6 +463,17 @@ export class ApprovalService {
         HttpStatus.INTERNAL_SERVER_ERROR,
       );
     }
+  }
+
+  private mapRoleAssignment(roleAssignment: any) {
+    const roleKeys = AllRoleDto.propertyNames;
+    const mappedRoleAssignment: any = {};
+
+    roleKeys.forEach((key) => {
+      mappedRoleAssignment[key] = roleAssignment?.[key] ?? null;
+    });
+
+    return mappedRoleAssignment;
   }
 
   async remark(

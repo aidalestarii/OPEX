@@ -1,5 +1,6 @@
 import { StatusEnum } from '@prisma/client';
 import {
+  IsBoolean,
   IsEnum,
   IsNotEmpty,
   IsNumber,

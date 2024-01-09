@@ -16,10 +16,10 @@ import { AllRoleDto } from '../realization/dto/create-realization.dto';
 export class RoleController {
   constructor(private readonly roleService: RoleService) {}
 
-  @Get(':personalNumber')
+  @Get(':personalNumberTo')
   async getSample(
-    @Param('personalNumber') personalNumber: string,
+    @Param('personalNumberTo') personalNumberTo: string,
   ): Promise<Partial<RoleDto>> {
-    return this.roleService.getRole(personalNumber);
+    return this.roleService.getRole(personalNumberTo);
   }
 }
