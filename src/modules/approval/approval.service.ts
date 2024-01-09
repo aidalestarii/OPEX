@@ -118,39 +118,34 @@ export class ApprovalService {
         };
       }
 
-      // Count total items with applied filters
-      let totalItems: number;
-
+      let conditions: any;
       if (isTAB) {
-        totalItems = await this.prisma.realization.count({
-          where: {
-            ...filter,
-            OR: [
-              { personalNumberTo: personalNumberTo },
-              { personalNumberTo: null, departmentTo: 'TAB' },
-            ],
-          },
-        });
+        conditions = {
+          ...filter,
+          OR: [
+            { personalNumberTo: personalNumberTo },
+            { personalNumberTo: null, departmentTo: 'TAB' },
+          ],
+        };
+      } else if (isTXC_3) {
+        conditions = {
+          ...filter,
+          OR: [
+            { personalNumberTo: personalNumberTo },
+            { personalNumberTo: null, departmentTo: 'TXC_3' },
+          ],
+        };
+      } else {
+        conditions = {
+          ...filter,
+          personalNumberTo: personalNumberTo,
+        };
       }
 
-      if ((isTXC_3 = true)) {
-        totalItems = await this.prisma.realization.count({
-          where: {
-            ...filter,
-            OR: [
-              { personalNumberTo: personalNumberTo },
-              { personalNumberTo: null, departmentTo: 'TXC_3' },
-            ],
-          },
-        });
-      } else {
-        totalItems = await this.prisma.realization.count({
-          where: {
-            ...filter,
-            personalNumberTo: personalNumberTo,
-          },
-        });
-      }
+      // Count total items with applied filters
+      const totalItems = await this.prisma.realization.count({
+        where: conditions,
+      });
 
       const skip = (page - 1) * perPage;
 
@@ -179,10 +174,7 @@ export class ApprovalService {
         orderBy: {
           createdAt: order.toLowerCase() as SortOrder,
         },
-        where: {
-          ...filter,
-          personalNumberTo: personalNumberTo,
-        },
+        where: conditions,
         include: {
           realizationItem: true,
         },
@@ -214,14 +206,6 @@ export class ApprovalService {
 
       const totalItemsPerPage = isLastPage ? remainingItems : perPage;
 
-      console.log(
-        'Query Parameters:',
-        page,
-        personalNumberTo,
-        queryParams,
-        isTAB,
-        isTXC_3,
-      );
       return {
         data: realizationWithFileUpload,
         meta: {
@@ -354,6 +338,24 @@ export class ApprovalService {
       } else if (updateRealizationDto.statusToId === 6) {
         personalNumberTo = null;
         departmentTo = 'TAB';
+      } else if (updateRealizationDto.statusToId === 7) {
+        personalNumberTo =
+          realization.roleAssignment['SM_TAB']?.personalNumber ?? null;
+        departmentTo =
+          realization.roleAssignment['SM_TAB']?.personalUnit ?? null;
+      } else if (updateRealizationDto.statusToId === 8) {
+        personalNumberTo =
+          realization.roleAssignment['vicePresidentTA']?.personalNumber ?? null;
+        departmentTo =
+          realization.roleAssignment['vicePresidentTA']?.personalUnit ?? null;
+      } else if (updateRealizationDto.statusToId === 9) {
+        personalNumberTo = null;
+        departmentTo = 'TXC - 3';
+      } else if (updateRealizationDto.statusToId === 10) {
+        personalNumberTo =
+          realization.roleAssignment['vicePresidentTX']?.personalNumber ?? null;
+        departmentTo =
+          realization.roleAssignment['vicePresidentTX']?.personalUnit ?? null;
       }
 
       const updatedRealization = await this.prisma.realization.update({
