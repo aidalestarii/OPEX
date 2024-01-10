@@ -63,7 +63,7 @@ export class ApprovalService {
     personalNumberTo: string,
     queryParams: any,
     isTAB: boolean,
-    isTXC_3: boolean,
+    isTXC3: boolean,
   ) {
     try {
       const perPage = 10;
@@ -127,7 +127,7 @@ export class ApprovalService {
             { personalNumberTo: null, departmentTo: 'TAB' },
           ],
         };
-      } else if (isTXC_3 === true) {
+      } else if (isTXC3 === true) {
         conditions = {
           ...filter,
           OR: [
@@ -312,25 +312,6 @@ export class ApprovalService {
     return realization;
   }
 
-  async generateTAReff(id: number): Promise<string> {
-    const year = new Date().getFullYear();
-    const month = (new Date().getMonth() + 1).toString().padStart(2, '0');
-
-    const realization = await this.prisma.realization.findUnique({
-      where: {
-        idRealization: id,
-      },
-      include: {
-        m_cost_center: true,
-      },
-    });
-    const dinas = realization.m_cost_center.dinas;
-
-    const requestNumber = `TAB/RA.${dinas}/${month}.${id}/${year}`;
-
-    return requestNumber;
-  }
-
   async approval(dto: ApproveDto) {
     const { idRealization, updateRealizationDto, approvalDto } = dto;
     const realization = await this.prisma.realization.findUnique({
@@ -345,6 +326,7 @@ export class ApprovalService {
     try {
       let personalNumberTo: string | null = null;
       let departmentTo: string | null = null;
+      let taReff: string | null = null;
 
       if (updateRealizationDto.statusToId === null) {
         personalNumberTo = null;
@@ -428,6 +410,25 @@ export class ApprovalService {
         HttpStatus.INTERNAL_SERVER_ERROR,
       );
     }
+  }
+
+  async generateTAReff(id: number): Promise<string> {
+    const year = new Date().getFullYear();
+    const month = (new Date().getMonth() + 1).toString().padStart(2, '0');
+
+    const realization = await this.prisma.realization.findUnique({
+      where: {
+        idRealization: id,
+      },
+      include: {
+        m_cost_center: true,
+      },
+    });
+    const dinas = realization.m_cost_center.dinas;
+
+    const tAReff = `TAB/RA.${dinas}/${month}.${id}/${year}`;
+
+    return tAReff;
   }
 
   async take(id: number, updateRealizationDto: UpdateRealizationDto) {
