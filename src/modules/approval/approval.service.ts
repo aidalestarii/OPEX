@@ -132,7 +132,7 @@ export class ApprovalService {
           ...filter,
           OR: [
             { personalNumberTo: personalNumberTo },
-            { personalNumberTo: null, departmentTo: 'TXC_3' },
+            { personalNumberTo: null, departmentTo: 'TXC-3' },
           ],
         };
       } else {
