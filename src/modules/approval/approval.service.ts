@@ -119,7 +119,7 @@ export class ApprovalService {
       }
 
       let conditions: any;
-      if (isTAB) {
+      if (isTAB === true) {
         conditions = {
           ...filter,
           OR: [
@@ -127,7 +127,7 @@ export class ApprovalService {
             { personalNumberTo: null, departmentTo: 'TAB' },
           ],
         };
-      } else if (isTXC_3) {
+      } else if (isTXC_3 === true) {
         conditions = {
           ...filter,
           OR: [
@@ -312,6 +312,25 @@ export class ApprovalService {
     return realization;
   }
 
+  async generateTAReff(id: number): Promise<string> {
+    const year = new Date().getFullYear();
+    const month = (new Date().getMonth() + 1).toString().padStart(2, '0');
+
+    const realization = await this.prisma.realization.findUnique({
+      where: {
+        idRealization: id,
+      },
+      include: {
+        m_cost_center: true,
+      },
+    });
+    const dinas = realization.m_cost_center.dinas;
+
+    const requestNumber = `TAB/RA.${dinas}/${month}.${id}/${year}`;
+
+    return requestNumber;
+  }
+
   async approval(dto: ApproveDto) {
     const { idRealization, updateRealizationDto, approvalDto } = dto;
     const realization = await this.prisma.realization.findUnique({
@@ -330,6 +349,11 @@ export class ApprovalService {
       if (updateRealizationDto.statusToId === null) {
         personalNumberTo = null;
         departmentTo = null;
+      } else if (updateRealizationDto.statusToId === 1) {
+        personalNumberTo =
+          realization.roleAssignment['employee']?.personalNumber ?? null;
+        departmentTo =
+          realization.roleAssignment['employee']?.personalUnit ?? null;
       } else if (updateRealizationDto.statusToId === 5) {
         personalNumberTo =
           realization.roleAssignment['vicePresident']?.personalNumber ?? null;
@@ -350,7 +374,7 @@ export class ApprovalService {
           realization.roleAssignment['vicePresidentTA']?.personalUnit ?? null;
       } else if (updateRealizationDto.statusToId === 9) {
         personalNumberTo = null;
-        departmentTo = 'TXC - 3';
+        departmentTo = 'TXC-3';
       } else if (updateRealizationDto.statusToId === 10) {
         personalNumberTo =
           realization.roleAssignment['vicePresidentTX']?.personalNumber ?? null;

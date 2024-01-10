@@ -31,7 +31,7 @@ export class RealizationService {
 
   async generateRequestNumber(idCostCenter: number): Promise<string> {
     const year = new Date().getFullYear() % 100;
-    const month = new Date().getMonth() + 1;
+    const month = (new Date().getMonth() + 1).toString().padStart(2, '0');
 
     const maxId = await this.prisma.realization.aggregate({
       _max: {
