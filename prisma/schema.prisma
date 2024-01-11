@@ -286,7 +286,7 @@ model Realization {
   costCenterId     Int                 @map("cost_center_id") @db.Integer
   draftNumber      Int                 @default(autoincrement()) @map("no_draft") @db.Integer
   requestNumber    String?             @map("no_request")
-  taReff           Int?                @map("ta_reff") @db.Integer
+  taReff           String?             @map("ta_reff") @db.VarChar
   type             RealizationTypeEnum @default(UANG_MUKA) @map("type")
   typeOfLetter     String              @default("Realisasi Anggaran") @map("type_of_letter")
   responsibleNopeg String              @map("responsible_nopeg") @db.VarChar(8)

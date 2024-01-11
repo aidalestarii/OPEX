@@ -326,7 +326,6 @@ export class ApprovalService {
       let personalNumberTo: string | null = null;
       let departmentTo: string | null = null;
       let taReff: string | null = null;
-
       if (updateRealizationDto.statusToId === null) {
         personalNumberTo = null;
         departmentTo = null;
@@ -344,10 +343,12 @@ export class ApprovalService {
         personalNumberTo = null;
         departmentTo = 'TAB';
       } else if (updateRealizationDto.statusToId === 7) {
+        taReff = await this.generateTAReff(idRealization);
         personalNumberTo =
           realization.roleAssignment['SM_TAB']?.personalNumber ?? null;
         departmentTo =
           realization.roleAssignment['SM_TAB']?.personalUnit ?? null;
+        taReff = taReff;
       } else if (updateRealizationDto.statusToId === 8) {
         personalNumberTo =
           realization.roleAssignment['vicePresidentTA']?.personalNumber ?? null;
@@ -366,6 +367,7 @@ export class ApprovalService {
       const updatedRealization = await this.prisma.realization.update({
         where: { idRealization: idRealization },
         data: {
+          taReff: taReff,
           status: updateRealizationDto.status,
           statusId: updateRealizationDto.statusId,
           statusToId: updateRealizationDto.statusToId,
@@ -411,7 +413,7 @@ export class ApprovalService {
     }
   }
 
-  async generateTAReff(id: number): Promise<string> {
+  private async generateTAReff(id: number): Promise<string> {
     const year = new Date().getFullYear();
     const month = (new Date().getMonth() + 1).toString().padStart(2, '0');
 
@@ -425,7 +427,7 @@ export class ApprovalService {
     });
     const dinas = realization.m_cost_center.dinas;
 
-    const tAReff = `TAB/RA.${dinas}/${month}.${id}/${year}`;
+    const tAReff = `TAB/RA.${dinas}/${month}.0${id}/${year}`;
 
     return tAReff;
   }
