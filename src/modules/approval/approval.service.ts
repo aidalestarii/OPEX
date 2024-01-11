@@ -14,7 +14,6 @@ import { UpdateRealizationDto } from '../realization/dto/update-realization.dto'
 import { SortOrder } from '@elastic/elasticsearch/lib/api/types';
 import { RoleService } from '../role/role.service';
 import { HttpService } from '@nestjs/axios';
-import { AllRoleDto } from '../realization/dto/create-realization.dto';
 
 @Injectable()
 export class ApprovalService {
@@ -431,30 +430,41 @@ export class ApprovalService {
     return tAReff;
   }
 
-  async take(id: number, updateRealizationDto: UpdateRealizationDto) {
+  async take(
+    id: number,
+    updateRealizationDto: UpdateRealizationDto,
+    isTAB: boolean,
+    isTXC3: boolean,
+  ) {
     const realization = await this.prisma.realization.findUnique({
       where: { idRealization: id },
     });
     if (!realization) {
       throw new NotFoundException(`Realization with ID ${id} not found`);
     }
+    let conditions: string;
+    if (isTAB === true && isTXC3 === false) {
+      conditions = 'TAB';
+    } else if (isTAB === false && isTXC3 === true) {
+      conditions = 'TXC_3';
+    } else {
+      throw new BadRequestException('Invalid conditions');
+    }
     try {
       let contributorsArray = realization.contributors || [];
-      let roleAssignment = realization.roleAssignment;
-      let dtoRoleAssignment = null;
+      let roleAssignment = realization.roleAssignment || {};
 
       if (
         updateRealizationDto.personalNumberTo === null &&
         contributorsArray.length > 0
       ) {
         contributorsArray.pop();
-
-        // roleAssignment = await this.roleService.getUserData(
-        //   updateRealizationDto.personalNumberTo,
-        // );
-        // dtoRoleAssignment = this.mapRoleAssignment(roleAssignment);
+        roleAssignment[conditions] = null;
       } else if (updateRealizationDto.personalNumberTo !== null) {
         contributorsArray.push(updateRealizationDto.personalNumberTo);
+        roleAssignment[conditions] = await this.roleService.getUserData(
+          updateRealizationDto.personalNumberTo,
+        );
       }
 
       const updatedRealization = await this.prisma.realization.update({
@@ -466,6 +476,7 @@ export class ApprovalService {
           contributors: {
             set: contributorsArray,
           },
+          roleAssignment: roleAssignment,
         },
       });
 
@@ -490,17 +501,6 @@ export class ApprovalService {
         HttpStatus.INTERNAL_SERVER_ERROR,
       );
     }
-  }
-
-  private mapRoleAssignment(roleAssignment: any) {
-    const roleKeys = AllRoleDto.propertyNames;
-    const mappedRoleAssignment: any = {};
-
-    roleKeys.forEach((key) => {
-      mappedRoleAssignment[key] = roleAssignment?.[key] ?? null;
-    });
-
-    return mappedRoleAssignment;
   }
 
   async remark(

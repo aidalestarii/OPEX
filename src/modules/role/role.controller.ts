@@ -20,6 +20,6 @@ export class RoleController {
   async getSample(
     @Param('personalNumberTo') personalNumberTo: string,
   ): Promise<Partial<RoleDto>> {
-    return this.roleService.getRole(personalNumberTo);
+    return this.roleService.getUserData(personalNumberTo);
   }
 }
