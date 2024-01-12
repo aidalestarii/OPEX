@@ -9,10 +9,16 @@ import { CreateReportDto } from './dto/create-report.dto';
 import { UpdateReportDto } from './dto/update-report.dto';
 import { PrismaService } from 'src/core/service/prisma.service';
 import { SortOrder } from '@elastic/elasticsearch/lib/api/types';
+import { RoleService } from '../role/role.service';
+import { HttpService } from '@nestjs/axios';
 
 @Injectable()
 export class ReportService {
-  constructor(private readonly prisma: PrismaService) {}
+  httpService: HttpService;
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly roleService: RoleService,
+  ) {}
 
   create(createReportDto: CreateReportDto) {
     return 'This action adds a new report';

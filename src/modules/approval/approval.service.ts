@@ -18,13 +18,10 @@ import { HttpService } from '@nestjs/axios';
 @Injectable()
 export class ApprovalService {
   httpService: HttpService;
-  prismaService: PrismaClient;
   constructor(
     private readonly prisma: PrismaService,
     private readonly roleService: RoleService,
-  ) {
-    this.prismaService = new PrismaClient();
-  }
+  ) {}
 
   async countNeedApproval(personalNumberTo: string) {
     try {
