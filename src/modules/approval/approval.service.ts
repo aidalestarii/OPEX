@@ -183,30 +183,37 @@ export class ApprovalService {
       const remainingItems = totalItems - skip;
       const isLastPage = page * perPage >= totalItems;
 
-      const realizationWithFileUpload = realization.map((realizationItem) => {
-        const totalAmount = realizationItem.realizationItem.reduce(
-          (accumulator, currentItem) => accumulator + (currentItem.amount || 0),
-          0,
-        );
+      const realizationData = await Promise.all(
+        realization.map(async (realizationItem) => {
+          const totalAmount = realizationItem.realizationItem.reduce(
+            (accumulator, currentItem) =>
+              accumulator + (currentItem.amount || 0),
+            0,
+          );
+          const name =
+            realizationItem.personalNumberTo !== null
+              ? await this.roleService.getName(realizationItem.personalNumberTo)
+              : null;
 
-        return {
-          idRealization: realizationItem.idRealization,
-          taReff: realizationItem.taReff,
-          requestNumber: realizationItem.requestNumber,
-          typeOfLetter: realizationItem.typeOfLetter,
-          entryDate: realizationItem.createdAt,
-          amountSubmission: totalAmount,
-          status: realizationItem.status,
-          statusTo: realizationItem.personalNumberTo,
-          departmentTo: realizationItem.departmentTo,
-          description: realizationItem.titleRequest,
-        };
-      });
+          return {
+            idRealization: realizationItem.idRealization,
+            taReff: realizationItem.taReff,
+            requestNumber: realizationItem.requestNumber,
+            typeOfLetter: realizationItem.typeOfLetter,
+            entryDate: realizationItem.createdAt,
+            amountSubmission: totalAmount,
+            status: realizationItem.status,
+            statusTo: name !== null ? name : null,
+            departmentTo: realizationItem.departmentTo,
+            description: realizationItem.titleRequest,
+          };
+        }),
+      );
 
       const totalItemsPerPage = isLastPage ? remainingItems : perPage;
 
       return {
-        data: realizationWithFileUpload,
+        data: realizationData,
         meta: {
           currentPage: Number(page),
           totalItems,
@@ -342,8 +349,8 @@ export class ApprovalService {
       } else if (updateRealizationDto.statusToId === 6) {
         personalNumberTo = null;
         departmentTo = 'TAB';
-      } else if (updateRealizationDto.statusToId === 7) {
         taReff = await this.generateTAReff(idRealization);
+      } else if (updateRealizationDto.statusToId === 7) {
         personalNumberTo =
           realization.roleAssignment['SM_TAB']?.personalNumber ?? null;
         departmentTo =

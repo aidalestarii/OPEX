@@ -112,4 +112,23 @@ export class RoleService {
     // console.log(result2);
     return result2;
   }
+
+  async getName(personalNumber: string): Promise<RoleDto> {
+    const apiUrl = `https://api.gmf-aeroasia.co.id/th/soev2/v2/employee/${personalNumber}`;
+    const headers = {
+      'x-api-key': this.apiKey,
+    };
+
+    let result;
+
+    await lastValueFrom(
+      this.httpService.get(apiUrl, { headers }).pipe(
+        tap((v) => {
+          result = v.data;
+        }),
+      ),
+    );
+
+    return result.body.personalName;
+  }
 }

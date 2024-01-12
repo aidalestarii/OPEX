@@ -9,10 +9,16 @@ import { CreateDashboardDto } from './dto/create-dashboard.dto';
 import { UpdateDashboardDto } from './dto/update-dashboard.dto';
 import { PrismaService } from 'src/core/service/prisma.service';
 import { SortOrder } from '@elastic/elasticsearch/lib/api/types';
+import { RoleService } from '../role/role.service';
+import { HttpService } from '@nestjs/axios';
 
 @Injectable()
 export class DashboardService {
-  constructor(private readonly prisma: PrismaService) {}
+  httpService: HttpService;
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly roleService: RoleService,
+  ) {}
 
   async findAll() {
     const realization = await this.prisma.realization.findMany({
@@ -137,30 +143,37 @@ export class DashboardService {
       const remainingItems = totalItems - skip;
       const isLastPage = page * perPage >= totalItems;
 
-      const realizationWithFileUpload = realization.map((realizationItem) => {
-        const totalAmount = realizationItem.realizationItem.reduce(
-          (accumulator, currentItem) => accumulator + (currentItem.amount || 0),
-          0,
-        );
+      const realizationWithAmount = await Promise.all(
+        realization.map(async (realizationItem) => {
+          const totalAmount = realizationItem.realizationItem.reduce(
+            (accumulator, currentItem) =>
+              accumulator + (currentItem.amount || 0),
+            0,
+          );
+          const name =
+            realizationItem.personalNumberTo !== null
+              ? await this.roleService.getName(realizationItem.personalNumberTo)
+              : null;
 
-        return {
-          idRealization: realizationItem.idRealization,
-          requestNumber: realizationItem.requestNumber,
-          entryDate: realizationItem.createdAt,
-          m_cost_center: realizationItem.m_cost_center,
-          status: realizationItem.status,
-          typeSubmission: realizationItem.type,
-          statusTo: realizationItem.personalNumberTo,
-          departmentTo: realizationItem.departmentTo,
-          submissionValue: totalAmount,
-          description: realizationItem.titleRequest,
-        };
-      });
+          return {
+            idRealization: realizationItem.idRealization,
+            requestNumber: realizationItem.requestNumber,
+            entryDate: realizationItem.createdAt,
+            m_cost_center: realizationItem.m_cost_center,
+            status: realizationItem.status,
+            typeSubmission: realizationItem.type,
+            statusTo: name !== null ? name : null,
+            departmentTo: realizationItem.departmentTo,
+            submissionValue: totalAmount,
+            description: realizationItem.titleRequest,
+          };
+        }),
+      );
 
       const totalItemsPerPage = isLastPage ? remainingItems : perPage;
 
       return {
-        data: realizationWithFileUpload,
+        data: realizationWithAmount,
         meta: {
           currentPage: Number(page),
           totalItems,
