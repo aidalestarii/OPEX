@@ -318,26 +318,38 @@ export class ReportService {
       // const remainingItems = totalItems % perPage;
       const remainingItems = totalItems - skip;
       const isLastPage = page * perPage >= totalItems;
-      const personalReport = realization.map((item) => {
-        const totalAmount = item.realizationItem.reduce(
-          (accumulator, currentItem) => accumulator + (currentItem.amount || 0),
-          0,
-        );
 
-        return {
-          idRealization: item.idRealization,
-          dinas: item.m_cost_center.dinas,
-          month: item.month,
-          years: item.years,
-          requestNumber: item.requestNumber,
-          typeSubmission: item.type,
-          submissionValue: totalAmount,
-          status: item.status,
-          requestBy: item.createdBy,
-          responsibleOfRequest: item.responsibleNopeg,
-          description: item.titleRequest,
-        };
-      });
+      const personalReport = await Promise.all(
+        realization.map(async (item) => {
+          const totalAmount = item.realizationItem.reduce(
+            (accumulator, currentItem) =>
+              accumulator + (currentItem.amount || 0),
+            0,
+          );
+          const responsible =
+            item.createdBy !== null
+              ? await this.roleService.getName(item.responsibleNopeg)
+              : null;
+          const requestBy =
+            item.createdBy !== null
+              ? await this.roleService.getName(item.createdBy)
+              : null;
+
+          return {
+            idRealization: item.idRealization,
+            dinas: item.m_cost_center.dinas,
+            month: item.month,
+            years: item.years,
+            requestNumber: item.requestNumber,
+            typeSubmission: item.type,
+            submissionValue: totalAmount,
+            status: item.status,
+            requestBy: requestBy !== null ? requestBy : null,
+            responsibleOfRequest: responsible !== null ? responsible : null,
+            description: item.titleRequest,
+          };
+        }),
+      );
 
       const totalSubmissionValue = personalReport.reduce(
         (total, item) => total + item.submissionValue,
