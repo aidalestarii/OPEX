@@ -1,13 +1,6 @@
 import { RealizationTypeEnum, StatusEnum } from '@prisma/client';
 import { Type } from 'class-transformer';
-import {
-  IsDecimal,
-  IsEnum,
-  IsNotEmpty,
-  IsNumber,
-  IsOptional,
-  IsString,
-} from 'class-validator';
+import { IsEnum, IsNotEmpty, IsOptional, IsString } from 'class-validator';
 
 export class UpdateRealizationDto {
   years: number;
@@ -57,6 +50,8 @@ export class UpdateRealizationDto {
   personalNumberTo: string;
   contributors;
 
+  realizationItems: UpdateRealizationItemDto[];
+
   // @IsString()
   // @IsNotEmpty()
   // createdBy: string;
@@ -85,49 +80,53 @@ export class UpdateRealizationDto {
   // }
 }
 
-// export class UpdateRealizationItemDto {
-//   @Type(() => Number)
-//   realizationId: number;
+export class UpdateRealizationItemDto {
+  idRealizationItem: number;
+  @Type(() => Number)
+  realizationId: number;
 
-//   @Type(() => Number)
-//   glAccountId: number;
+  @Type(() => Number)
+  glAccountId: number;
 
-//   @Type(() => Number)
-//   amount: number;
+  @Type(() => Number)
+  amount: number;
 
-//   @Type(() => Number)
-//   amountSubmission: number;
+  @Type(() => Number)
+  amountSubmission: number;
 
-//   @Type(() => Number)
-//   amountHps?: number;
+  @Type(() => Number)
+  amountHps?: number;
 
-//   @Type(() => Number)
-//   amountCorrection: number;
+  @Type(() => Number)
+  amountCorrection: number;
 
-//   periodStart: Date;
+  @Type(() => Number)
+  amountApprove: number;
 
-//   periodFinish: Date;
+  periodStart: Date;
 
-//   remarkPby: string;
+  periodFinish: Date;
 
-//   readonly memo?: string;
+  remarkPby: string;
 
-//   @IsString()
-//   descPby: string;
+  readonly memo?: string;
 
-//   @IsString()
-//   createdBy: string;
+  @IsString()
+  descPby: string;
 
-//   static fromRequestArray(
-//     data: UpdateRealizationItemDto[],
-//   ): UpdateRealizationItemDto[] {
-//     return data.map((item) => {
-//       item.amount = Number(item.amount);
-//       item.amountSubmission = Number(item.amountSubmission);
-//       item.amountHps = Number(item.amountHps);
-//       item.amountCorrection = Number(item.amountCorrection);
-//       item.glAccountId = Number(item.glAccountId);
-//       return item;
-//     });
-//   }
-// }
+  @IsString()
+  createdBy: string;
+
+  static fromRequestArray(
+    data: UpdateRealizationItemDto[],
+  ): UpdateRealizationItemDto[] {
+    return data.map((item) => {
+      item.amount = Number(item.amount);
+      item.amountSubmission = Number(item.amountSubmission);
+      item.amountHps = Number(item.amountHps);
+      item.amountCorrection = Number(item.amountCorrection);
+      item.glAccountId = Number(item.glAccountId);
+      return item;
+    });
+  }
+}

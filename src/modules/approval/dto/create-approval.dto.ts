@@ -7,7 +7,10 @@ import {
   IsOptional,
   IsString,
 } from 'class-validator';
-import { UpdateRealizationDto } from 'src/modules/realization/dto/update-realization.dto';
+import {
+  UpdateRealizationDto,
+  UpdateRealizationItemDto,
+} from 'src/modules/realization/dto/update-realization.dto';
 
 export class ApproveDto {
   @IsNotEmpty()
@@ -17,6 +20,8 @@ export class ApproveDto {
   readonly updateRealizationDto: UpdateRealizationDto;
 
   readonly approvalDto: ApprovalDto;
+
+  readonly realizationItemDto: UpdateRealizationItemDto[];
 }
 
 export class ApprovalDto {
