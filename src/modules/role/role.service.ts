@@ -66,6 +66,22 @@ export class RoleService {
       this.httpService.get(apiVP_TX, { headers }),
     );
 
+    //SM TAP
+    const SM_TAP = 580459;
+
+    const apiSM_TAP = `https://api.gmf-aeroasia.co.id/th/soev2/v2/employee/${SM_TAP}`;
+    const dataSM_TAP = await lastValueFrom(
+      this.httpService.get(apiSM_TAP, { headers }),
+    );
+
+    //DF
+    const DF = 782703;
+
+    const apiDF = `https://api.gmf-aeroasia.co.id/th/soev2/v2/employee/${DF}`;
+    const dataDF = await lastValueFrom(
+      this.httpService.get(apiDF, { headers }),
+    );
+
     const result2 = {
       ...result.body,
       vicePresident: dataSM_USER.data.body.personalSuperior,
@@ -84,6 +100,7 @@ export class RoleService {
     return result2;
   }
 
+  //untuk take project
   async getUserData(personalNumberTo: string): Promise<RoleDto> {
     const apiUrl = `https://api.gmf-aeroasia.co.id/th/soev2/v2/employee/${personalNumberTo}`;
     const headers = {
