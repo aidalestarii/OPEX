@@ -101,7 +101,13 @@ export class ApprovalService {
         filter.status = status;
       }
       if (statusTo) {
-        filter.personalNumberTo = statusTo;
+        if (statusTo === 'TAB') {
+          filter.personalNumberTo = null;
+        } else if (statusTo === 'TXC-3') {
+          filter.personalNumberTo = null;
+        } else {
+          filter.personalNumberTo = statusTo;
+        }
       }
 
       if (entryDate && entryDateTo) {
@@ -373,6 +379,11 @@ export class ApprovalService {
         personalNumberTo = null;
         departmentTo = 'TXC-3';
       } else if (updateRealizationDto.statusToId === 10) {
+        personalNumberTo =
+          realization.roleAssignment['SM_TXC']?.personalNumber ?? null;
+        departmentTo =
+          realization.roleAssignment['SM_TXC']?.personalUnit ?? null;
+      } else if (updateRealizationDto.statusToId === 11) {
         personalNumberTo =
           realization.roleAssignment['vicePresidentTX']?.personalNumber ?? null;
         departmentTo =
