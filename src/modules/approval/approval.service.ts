@@ -418,29 +418,32 @@ export class ApprovalService {
         });
       }
 
-      const updatedItems = await Promise.all(
-        realizationItemDto.map(async (item: UpdateRealizationItemDto) => {
-          const amount =
-            item.amountApprove !== null
-              ? item.amountApprove
-              : item.amountCorrection !== null
-              ? item.amountCorrection
-              : item.amountHps !== null
-              ? item.amountHps
-              : null;
+      let updatedItems = null;
+      if (realizationItemDto) {
+        updatedItems = await Promise.all(
+          realizationItemDto.map(async (item: UpdateRealizationItemDto) => {
+            const amount =
+              item.amountApprove !== null
+                ? item.amountApprove
+                : item.amountCorrection !== null
+                ? item.amountCorrection
+                : item.amountHps !== null
+                ? item.amountHps
+                : null;
 
-          return await this.prisma.realizationItem.update({
-            where: { idRealizationItem: item.idRealizationItem },
-            data: {
-              amountHps: item.amountHps,
-              amountCorrection: item.amountCorrection,
-              amountApprove: item.amountApprove,
-              updatedBy: updateRealizationDto.updatedBy,
-              ...(amount !== null && { amount: amount }),
-            },
-          });
-        }),
-      );
+            return await this.prisma.realizationItem.update({
+              where: { idRealizationItem: item.idRealizationItem },
+              data: {
+                amountHps: item.amountHps,
+                amountCorrection: item.amountCorrection,
+                amountApprove: item.amountApprove,
+                updatedBy: updateRealizationDto.updatedBy,
+                ...(amount !== null && { amount: amount }),
+              },
+            });
+          }),
+        );
+      }
 
       return {
         data: { updatedRealization, createApproval, updatedItems, createMemo },
