@@ -323,6 +323,7 @@ export class ApprovalService {
       idRealization,
       updateRealizationDto,
       approvalDto,
+      noteMemoDto,
       realizationItemDto,
     } = dto;
     const realization = await this.prisma.realization.findUnique({
@@ -339,6 +340,7 @@ export class ApprovalService {
       let personalNumberTo: string | null = null;
       let departmentTo: string | null = null;
       let taReff: string | null = null;
+
       if (updateRealizationDto.statusToId === null) {
         personalNumberTo = null;
         departmentTo = null;
@@ -393,7 +395,7 @@ export class ApprovalService {
         },
       });
 
-      const createdApproval = await this.prisma.approval.create({
+      const createApproval = await this.prisma.approval.create({
         data: {
           ...approvalDto,
           tableName: 'Realization',
@@ -402,6 +404,20 @@ export class ApprovalService {
           createdBy: updateRealizationDto.updatedBy,
         },
       });
+
+      let createMemo = null;
+      if (noteMemoDto) {
+        createMemo = await this.prisma.noteMemo.create({
+          data: {
+            ...noteMemoDto,
+            approvalId: idRealization,
+            years: new Date().getFullYear(),
+            memoNumber: await this.generateMemoNumber(idRealization),
+            createdBy: updateRealizationDto.updatedBy,
+          },
+        });
+      }
+
       const updatedItems = await Promise.all(
         realizationItemDto.map(async (item: UpdateRealizationItemDto) => {
           const amount =
@@ -413,26 +429,21 @@ export class ApprovalService {
               ? item.amountHps
               : null;
 
-          const dataToUpdate: any = {
-            amountHps: item.amountHps,
-            amountCorrection: item.amountCorrection,
-            amountApprove: item.amountApprove,
-            updatedBy: updateRealizationDto.updatedBy,
-          };
-
-          if (amount !== null) {
-            dataToUpdate.amount = amount;
-          }
-
           return await this.prisma.realizationItem.update({
             where: { idRealizationItem: item.idRealizationItem },
-            data: dataToUpdate,
+            data: {
+              amountHps: item.amountHps,
+              amountCorrection: item.amountCorrection,
+              amountApprove: item.amountApprove,
+              updatedBy: updateRealizationDto.updatedBy,
+              ...(amount !== null && { amount: amount }),
+            },
           });
         }),
       );
 
       return {
-        data: { updatedRealization, createdApproval, updatedItems },
+        data: { updatedRealization, createApproval, updatedItems, createMemo },
         meta: null,
         message: 'Realization updated, and Approval created successfully',
         status: HttpStatus.OK,
@@ -471,6 +482,24 @@ export class ApprovalService {
     const tAReff = `TAB/RA.${dinas}/${month}.0${id}/${year}`;
 
     return tAReff;
+  }
+
+  private async generateMemoNumber(id: number): Promise<string> {
+    const year = new Date().getFullYear() % 100;
+
+    const realization = await this.prisma.realization.findUnique({
+      where: {
+        idRealization: id,
+      },
+      include: {
+        m_cost_center: true,
+      },
+    });
+    const dinas = realization.m_cost_center.dinas;
+
+    const memoNumber = `${dinas}/MEMO/${id}/${year}`;
+
+    return memoNumber;
   }
 
   async take(

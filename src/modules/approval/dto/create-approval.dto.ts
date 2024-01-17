@@ -21,6 +21,8 @@ export class ApproveDto {
 
   readonly approvalDto: ApprovalDto;
 
+  readonly noteMemoDto: NoteMemoDto;
+
   readonly realizationItemDto: UpdateRealizationItemDto[];
 }
 
@@ -47,6 +49,33 @@ export class ApprovalDto {
   @IsOptional()
   @IsString()
   remark?: string;
+
+  @IsNotEmpty()
+  @IsString()
+  createdBy: string;
+}
+
+export class NoteMemoDto {
+  @IsNumber()
+  approvalId: number;
+
+  @IsNumber()
+  years: number;
+
+  @IsNotEmpty()
+  @IsString()
+  dinas: string;
+
+  @IsString()
+  memoNumber: string;
+
+  @IsNotEmpty()
+  @IsString()
+  note: string;
+
+  @IsNotEmpty()
+  @IsString()
+  departmentTo: string;
 
   @IsNotEmpty()
   @IsString()
