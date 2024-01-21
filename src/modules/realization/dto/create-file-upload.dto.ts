@@ -8,12 +8,12 @@ export class CreateFileDto {
   tableId: number;
 
   @IsNotEmpty()
+  @IsString()
   docName: string;
 
   @IsNotEmpty()
   @Type(() => Number)
   docCategoryId: number;
-  //draftNumber: number;
 
   docLink: string;
 
@@ -22,7 +22,6 @@ export class CreateFileDto {
   docType: string;
   department: string;
 
-  @IsNotEmpty()
   @IsString()
   createdBy: string;
 

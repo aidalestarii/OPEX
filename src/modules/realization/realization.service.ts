@@ -29,7 +29,7 @@ export class RealizationService {
     this.prismaService = new PrismaClient();
   }
 
-  async generateRequestNumber(idCostCenter: number): Promise<string> {
+  private async generateRequestNumber(idCostCenter: number): Promise<string> {
     const year = new Date().getFullYear() % 100;
     const month = (new Date().getMonth() + 1).toString().padStart(2, '0');
 
@@ -51,7 +51,7 @@ export class RealizationService {
 
     return requestNumber;
   }
-  async generateDepartment(idCostCenter: number): Promise<string> {
+  private async generateDepartment(idCostCenter: number): Promise<string> {
     const mCostCenter = await this.prisma.mCostCenter.findUnique({
       where: { idCostCenter },
     });

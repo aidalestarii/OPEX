@@ -17,6 +17,7 @@ import {
 import { SortOrder } from '@elastic/elasticsearch/lib/api/types';
 import { RoleService } from '../role/role.service';
 import { HttpService } from '@nestjs/axios';
+import { CreateFileDto } from '../realization/dto/create-file-upload.dto';
 
 @Injectable()
 export class ApprovalService {
@@ -324,7 +325,7 @@ export class ApprovalService {
     return realization;
   }
 
-  async approval(dto: ApproveDto) {
+  async approval(dto: ApproveDto, uploadfile: CreateFileDto[]) {
     const {
       idRealization,
       updateRealizationDto,
@@ -456,8 +457,28 @@ export class ApprovalService {
         );
       }
 
+      const uploadFiles = await Promise.all(
+        uploadfile.map(async (file: CreateFileDto) => {
+          return this.prisma.fileUpload.create({
+            data: {
+              ...file,
+              tableName: 'Realization',
+              tableId: idRealization,
+              department: approvalDto.unit,
+              createdBy: updateRealizationDto.updatedBy,
+            },
+          });
+        }),
+      );
+
       return {
-        data: { updatedRealization, createApproval, updatedItems, createMemo },
+        data: {
+          updatedRealization,
+          createApproval,
+          updatedItems,
+          createMemo,
+          uploadFiles,
+        },
         meta: null,
         message: 'Realization updated, and Approval created successfully',
         status: HttpStatus.OK,

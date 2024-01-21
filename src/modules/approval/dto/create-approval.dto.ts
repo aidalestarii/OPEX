@@ -1,4 +1,5 @@
 import { StatusEnum } from '@prisma/client';
+import { Type } from 'class-transformer';
 import {
   IsBoolean,
   IsEnum,
@@ -7,6 +8,7 @@ import {
   IsOptional,
   IsString,
 } from 'class-validator';
+import { CreateFileDto } from 'src/modules/realization/dto/create-file-upload.dto';
 import {
   UpdateRealizationDto,
   UpdateRealizationItemDto,
@@ -15,15 +17,40 @@ import {
 export class ApproveDto {
   @IsNotEmpty()
   @IsNumber()
-  readonly idRealization: number;
+  @Type(() => Number)
+  idRealization: number;
 
-  readonly updateRealizationDto: UpdateRealizationDto;
+  updateRealizationDto: UpdateRealizationDto;
 
-  readonly approvalDto: ApprovalDto;
+  approvalDto: ApprovalDto;
 
-  readonly noteMemoDto: NoteMemoDto;
+  noteMemoDto: NoteMemoDto;
 
-  readonly realizationItemDto: UpdateRealizationItemDto[];
+  realizationItemDto: UpdateRealizationItemDto[];
+
+  uploadfile: CreateFileDto[];
+
+  static fromRequest(data: ApproveDto): ApproveDto {
+    data.idRealization = Number(data.idRealization);
+
+    if (data.updateRealizationDto) {
+      data.updateRealizationDto = UpdateRealizationDto.fromRequest(
+        data.updateRealizationDto,
+      );
+    }
+
+    if (Array.isArray(data.realizationItemDto)) {
+      data.realizationItemDto = UpdateRealizationItemDto.fromRequestArray(
+        data.realizationItemDto,
+      );
+    }
+
+    if (Array.isArray(data.uploadfile)) {
+      data.uploadfile = CreateFileDto.fromRequest(data.uploadfile);
+    }
+
+    return data;
+  }
 }
 
 export class ApprovalDto {
@@ -57,6 +84,7 @@ export class ApprovalDto {
 
 export class NoteMemoDto {
   @IsNumber()
+  @Type(() => Number)
   approvalId: number;
 
   @IsNumber()
@@ -80,4 +108,9 @@ export class NoteMemoDto {
   @IsNotEmpty()
   @IsString()
   createdBy: string;
+
+  static fromRequest(data: NoteMemoDto): NoteMemoDto {
+    data.approvalId = Number(data.approvalId);
+    return data;
+  }
 }

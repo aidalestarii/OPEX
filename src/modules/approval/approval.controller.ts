@@ -9,11 +9,17 @@ import {
   Put,
   Query,
   ParseBoolPipe,
+  UploadedFiles,
+  UseInterceptors,
 } from '@nestjs/common';
 import { ApprovalService } from './approval.service';
 import { ApprovalDto, ApproveDto } from './dto/create-approval.dto';
 import { UpdateApprovalDto } from './dto/update-approval.dto';
 import { UpdateRealizationDto } from '../realization/dto/update-realization.dto';
+import { CreateFileDto } from '../realization/dto/create-file-upload.dto';
+import { extname } from 'path';
+import { AnyFilesInterceptor } from '@nestjs/platform-express/multer';
+import { multerPdfOptions } from 'src/config/multer.config';
 
 @Controller({
   version: '1',
@@ -57,8 +63,29 @@ export class ApprovalController {
   }
 
   @Post('/approve')
-  async approval(@Body() dto: ApproveDto) {
-    return this.approvalService.approval(dto);
+  @UseInterceptors(AnyFilesInterceptor(multerPdfOptions))
+  async approval(
+    @Body() dto: ApproveDto,
+    @UploadedFiles() files: Express.Multer.File[],
+    @Body() dtoFile: CreateFileDto,
+  ) {
+    const fromRequest = ApproveDto.fromRequest(dto);
+
+    const createFileDtos: CreateFileDto[] = (files ?? []).map(
+      (file, index) => ({
+        tableName: 'Realization',
+        docName: dtoFile.docName[index],
+        docLink: file.path,
+        docSize: parseFloat((file.size / 1000000).toFixed(2)),
+        docType: extname(file.originalname),
+        department: '',
+        createdBy: '',
+        tableId: 1,
+        docCategoryId: parseInt(dtoFile.docCategoryId[index]),
+      }),
+    );
+
+    return this.approvalService.approval(fromRequest, createFileDtos);
   }
 
   @Put('/take/:id')
