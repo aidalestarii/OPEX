@@ -370,7 +370,6 @@ export class ApprovalService {
           realization.roleAssignment['SM_TAB']?.personalNumber ?? null;
         departmentTo =
           realization.roleAssignment['SM_TAB']?.personalUnit ?? null;
-        taReff = taReff;
       } else if (updateRealizationDto.statusToId === 8) {
         personalNumberTo =
           realization.roleAssignment['vicePresidentTA']?.personalNumber ?? null;
@@ -499,7 +498,117 @@ export class ApprovalService {
       );
     }
   }
+  async revise(dto: ApproveDto) {
+    const {
+      idRealization,
+      updateRealizationDto,
+      approvalDto,
+      realizationItemDto,
+    } = dto;
+    const realization = await this.prisma.realization.findUnique({
+      where: { idRealization },
+      include: { realizationItem: true },
+    });
+    if (!realization) {
+      throw new NotFoundException(
+        `Realization with id ${idRealization} not found`,
+      );
+    }
 
+    try {
+      let personalNumberTo: string | null = null;
+      let departmentTo: string | null = null;
+
+      if (updateRealizationDto.statusToId === null) {
+        personalNumberTo = null;
+        departmentTo = null;
+      } else if (updateRealizationDto.statusToId === 7) {
+        personalNumberTo =
+          realization.roleAssignment['SM_TAB']?.personalNumber ?? null;
+        departmentTo =
+          realization.roleAssignment['SM_TAB']?.personalUnit ?? null;
+      } else if (updateRealizationDto.statusToId === 10) {
+        personalNumberTo =
+          realization.roleAssignment['SM_TXC']?.personalNumber ?? null;
+        departmentTo =
+          realization.roleAssignment['SM_TXC']?.personalUnit ?? null;
+      }
+
+      const updatedRealization = await this.prisma.realization.update({
+        where: { idRealization: idRealization },
+        data: {
+          status: updateRealizationDto.status,
+          statusId: updateRealizationDto.statusId,
+          statusToId: updateRealizationDto.statusToId,
+          departmentTo: departmentTo,
+          personalNumberTo: personalNumberTo,
+          updatedBy: updateRealizationDto.updatedBy,
+        },
+      });
+
+      const createApproval = await this.prisma.approval.create({
+        data: {
+          ...approvalDto,
+          tableName: 'Realization',
+          tableId: idRealization,
+          status: updateRealizationDto.status,
+          createdBy: updateRealizationDto.updatedBy,
+        },
+      });
+
+      let updatedItems = null;
+      if (realizationItemDto) {
+        updatedItems = await Promise.all(
+          realizationItemDto.map(async (item: UpdateRealizationItemDto) => {
+            const amount =
+              item.amountApprove !== null
+                ? item.amountApprove
+                : item.amountCorrection !== null
+                ? item.amountCorrection
+                : item.amountHps !== null
+                ? item.amountHps
+                : null;
+
+            return await this.prisma.realizationItem.update({
+              where: { idRealizationItem: item.idRealizationItem },
+              data: {
+                amountHps: item.amountHps,
+                amountCorrection: item.amountCorrection,
+                amountApprove: item.amountApprove,
+                updatedBy: updateRealizationDto.updatedBy,
+                ...(amount !== null && { amount: amount }),
+              },
+            });
+          }),
+        );
+      }
+
+      return {
+        data: {
+          updatedRealization,
+          createApproval,
+          updatedItems,
+        },
+        meta: null,
+        message: 'Realization revised successfully',
+        status: HttpStatus.OK,
+        time: new Date(),
+      };
+    } catch (error) {
+      console.log(error);
+      throw new HttpException(
+        {
+          data: null,
+          meta: null,
+          message: 'Failed to update Realization and insert Approval',
+          status: HttpStatus.INTERNAL_SERVER_ERROR,
+          time: new Date(),
+          error: error.message,
+        },
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+  }
   private async generateTAReff(id: number): Promise<string> {
     const year = new Date().getFullYear();
     const month = (new Date().getMonth() + 1).toString().padStart(2, '0');

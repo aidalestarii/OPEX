@@ -88,6 +88,12 @@ export class ApprovalController {
     return this.approvalService.approval(fromRequest, createFileDtos);
   }
 
+  // @Post('/revise')
+  // async revise(@Body() dto: ApproveDto) {
+  //   const fromRequest = ApproveDto.fromRequest(dto);
+  //   return this.approvalService.approval(fromRequest);
+  // }
+
   @Put('/take/:id')
   async takeProject(
     @Param('id') id: number,
