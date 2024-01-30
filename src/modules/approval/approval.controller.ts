@@ -36,6 +36,7 @@ export class ApprovalController {
     @Query() queryParams: any,
     @Query('isTAB', ParseBoolPipe) isTAB: boolean,
     @Query('isTXC-3', ParseBoolPipe) isTXC3: boolean,
+    @Query('isTAP', ParseBoolPipe) isTAP: boolean,
   ) {
     return this.approvalService.findAllWithPaginationAndFilter(
       page,
@@ -44,6 +45,7 @@ export class ApprovalController {
       queryParams,
       isTAB,
       isTXC3,
+      isTAP,
     );
   }
 
@@ -100,8 +102,15 @@ export class ApprovalController {
     @Body() updateRealizationDto: UpdateRealizationDto,
     @Query('isTAB', ParseBoolPipe) isTAB: boolean,
     @Query('isTXC-3', ParseBoolPipe) isTXC3: boolean,
+    @Query('isTAP', ParseBoolPipe) isTAP: boolean,
   ) {
-    return this.approvalService.take(+id, updateRealizationDto, isTAB, isTXC3);
+    return this.approvalService.take(
+      +id,
+      updateRealizationDto,
+      isTAB,
+      isTXC3,
+      isTAP,
+    );
   }
 
   @Get('remark/:id')

@@ -69,7 +69,7 @@ export class RealizationService {
   ) {
     try {
       const timeoutPromise = new Promise((_, reject) =>
-        setTimeout(() => reject(new Error('Transaction timeout')), 60000),
+        setTimeout(() => reject(new Error('Transaction timeout')), 600000),
       );
 
       const transactionPromise = this.prisma.$transaction(
@@ -93,9 +93,31 @@ export class RealizationService {
             roleAssignment = await this.roleService.getRole(
               createRealization.createdBy,
             );
-            dtoRoleAssignment = this.mapRoleAssignment(roleAssignment);
-          }
 
+            if (
+              !(
+                createRealization.type === 'PENGADAAN' &&
+                realizationItems.reduce(
+                  (sum, item) => sum + item.amountSubmission,
+                  0,
+                ) > 10000000
+              )
+            ) {
+              dtoRoleAssignment = {
+                employee: roleAssignment.employee,
+                seniorManager: roleAssignment.seniorManager,
+                vicePresident: roleAssignment.vicePresident,
+                SM_TAB: roleAssignment.SM_TAB,
+                vicePresidentTA: roleAssignment.vicePresidentTA,
+                SM_TXC: roleAssignment.SM_TXC,
+                vicePresidentTX: roleAssignment.vicePresidentTX,
+                SM_TAP: null,
+                DF: null,
+              };
+            } else {
+              dtoRoleAssignment = this.mapRoleAssignment(roleAssignment);
+            }
+          }
           // Extract Realization data from the DTO
           const { ...realizationData } = createRealization;
 

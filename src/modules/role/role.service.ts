@@ -85,10 +85,12 @@ export class RoleService {
     const result2 = {
       ...result.body,
       vicePresident: dataSM_USER.data.body.personalSuperior,
+      SM_TAP: dataSM_TAP.data.body,
       SM_TAB: dataSM_TAB.data.body,
       vicePresidentTA: dataVP_TA.data.body,
       SM_TXC: dataSM_TXC.data.body,
       vicePresidentTX: dataVP_TX.data.body,
+      DF: dataDF.data.body,
     } as RoleDto;
 
     for (const role in RoleDto) {
