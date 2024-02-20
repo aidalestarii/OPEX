@@ -13,6 +13,7 @@ import { MasterStatusModule } from './modules/master_status/master_status.module
 import { ApprovalModule } from './modules/approval/approval.module';
 import { RoleModule } from './modules/role/role.module';
 import { ReportModule } from './modules/report/report.module';
+import { ReallocationModule } from './modules/reallocation/reallocation.module';
 
 @Module({
   imports: [
@@ -28,6 +29,7 @@ import { ReportModule } from './modules/report/report.module';
     ApprovalModule,
     RoleModule,
     ReportModule,
+    ReallocationModule,
   ],
   controllers: [AppController],
   providers: [AppService],

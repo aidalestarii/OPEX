@@ -424,7 +424,7 @@ model Reallocation {
   statusId         Int        @map("status_id") @db.Integer
   department       String     @map("department") @db.VarChar(8)
   personalNumber   String     @map("nopeg") @db.VarChar(8)
-  statusToId       Int?
+  statusToId       Int?       @map("status_to_id") @db.Integer
   departmentTo     String     @map("department_to") @db.VarChar(8)
   personalNumberTo String     @map("nopeg_to") @db.VarChar(8)
   createdAt        DateTime   @default(now()) @map("created_at") @db.Timestamp(6)
